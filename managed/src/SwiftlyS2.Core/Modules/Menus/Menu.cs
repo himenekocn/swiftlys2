@@ -280,7 +280,6 @@ internal class Menu : IMenu
                 if (subMenu != null)
                 {
                     subMenu.Parent = this;
-                    subMenu.Rerender(player);
                     subMenu.Show(player);
                 }
                 break;
