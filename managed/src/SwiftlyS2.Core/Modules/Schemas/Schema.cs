@@ -48,7 +48,6 @@ internal static class Schema {
 
   [MethodImpl(MethodImplOptions.AggressiveInlining)]  
   public static int GetOffset(ulong hash) {
-    Console.WriteLine($"isFollowingServerGuidelines: {isFollowingServerGuidelines}, hash: {hash}");
     if (isFollowingServerGuidelines && dangerousFields.Contains(hash)) {
       throw new InvalidOperationException($"Cannot execute dangerous operation {hash} while \"FollowCS2ServerGuidelines\" is enabled.\n\tTo use this operation, disable the option in core.jsonc.");
     }
