@@ -48,4 +48,13 @@ public interface IPlayerManagerService
     /// </summary>
     /// <returns>An enumerable collection of <see cref="IPlayer"/> instances representing all online players.</returns>
     IEnumerable<IPlayer> GetAllPlayers();
+
+    /// <summary>
+    /// Finds targetted players based on the provided search criteria.
+    /// </summary>
+    /// <param name="player">The player initiating the search.</param>
+    /// <param name="target">The target player name or identifier.</param>
+    /// <param name="searchMode">The search mode to apply.</param>
+    /// <returns>A collection of players matching the search criteria.</returns>
+    IEnumerable<IPlayer> FindTargettedPlayers(IPlayer player, string target, TargetSearchMode searchMode);
 }
