@@ -8,6 +8,7 @@ using SwiftlyS2.Shared.Database;
 using SwiftlyS2.Shared.EntitySystem;
 using SwiftlyS2.Shared.Events;
 using SwiftlyS2.Shared.GameEvents;
+using SwiftlyS2.Shared.Helpers;
 using SwiftlyS2.Shared.Memory;
 using SwiftlyS2.Shared.Menus;
 using SwiftlyS2.Shared.NetMessages;
@@ -44,6 +45,11 @@ public interface ISwiftlyCore
   /// Net message service.
   /// </summary>
   public INetMessageService NetMessage { get; }
+
+  /// <summary>
+  /// Helpers service.
+  /// </summary>
+  public IHelpers Helpers { get; }
 
   /// <summary>
   /// Command service.

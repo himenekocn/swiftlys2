@@ -37,6 +37,7 @@ using SwiftlyS2.Shared.Translation;
 using SwiftlyS2.Core.Players;
 using SwiftlyS2.Shared.CommandLine;
 using SwiftlyS2.Core.CommandLine;
+using SwiftlyS2.Shared.Helpers;
 
 namespace SwiftlyS2.Core.Services;
 
@@ -70,6 +71,7 @@ internal class SwiftlyCore : ISwiftlyCore, IDisposable
   public RegistratorService RegistratorService { get; init; }
   public MenuManager MenuManager { get; init; }
   public CommandLineService CommandLineService { get; init; }
+  public HelpersService Helpers { get; init; }
   public string ContextBasePath { get; init; }
   public SwiftlyCore(string contextId, string contextBaseDirectory, PluginMetadata? pluginManifest, Type contextType, IServiceProvider coreProvider)
   {
@@ -111,6 +113,7 @@ internal class SwiftlyCore : ISwiftlyCore, IDisposable
       .AddSingleton<RegistratorService>()
       .AddSingleton<MenuManager>()
       .AddSingleton<CommandLineService>()
+      .AddSingleton<HelpersService>()
       .AddSingleton<IPermissionManager>(provider => provider.GetRequiredService<PermissionManager>())
 
       .AddSingleton<IEventSubscriber>(provider => provider.GetRequiredService<EventSubscriber>())
@@ -134,6 +137,7 @@ internal class SwiftlyCore : ISwiftlyCore, IDisposable
       .AddSingleton<IRegistratorService>(provider => provider.GetRequiredService<RegistratorService>())
       .AddSingleton<IMenuManager>(provider => provider.GetRequiredService<MenuManager>())
       .AddSingleton<ICommandLine>(provider => provider.GetRequiredService<CommandLineService>())
+      .AddSingleton<IHelpers>(provider => provider.GetRequiredService<HelpersService>())
 
       .AddLogging(
         builder =>
@@ -168,6 +172,7 @@ internal class SwiftlyCore : ISwiftlyCore, IDisposable
     RegistratorService = _ServiceProvider.GetRequiredService<RegistratorService>();
     MenuManager = _ServiceProvider.GetRequiredService<MenuManager>();
     CommandLineService = _ServiceProvider.GetRequiredService<CommandLineService>();
+    Helpers = _ServiceProvider.GetRequiredService<HelpersService>();
     Logger = LoggerFactory.CreateLogger(contextType);
   }
 
@@ -211,4 +216,5 @@ internal class SwiftlyCore : ISwiftlyCore, IDisposable
   IMenuManager ISwiftlyCore.Menus => MenuManager;
   string ISwiftlyCore.PluginPath => ContextBasePath;
   ICommandLine ISwiftlyCore.CommandLine => CommandLineService;
+  IHelpers ISwiftlyCore.Helpers => Helpers;
 }
