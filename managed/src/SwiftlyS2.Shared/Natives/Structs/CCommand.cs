@@ -17,81 +17,21 @@ public unsafe struct CCommand
     private CUtlVectorFixedGrowable<byte, FixedCharBuffer512> _argvBuffer;
     private CUtlVectorFixedGrowable<nint, FixedPtrBuffer64> _args;
 
-    public CCommand()
-    {
-        _argv0Size = 0;
-        _argSBuffer = new CUtlVectorFixedGrowable<byte, FixedCharBuffer512>((int)COMMAND.MAX_LENGTH);
-        _argvBuffer = new CUtlVectorFixedGrowable<byte, FixedCharBuffer512>((int)COMMAND.MAX_LENGTH);
-        _args = new CUtlVectorFixedGrowable<nint, FixedPtrBuffer64>((int)COMMAND.MAX_ARGC);
-        EnsureBuffers();
-        Reset();
-    }
+    // public CCommand()
+    // {
+    //     _argv0Size = 0;
+    //     _argSBuffer = new CUtlVectorFixedGrowable<byte, FixedCharBuffer512>((int)COMMAND.MAX_LENGTH);
+    //     _argvBuffer = new CUtlVectorFixedGrowable<byte, FixedCharBuffer512>((int)COMMAND.MAX_LENGTH);
+    //     _args = new CUtlVectorFixedGrowable<nint, FixedPtrBuffer64>((int)COMMAND.MAX_ARGC);
+    //     EnsureBuffers();
+    //     Reset();
+    // }
 
-    public CCommand(string[] args)
-    {
-        _argv0Size = 0;
-        _argSBuffer = new CUtlVectorFixedGrowable<byte, FixedCharBuffer512>((int)COMMAND.MAX_LENGTH);
-        _argvBuffer = new CUtlVectorFixedGrowable<byte, FixedCharBuffer512>((int)COMMAND.MAX_LENGTH);
-        _args = new CUtlVectorFixedGrowable<nint, FixedPtrBuffer64>((int)COMMAND.MAX_ARGC);
-        EnsureBuffers();
-        Reset();
-
-        if (args == null || args.Length == 0)
-        {
-            return;
-        }
-
-        byte* pBuf = (byte*)_argvBuffer.Base;
-        byte* pSBuf = (byte*)_argSBuffer.Base;
-
-        for (int i = 0; i < args.Length; ++i)
-        {
-            _args.AddToTail((nint)pBuf);
-
-            var argBytes = System.Text.Encoding.UTF8.GetBytes(args[i]);
-            int nLen = argBytes.Length;
-
-            fixed (byte* pArg = argBytes)
-            {
-                Unsafe.CopyBlock(pBuf, pArg, (uint)nLen);
-            }
-            pBuf[nLen] = 0;
-
-            if (i == 0)
-            {
-                _argv0Size = nLen;
-            }
-            pBuf += nLen + 1;
-
-            bool bContainsSpace = args[i].Contains(' ');
-            if (bContainsSpace)
-            {
-                *pSBuf++ = (byte)'"';
-            }
-
-            fixed (byte* pArg = argBytes)
-            {
-                Unsafe.CopyBlock(pSBuf, pArg, (uint)nLen);
-            }
-            pSBuf += nLen;
-
-            if (bContainsSpace)
-            {
-                *pSBuf++ = (byte)'"';
-            }
-
-            if (i != args.Length - 1)
-            {
-                *pSBuf++ = (byte)' ';
-            }
-        }
-    }
-
-    private void EnsureBuffers()
-    {
-        _argSBuffer.SetSize(MaxCommandLength());
-        _argvBuffer.SetSize(MaxCommandLength());
-    }
+    // private void EnsureBuffers()
+    // {
+    //     _argSBuffer.SetSize(MaxCommandLength());
+    //     _argvBuffer.SetSize(MaxCommandLength());
+    // }
 
     public void Reset()
     {
@@ -139,4 +79,79 @@ public unsafe struct CCommand
     }
 
     public static int MaxCommandLength() => (int)COMMAND.MAX_LENGTH - 1;
+
+    public bool Tokenize(string commandString)
+    {
+        if (string.IsNullOrWhiteSpace(commandString))
+        {
+            return false;
+        }
+
+        Reset();
+
+        var cmdBytes = System.Text.Encoding.UTF8.GetBytes(commandString);
+        int nLen = cmdBytes.Length;
+
+        if (nLen >= MaxCommandLength())
+        {
+            return false;
+        }
+
+        fixed (byte* pCmd = cmdBytes)
+        {
+            Unsafe.CopyBlock((byte*)_argSBuffer.Base, pCmd, (uint)nLen);
+            ((byte*)_argSBuffer.Base)[nLen] = 0;
+        }
+
+        byte* pSBuf = (byte*)_argSBuffer.Base;
+        byte* pArgvBuf = (byte*)_argvBuffer.Base;
+        int nArgvBufferSize = 0;
+        bool inQuotes = false;
+        int tokenStart = 0;
+
+        for (int i = 0; i <= nLen; ++i)
+        {
+            byte ch = i < nLen ? pSBuf[i] : (byte)0;
+            bool isBreak = (ch == 0 || ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r') && !inQuotes;
+
+            if (ch == '"')
+            {
+                inQuotes = !inQuotes;
+                continue;
+            }
+
+            if (isBreak)
+            {
+                if (i > tokenStart)
+                {
+                    int tokenLen = i - tokenStart;
+                    byte* pDest = pArgvBuf + nArgvBufferSize;
+
+                    for (int j = 0; j < tokenLen; ++j)
+                    {
+                        byte srcCh = pSBuf[tokenStart + j];
+                        if (srcCh != '"')
+                        {
+                            *pDest++ = srcCh;
+                        }
+                    }
+                    *pDest = 0;
+
+                    _args.AddToTail((nint)(pArgvBuf + nArgvBufferSize));
+
+                    if (_args.Count == 1)
+                    {
+                        _argv0Size = tokenStart;
+                    }
+
+                    nArgvBufferSize = (int)(pDest - pArgvBuf) + 1;
+                }
+                tokenStart = i + 1;
+
+                if (ch == 0) break;
+            }
+        }
+
+        return _args.Count > 0;
+    }
 }
