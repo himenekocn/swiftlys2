@@ -1,10 +1,8 @@
 using System.Text;
 using System.Collections.Concurrent;
 using Spectre.Console;
-using SwiftlyS2.Shared;
 using SwiftlyS2.Shared.Misc;
 using SwiftlyS2.Shared.Events;
-using SwiftlyS2.Shared.Services;
 
 namespace SwiftlyS2.Core.Services;
 
@@ -35,14 +33,12 @@ internal sealed class CommandTrackerManager : IDisposable
 
     public void ProcessCommand(IOnCommandExecuteHookEvent @event)
     {
-        if (string.IsNullOrWhiteSpace(@event.Command[0]) || !@event.Command[0]!.StartsWith("^wb^"))
-        {
-            Interlocked.Exchange(ref currentCommandContainer, CommandIdContainer.Empty);
-            return;
-        }
-
         if (@event.HookMode == HookMode.Pre)
         {
+            if (string.IsNullOrWhiteSpace(@event.Command[0]) || !@event.Command[0]!.StartsWith("^wb^"))
+            {
+                return;
+            }
             ProcessCommandStart(@event);
         }
         else if (@event.HookMode == HookMode.Post)
@@ -113,7 +109,8 @@ internal sealed class CommandTrackerManager : IDisposable
                     await Task.Delay(TimeSpan.FromMilliseconds(200), cancellationTokenSource.Token);
                     CleanupExpiredCommands();
                 }
-                catch (Exception ex) { 
+                catch (Exception ex)
+                {
                     AnsiConsole.WriteException(ex);
                 }
             }

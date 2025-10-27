@@ -115,7 +115,6 @@ internal class CoreHookService : IDisposable
           if (a5 != nint.Zero)
           {
             ref var command = ref Unsafe.AsRef<CCommand>((void*)a5);
-            
             var @eventPre = new OnCommandExecuteHookEvent(ref command, HookMode.Pre);
             EventPublisher.InvokeOnCommandExecuteHook(@eventPre);
 
@@ -123,7 +122,6 @@ internal class CoreHookService : IDisposable
 
             var @eventPost = new OnCommandExecuteHookEvent(ref command, HookMode.Post);
             EventPublisher.InvokeOnCommandExecuteHook(@eventPost);
-
             return result;
           }
           return next()(a1, a2, a3, a4, a5);
