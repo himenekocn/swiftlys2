@@ -9,6 +9,7 @@ using SwiftlyS2.Shared;
 using SwiftlyS2.Shared.Memory;
 using SwiftlyS2.Shared.Misc;
 using SwiftlyS2.Shared.SchemaDefinitions;
+using SwiftlyS2.Shared.Natives;
 
 namespace SwiftlyS2.Core.Services;
 
@@ -103,66 +104,28 @@ internal class CoreHookService : IDisposable
     var address = _Core.GameData.GetSignature("Cmd_ExecuteCommand");
 
     _Logger.LogInformation("Hooking Cmd_ExecuteCommand at {Address}", address);
-    var commandNameOffset = NativeOffsets.Fetch("CommandNameOffset");
-    var commandArgsOffset = NativeOffsets.Fetch("CommandArgsOffset");
 
     _ExecuteCommand = _Core.Memory.GetUnmanagedFunctionByAddress<ExecuteCommandDelegate>(address);
     _ExecuteCommandGuid = _ExecuteCommand.AddHook((next) =>
     {
       return (a1, a2, a3, a4, a5) =>
       {
-        var commandName = (a5 != nint.Zero && a5 < nint.MaxValue && commandNameOffset != 0) switch
+        unsafe
         {
-          true when Marshal.ReadIntPtr(new nint(a5 + commandNameOffset)) is var basePtr && basePtr != nint.Zero && basePtr < nint.MaxValue
-            => Marshal.PtrToStringAnsi(Marshal.ReadIntPtr(basePtr)) ?? string.Empty,
-          _ => string.Empty
-        };
-        var commandArgs = (a5 != nint.Zero && a5 < nint.MaxValue && commandArgsOffset != 0) switch
-        {
-          true => Marshal.PtrToStringAnsi(new nint(a5 + commandArgsOffset)) ?? string.Empty,
-          _ => string.Empty
-        };
+          if (a5 != nint.Zero)
+          {
+            ref var command = ref Unsafe.AsRef<CCommand>((void*)a5);
+            var @eventPre = new OnCommandExecuteHookEvent(ref command, HookMode.Pre);
+            EventPublisher.InvokeOnCommandExecuteHook(@eventPre);
 
-        var argsSplit = commandArgs.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        var args = argsSplit.Length > 1 ? argsSplit[1..] : [];
+            var result = next()(a1, a2, a3, a4, a5);
 
-        var preEvent = new OnCommandExecuteHookEvent
-        {
-          OriginalName = commandName,
-          OriginalArgs = args,
-          HookMode = HookMode.Pre
-        };
-        EventPublisher.InvokeOnCommandExecuteHook(preEvent);
-
-        nint newCommandNamePtr = nint.Zero;
-
-        if (preEvent.Intercepted && preEvent.CommandName.Length < commandName.Length)
-        {
-          var newCommandName = Encoding.UTF8.GetBytes(preEvent.CommandName);
-
-          newCommandNamePtr = NativeAllocator.Alloc((ulong)(newCommandName.Length + 1));
-          newCommandNamePtr.Write(newCommandName.Length, 0);
-
-          newCommandNamePtr.CopyFrom(newCommandName);
-          (a5 + commandNameOffset).Read<nint>().Write(newCommandNamePtr);
+            var @eventPost = new OnCommandExecuteHookEvent(ref command, HookMode.Post);
+            EventPublisher.InvokeOnCommandExecuteHook(@eventPost);
+            return result;
+          }
+          return next()(a1, a2, a3, a4, a5);
         }
-
-        var result = next()(a1, a2, a3, a4, a5);
-
-        var postEvent = new OnCommandExecuteHookEvent
-        {
-          OriginalName = commandName,
-          OriginalArgs = args,
-          HookMode = HookMode.Post
-        };
-        EventPublisher.InvokeOnCommandExecuteHook(postEvent);
-
-        if (newCommandNamePtr != nint.Zero)
-        {
-          NativeAllocator.Free(newCommandNamePtr);
-        }
-
-        return result;
       };
     });
   }

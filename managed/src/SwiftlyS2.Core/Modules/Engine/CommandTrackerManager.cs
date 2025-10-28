@@ -1,10 +1,8 @@
 using System.Text;
 using System.Collections.Concurrent;
 using Spectre.Console;
-using SwiftlyS2.Shared;
 using SwiftlyS2.Shared.Misc;
 using SwiftlyS2.Shared.Events;
-using SwiftlyS2.Shared.Services;
 
 namespace SwiftlyS2.Core.Services;
 
@@ -27,25 +25,20 @@ internal sealed class CommandTrackerManager : IDisposable
     private readonly CancellationTokenSource cancellationTokenSource = new();
     private readonly ConcurrentQueue<Action<string>> pendingCallbacks = new();
     private volatile bool disposed;
-    private volatile bool eventsSubscribed;
 
     public CommandTrackerManager()
     {
-        eventsSubscribed = false;
-
         StartCleanupTimer();
     }
 
     public void ProcessCommand(IOnCommandExecuteHookEvent @event)
     {
-        if (string.IsNullOrEmpty(@event.OriginalName) || !@event.OriginalName.StartsWith("^wb^"))
-        {
-            Interlocked.Exchange(ref currentCommandContainer, CommandIdContainer.Empty);
-            return;
-        }
-
         if (@event.HookMode == HookMode.Pre)
         {
+            if (string.IsNullOrWhiteSpace(@event.Command[0]) || !@event.Command[0]!.StartsWith("^wb^"))
+            {
+                return;
+            }
             ProcessCommandStart(@event);
         }
         else if (@event.HookMode == HookMode.Post)
@@ -78,7 +71,7 @@ internal sealed class CommandTrackerManager : IDisposable
             {
                 var newContainer = new CommandIdContainer(newCommandId);
                 Interlocked.Exchange(ref currentCommandContainer, newContainer);
-                @event.SetCommandName(@event.OriginalName.Replace("^wb^", string.Empty));
+                @event.Command.Tokenize($"{@event.Command[0]!.Replace("^wb^", string.Empty)} {@event.Command.ArgS}");
             }
         }
         else
@@ -87,7 +80,7 @@ internal sealed class CommandTrackerManager : IDisposable
         }
     }
 
-    public void ProcessCommandEnd(IOnCommandExecuteHookEvent @event)
+    public void ProcessCommandEnd(IOnCommandExecuteHookEvent _)
     {
         var previousContainer = Interlocked.Exchange(ref currentCommandContainer, CommandIdContainer.Empty);
         var commandId = previousContainer?.Value ?? Guid.Empty;
@@ -101,10 +94,7 @@ internal sealed class CommandTrackerManager : IDisposable
                 output.Append(line);
             }
 
-            Task.Run(() =>
-            {
-                command.Callback.Invoke(output.ToString());
-            });
+            Task.Run(() => command.Callback.Invoke(output.ToString()));
         }
     }
 
@@ -119,7 +109,8 @@ internal sealed class CommandTrackerManager : IDisposable
                     await Task.Delay(TimeSpan.FromMilliseconds(200), cancellationTokenSource.Token);
                     CleanupExpiredCommands();
                 }
-                catch (Exception ex) { 
+                catch (Exception ex)
+                {
                     AnsiConsole.WriteException(ex);
                 }
             }

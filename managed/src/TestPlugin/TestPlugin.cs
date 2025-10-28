@@ -86,6 +86,12 @@ public class TestPlugin : BasePlugin
 
   public override void Load(bool hotReload)
   {
+    // Core.Command.HookClientCommand((playerId, commandLine) =>
+    // {
+    //   Console.WriteLine("TestPlugin HookClientCommand " + playerId + " " + commandLine);
+    //   return HookResult.Continue;
+    // });
+    
     // Core.Event.OnConsoleOutput += (@event) =>
     // {
     //   Console.WriteLine($"[TestPlugin] ConsoleOutput: {@event.Message}");
@@ -94,8 +100,7 @@ public class TestPlugin : BasePlugin
     // Core.Event.OnCommandExecuteHook += (@event) =>
     // {
     //   if (@event.HookMode == HookMode.Pre) return;
-    //   Core.Logger.LogInformation("CommandExecute: {name} with {args}", @event.OriginalName, @event.OriginalArgs.Length > 0 ? string.Join(" ", @event.OriginalArgs) : "no args");
-    //   // @event.SetCommandName("test");
+    //   Core.Logger.LogInformation("CommandExecute: {name} with {args}", @event.Command[0], @event.Command.ArgS);
     // };
     Core.Engine.ExecuteCommandWithBuffer("@ping", (buffer) =>
     {
@@ -389,11 +394,6 @@ public class TestPlugin : BasePlugin
   [Command("h2")]
   public void TestCommand3(ICommandContext context)
   {
-    Core.Command.HookClientCommand((playerId, commandLine) =>
-    {
-      Console.WriteLine("TestPlugin HookClientCommand " + playerId + " " + commandLine);
-      return HookResult.Continue;
-    });
     Console.WriteLine(Core.GameData.GetSignature("CBaseEntity::DispatchSpawn"));
     var ent = Core.EntitySystem.CreateEntity<CPointWorldText>();
     ent.DispatchSpawn();
