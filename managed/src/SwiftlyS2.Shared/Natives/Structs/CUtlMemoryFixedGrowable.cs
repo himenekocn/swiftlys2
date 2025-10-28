@@ -8,21 +8,16 @@ public unsafe struct CUtlMemoryFixedGrowable<T, TBuffer>
     where T : unmanaged
     where TBuffer : unmanaged
 {
-    private nint _memory;
-    private int _allocationCount;
-    private int _growSize;
+    private CUtlMemory<T> _memory;
     private TBuffer _fixedMemory;
 
     public CUtlMemoryFixedGrowable(int size, int growSize = 0)
     {
-        _allocationCount = size;
-        _growSize = growSize | unchecked((int)0x80000000);
-
-        _memory = (nint)Unsafe.AsPointer(ref _fixedMemory);
+        _memory = new CUtlMemory<T>((nint)Unsafe.AsPointer(ref _fixedMemory), size, false);
     }
 
-    public readonly nint Base => _memory;
-    public readonly int AllocationCount => _allocationCount;
+    public readonly nint Base => _memory.Base;
+    public readonly int AllocationCount => _memory.Count;
 }
 
 [InlineArray(512)]
