@@ -27,11 +27,14 @@ public unsafe struct CUtlVectorFixedGrowable<T, TBuffer>
         _size = 0;
     }
 
-    public int AddToTail(nint value)
+    public int AddToTail(T value)
     {
+        if (_size >= MaxSize) {
+            throw new InvalidOperationException("Vector is full.");
+        }
         int idx = _size;
         _size++;
-        this[idx] = (T)(object)value;
+        this[idx] = value;
         return idx;
     }
 
@@ -39,9 +42,15 @@ public unsafe struct CUtlVectorFixedGrowable<T, TBuffer>
     {
         get
         {
+            if (index < 0 || index >= _size) {
+                throw new IndexOutOfRangeException("Index is out of range.");
+            }
             return ref Unsafe.AsRef<T>((void*)(_memory.Base + index * sizeof(T)));
         }
     }
+
+    // need revisit later
+    public readonly int MaxSize => Unsafe.SizeOf<TBuffer>() / Unsafe.SizeOf<T>();
 
     public readonly int Count => _size;
     public readonly nint Base => _memory.Base;
