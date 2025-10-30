@@ -213,4 +213,18 @@ internal static class NativePlayer {
     var ret = _HasMenuShown(playerid);
     return ret == 1;
   }
+
+  private unsafe static delegate* unmanaged<int, byte*, void> _ExecuteCommand;
+
+  public unsafe static void ExecuteCommand(int playerid, string command) {
+    var pool = ArrayPool<byte>.Shared;
+    var commandLength = Encoding.UTF8.GetByteCount(command);
+    var commandBuffer = pool.Rent(commandLength + 1);
+    Encoding.UTF8.GetBytes(command, commandBuffer);
+    commandBuffer[commandLength] = 0;
+    fixed (byte* commandBufferPtr = commandBuffer) {
+      _ExecuteCommand(playerid, commandBufferPtr);
+      pool.Return(commandBuffer);
+    }
+  }
 }

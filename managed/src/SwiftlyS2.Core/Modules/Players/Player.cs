@@ -119,6 +119,11 @@ internal class Player : IPlayer
         Controller?.Respawn();
     }
 
+    public void ExecuteCommand(string command)
+    {
+        NativePlayer.ExecuteCommand(_pid, command);
+    }
+
     public bool Equals(IPlayer? other)
     {
         if (other is null) return false;

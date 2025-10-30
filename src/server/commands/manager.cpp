@@ -41,7 +41,7 @@ std::set<std::string> silentCommandPrefixes;
 void DispatchConCommand(void* _this, ConCommandRef cmd, const CCommandContext& ctx, const CCommand& args);
 IVFunctionHook* g_pDispatchConCommandHook = nullptr;
 
-static void commandsCallback(const CCommandContext& context, const CCommand& args)
+void commandsCallback(const CCommandContext& context, const CCommand& args)
 {
     CCommand tokenizedArgs;
     tokenizedArgs.Tokenize(args.GetCommandString());

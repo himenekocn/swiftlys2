@@ -175,4 +175,8 @@ public interface IPlayer : IEquatable<IPlayer>
     /// Respawns the player.
     /// </summary>
     public void Respawn();
+    /// <summary>
+    /// Executes a command on behalf of the player.
+    /// </summary>
+    public void ExecuteCommand(string command);
 }
