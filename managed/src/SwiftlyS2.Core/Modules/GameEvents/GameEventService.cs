@@ -105,7 +105,6 @@ internal class GameEventService : IGameEventService, IDisposable {
 
   public void FireToPlayer<T>(int slot) where T : IGameEvent<T> {
     var handle = NativeGameEvents.CreateEvent(T.GetName());
-    var eventObj = T.Create(handle);
     NativeGameEvents.FireEventToClient(handle, slot);
     NativeGameEvents.FreeEvent(handle);
   }
