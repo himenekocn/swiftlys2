@@ -19,6 +19,7 @@
 #include <api/interfaces/manager.h>
 #include <api/shared/files.h>
 #include <api/shared/string.h>
+#include <api/shared/plat.h>
 
 #include <core/entrypoint.h>
 #include <scripting/scripting.h>
