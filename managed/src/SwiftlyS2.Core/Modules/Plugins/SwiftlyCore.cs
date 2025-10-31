@@ -74,12 +74,13 @@ internal class SwiftlyCore : ISwiftlyCore, IDisposable
   public CommandLineService CommandLineService { get; init; }
   public HelpersService Helpers { get; init; }
   public string ContextBasePath { get; init; }
-  public SwiftlyCore(string contextId, string contextBaseDirectory, PluginMetadata? pluginManifest, Type contextType, IServiceProvider coreProvider)
+  public string PluginDataDirectory { get; init; }
+  public SwiftlyCore(string contextId, string contextBaseDirectory, PluginMetadata? pluginManifest, Type contextType, IServiceProvider coreProvider, string pluginDataDirectory)
   {
 
     CoreContext id = new(contextId, contextBaseDirectory, pluginManifest);
     ContextBasePath = contextBaseDirectory;
-
+    PluginDataDirectory = pluginDataDirectory;
     ServiceCollection services = new();
 
     services

@@ -19,4 +19,8 @@ internal class RootDirService {
   public string GetConfigRoot() {
     return CombineRoot("configs");
   }
+
+  public string GetDataRoot() {
+    return CombineRoot("data");
+  }
 }

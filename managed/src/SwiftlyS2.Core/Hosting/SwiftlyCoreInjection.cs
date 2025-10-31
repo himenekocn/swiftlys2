@@ -11,7 +11,8 @@ internal static class SwiftlyCoreInjection {
       basePath,
       null,
       typeof(SwiftlyCore),
-      provider
+      provider,
+      basePath
     ));
   }
 }

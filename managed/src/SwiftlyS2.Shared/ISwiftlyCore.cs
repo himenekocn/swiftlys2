@@ -143,6 +143,16 @@ public interface ISwiftlyCore
   public IRegistratorService Registrator { get; }
 
   /// <summary>
+  /// Menu manager.
+  /// </summary>
+  public IMenuManager Menus { get; }
+
+  /// <summary>
+  /// Command line.
+  /// </summary>
+  public ICommandLine CommandLine { get; }
+
+  /// <summary>
   /// Gets the file path to the plugin directory.
   /// </summary>
   public string PluginPath { get; }
@@ -158,12 +168,8 @@ public interface ISwiftlyCore
   public string GameDirectory { get; }
 
   /// <summary>
-  /// Menu manager.
+  /// Gets the file path to the plugin data directory.
+  /// This directory is ensured to exist by the framework.
   /// </summary>
-  public IMenuManager Menus { get; }
-
-  /// <summary>
-  /// Command line.
-  /// </summary>
-  public ICommandLine CommandLine { get; }
+  public string PluginDataDirectory { get; }
 }

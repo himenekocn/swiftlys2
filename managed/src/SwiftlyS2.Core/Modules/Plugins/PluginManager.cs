@@ -20,19 +20,21 @@ internal class PluginManager
   private FileSystemWatcher? _Watcher { get; set; }
   private InterfaceManager _InterfaceManager { get; set; } = new();
   private List<Type> _SharedTypes { get; set; } = new();
-
+  private DataDirectoryService _DataDirectoryService { get; init; }
   private DateTime lastRead = DateTime.MinValue;
   private readonly HashSet<string> reloadingPlugins = new();
 
   public PluginManager(
     IServiceProvider provider,
-    ILoggerFactory loggerFactory,
-    RootDirService rootDirService
+    ILogger<PluginManager> logger,
+    RootDirService rootDirService,
+    DataDirectoryService dataDirectoryService
   )
   {
     _Provider = provider;
     _RootDirService = rootDirService;
-    _Logger = loggerFactory.CreateLogger<PluginManager>();
+    _Logger = logger;
+    _DataDirectoryService = dataDirectoryService;
     _Watcher = new FileSystemWatcher
     {
       Path = rootDirService.GetPluginsRoot(),
@@ -364,8 +366,9 @@ internal class PluginManager
 
     context.Metadata = metadata;
 
+    _DataDirectoryService.EnsurePluginDataDirectory(metadata.Id);
 
-    var core = new SwiftlyCore(metadata.Id, Path.GetDirectoryName(entrypointDll)!, metadata, pluginType, _Provider);
+    var core = new SwiftlyCore(metadata.Id, Path.GetDirectoryName(entrypointDll)!, metadata, pluginType, _Provider, _DataDirectoryService.GetPluginDataDirectory(metadata.Id));
 
     core.InitializeType(pluginType);
 
