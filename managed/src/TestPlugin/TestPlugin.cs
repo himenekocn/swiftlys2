@@ -561,19 +561,26 @@ public class TestPlugin : BasePlugin
 
     IMenu settingsMenu = Core.Menus.CreateMenu("Settings");
 
-    settingsMenu.Builder.Design
-      .MaxVisibleItems(5)
-      .SetGlobalHorizontalStyle(MenuHorizontalStyle.ScrollLeftLoop(26f, 64));
+    settingsMenu.Builder.Design.MaxVisibleItems(5);
 
     // settingsMenu.Builder.Design.MaxVisibleItems(Random.Shared.Next(-2, 8));
 
-    if (!int.TryParse(context.Args[0], out int type)) type = 0;
+    if (!int.TryParse(context.Args[0], out int vtype)) vtype = 0;
 
-    settingsMenu.Builder.Design.SetVerticalScrollStyle(type switch
+    settingsMenu.Builder.Design.SetVerticalScrollStyle(vtype switch
     {
       1 => MenuVerticalScrollStyle.LinearScroll,
       2 => MenuVerticalScrollStyle.WaitingCenter,
       _ => MenuVerticalScrollStyle.CenterFixed
+    });
+
+    if (!int.TryParse(context.Args[1], out int htype)) htype = 0;
+    settingsMenu.Builder.Design.SetGlobalHorizontalStyle(htype switch
+    {
+      1 => MenuHorizontalStyle.TruncateBothEnds(26f),
+      2 => MenuHorizontalStyle.ScrollLeftFade(26f, 32),
+      3 => MenuHorizontalStyle.ScrollLeftLoop(26f, 32),
+      _ => MenuHorizontalStyle.TruncateEnd(26f)
     });
     
     settingsMenu.Builder.AddButton("1. AButton",(p) =>

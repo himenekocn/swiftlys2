@@ -87,29 +87,31 @@ public static class Helper
   }
 
   /// <summary>
+  /// Estimates the display width of a character based on its type.
+  /// Inspired by: https://github.com/spectreconsole/wcwidth
+  /// </summary>
+  /// <param name="c">The character to measure.</param>
+  /// <returns>The estimated display width in relative units.</returns>
+  public static float GetCharWidth(char c) => c switch
+  {
+    >= '\u4E00' and <= '\u9FFF' => 2.0f, // CJK Unified Ideographs
+    >= '\u3000' and <= '\u303F' => 2.0f, // CJK Symbols and Punctuation
+    >= '\uFF00' and <= '\uFFEF' => 2.0f, // Halfwidth and Fullwidth Forms
+    >= 'A' and <= 'Z' => 1.2f,
+    >= 'a' and <= 'z' => 1.0f,
+    >= '0' and <= '9' => 1.0f,
+    ' ' => 0.5f,
+    >= '!' and <= '/' => 0.8f,
+    >= ':' and <= '@' => 0.8f,
+    >= '[' and <= '`' => 0.8f,
+    >= '{' and <= '~' => 0.8f,
+    _ => 1.0f
+  };
+
+  /// <summary>
   /// Estimates the display width of a text string based on character types.
   /// </summary>
   /// <param name="text">The text string to measure.</param>
   /// <returns>The estimated display width in relative units.</returns>
-  public static float EstimateTextWidth(string text)
-  {
-    // Inspired by: https://github.com/spectreconsole/wcwidth
-    static float GetCharWidth(char c) => c switch
-    {
-      >= '\u4E00' and <= '\u9FFF' => 2.0f, // CJK Unified Ideographs
-      >= '\u3000' and <= '\u303F' => 2.0f, // CJK Symbols and Punctuation
-      >= '\uFF00' and <= '\uFFEF' => 2.0f, // Halfwidth and Fullwidth Forms
-      >= 'A' and <= 'Z' => 1.2f,
-      >= 'a' and <= 'z' => 1.0f,
-      >= '0' and <= '9' => 1.0f,
-      ' ' => 0.5f,
-      >= '!' and <= '/' => 0.8f,
-      >= ':' and <= '@' => 0.8f,
-      >= '[' and <= '`' => 0.8f,
-      >= '{' and <= '~' => 0.8f,
-      _ => 1.0f
-    };
-
-    return text.Sum(GetCharWidth);
-  }
+  public static float EstimateTextWidth(string text) => text.Sum(GetCharWidth);
 }

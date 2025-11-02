@@ -418,11 +418,14 @@ internal class Menu : IMenu
     internal string ApplyHorizontalStyle(string text)
     {
         if (HorizontalStyle == null || string.IsNullOrEmpty(text))
+        {
             return text;
+        }
 
-        var textWidth = Helper.EstimateTextWidth(text);
-        if (textWidth <= HorizontalStyle.Value.MaxWidth)
+        if (Helper.EstimateTextWidth(text) <= HorizontalStyle.Value.MaxWidth)
+        {
             return text;
+        }
 
         return HorizontalStyle.Value.OverflowStyle switch
         {
@@ -431,170 +434,69 @@ internal class Menu : IMenu
             MenuHorizontalOverflowStyle.ScrollLeftFade => ScrollTextWithFade(text, HorizontalStyle.Value.MaxWidth, true),
             MenuHorizontalOverflowStyle.ScrollRightFade => ScrollTextWithFade(text, HorizontalStyle.Value.MaxWidth, false),
             MenuHorizontalOverflowStyle.ScrollLeftLoop => ScrollTextWithLoop($"{text.TrimEnd()} ", HorizontalStyle.Value.MaxWidth, true),
-            MenuHorizontalOverflowStyle.ScrollRightLoop => ScrollTextWithLoop($" {text.TrimStart()}", HorizontalStyle.Value.MaxWidth, false),
             _ => text
         };
     }
 
-    private string ScrollTextWithFade(string text, float maxWidth, bool scrollLeft)
+    private static int CalculateVisibleChars(string text, float maxWidth) =>
+        text.TakeWhile((c, i) => text[..i].Sum(Helper.GetCharWidth) + Helper.GetCharWidth(c) <= maxWidth).Count();
+
+    private int UpdateScrollOffset(string text, bool scrollLeft)
     {
         var textKey = $"{text}_{scrollLeft}";
 
-        if (!ScrollOffsets.ContainsKey(textKey))
-            ScrollOffsets[textKey] = 0;
+        ScrollOffsets.TryAdd(textKey, 0);
+        ScrollCallCounts.TryAdd(textKey, 0);
 
-        if (!ScrollCallCounts.ContainsKey(textKey))
-            ScrollCallCounts[textKey] = 0;
-
-        ScrollCallCounts[textKey]++;
-
-        var ticksPerScroll = HorizontalStyle?.TicksPerScroll ?? 16;
-        if (ScrollCallCounts[textKey] >= ticksPerScroll)
+        if (++ScrollCallCounts[textKey] >= (HorizontalStyle?.TicksPerScroll ?? 16))
         {
             ScrollCallCounts[textKey] = 0;
             ScrollOffsets[textKey] = (ScrollOffsets[textKey] + 1) % text.Length;
         }
 
-        var offset = ScrollOffsets[textKey];
+        return ScrollOffsets[textKey];
+    }
 
-        static float GetCharWidth(char c) => c switch
-        {
-            >= '\u4E00' and <= '\u9FFF' => 2.0f,
-            >= '\u3000' and <= '\u303F' => 2.0f,
-            >= '\uFF00' and <= '\uFFEF' => 2.0f,
-            >= 'A' and <= 'Z' => 1.2f,
-            >= 'a' and <= 'z' => 1.0f,
-            >= '0' and <= '9' => 1.0f,
-            ' ' => 0.5f,
-            >= '!' and <= '/' => 0.8f,
-            >= ':' and <= '@' => 0.8f,
-            >= '[' and <= '`' => 0.8f,
-            >= '{' and <= '~' => 0.8f,
-            _ => 1.0f
-        };
-
-        var currentWidth = 0f;
-        var visibleChars = 0;
-
-        for (var i = 0; i < text.Length && currentWidth < maxWidth; i++)
-        {
-            currentWidth += GetCharWidth(text[i]);
-            if (currentWidth <= maxWidth)
-                visibleChars++;
-        }
-
+    private string ScrollTextWithFade(string text, float maxWidth, bool scrollLeft)
+    {
+        var visibleChars = CalculateVisibleChars(text, maxWidth);
         if (visibleChars >= text.Length)
-            return text;
-
-        var startIndex = scrollLeft ? offset : Math.Max(0, text.Length - visibleChars - offset);
-        if (startIndex >= text.Length)
-            startIndex = 0;
-
-        var result = new StringBuilder();
-
-        for (var i = 0; i < visibleChars && startIndex + i < text.Length; i++)
         {
-            var ch = text[startIndex + i];
-            result.Append(ch);
+            return text;
         }
 
-        return result.ToString();
+        var offset = UpdateScrollOffset(text, scrollLeft);
+        var startIndex = Math.Clamp(scrollLeft ? offset : text.Length - visibleChars - offset, 0, text.Length - 1);
+
+        return new string(Enumerable.Range(0, visibleChars)
+            .TakeWhile(i => startIndex + i < text.Length)
+            .Select(i => text[startIndex + i])
+            .ToArray());
     }
 
     private string ScrollTextWithLoop(string text, float maxWidth, bool scrollLeft)
     {
-        var textKey = $"{text}_{scrollLeft}";
-
-        if (!ScrollOffsets.ContainsKey(textKey))
-            ScrollOffsets[textKey] = 0;
-
-        if (!ScrollCallCounts.ContainsKey(textKey))
-            ScrollCallCounts[textKey] = 0;
-
-        ScrollCallCounts[textKey]++;
-
-        var ticksPerScroll = HorizontalStyle?.TicksPerScroll ?? 16;
-        if (ScrollCallCounts[textKey] >= ticksPerScroll)
-        {
-            ScrollCallCounts[textKey] = 0;
-            ScrollOffsets[textKey] = (ScrollOffsets[textKey] + 1) % text.Length;
-        }
-
-        var offset = ScrollOffsets[textKey];
-
-        static float GetCharWidth(char c) => c switch
-        {
-            >= '\u4E00' and <= '\u9FFF' => 2.0f,
-            >= '\u3000' and <= '\u303F' => 2.0f,
-            >= '\uFF00' and <= '\uFFEF' => 2.0f,
-            >= 'A' and <= 'Z' => 1.2f,
-            >= 'a' and <= 'z' => 1.0f,
-            >= '0' and <= '9' => 1.0f,
-            ' ' => 0.5f,
-            >= '!' and <= '/' => 0.8f,
-            >= ':' and <= '@' => 0.8f,
-            >= '[' and <= '`' => 0.8f,
-            >= '{' and <= '~' => 0.8f,
-            _ => 1.0f
-        };
-
-        var currentWidth = 0f;
-        var visibleChars = 0;
-
-        for (var i = 0; i < text.Length && currentWidth < maxWidth; i++)
-        {
-            currentWidth += GetCharWidth(text[i]);
-            if (currentWidth <= maxWidth)
-                visibleChars++;
-        }
-
+        var visibleChars = CalculateVisibleChars(text, maxWidth);
         if (visibleChars >= text.Length)
-            return text;
-
-        var result = new StringBuilder();
-
-        for (var i = 0; i < visibleChars; i++)
         {
-            var charIndex = scrollLeft
-                ? (offset + i) % text.Length
-                : (text.Length - offset + i) % text.Length;
-            result.Append(text[charIndex]);
+            return text;
         }
 
-        return result.ToString();
+        var offset = UpdateScrollOffset(text, scrollLeft);
+
+        return new string(Enumerable.Range(0, visibleChars)
+            .Select(i => scrollLeft ? text[(offset + i) % text.Length] : text[(text.Length - offset + i) % text.Length])
+            .ToArray());
     }
 
     private static string TruncateTextEnd(string text, float maxWidth, string suffix = "...")
     {
-        static float GetCharWidth(char c) => c switch
-        {
-            >= '\u4E00' and <= '\u9FFF' => 2.0f,
-            >= '\u3000' and <= '\u303F' => 2.0f,
-            >= '\uFF00' and <= '\uFFEF' => 2.0f,
-            >= 'A' and <= 'Z' => 1.2f,
-            >= 'a' and <= 'z' => 1.0f,
-            >= '0' and <= '9' => 1.0f,
-            ' ' => 0.5f,
-            >= '!' and <= '/' => 0.8f,
-            >= ':' and <= '@' => 0.8f,
-            >= '[' and <= '`' => 0.8f,
-            >= '{' and <= '~' => 0.8f,
-            _ => 1.0f
-        };
-
         var suffixWidth = Helper.EstimateTextWidth(suffix);
-        var currentWidth = 0f;
-        var truncateIndex = 0;
 
-        foreach (var (c, i) in text.Select((ch, idx) => (ch, idx)))
-        {
-            var charWidth = GetCharWidth(c);
-            if (currentWidth + charWidth + suffixWidth <= maxWidth)
-            {
-                currentWidth += charWidth;
-                truncateIndex = i + 1;
-            }
-        }
+        var truncateIndex = text
+            .Select((c, i) => (c, i, width: text[..i].Sum(Helper.GetCharWidth) + Helper.GetCharWidth(c)))
+            .TakeWhile(x => x.width + suffixWidth <= maxWidth)
+            .LastOrDefault().i + 1;
 
         return truncateIndex < text.Length ? $"{text[..truncateIndex]}{suffix}" : text;
     }
@@ -602,33 +504,29 @@ internal class Menu : IMenu
     private static string TruncateTextBothEnds(string text, float maxWidth)
     {
         if (string.IsNullOrEmpty(text))
+        {
             return text;
+        }
 
         var totalWidth = Helper.EstimateTextWidth(text);
         if (totalWidth <= maxWidth)
-            return text;
-
-        var targetLength = (int)(text.Length * (maxWidth / totalWidth));
-        if (targetLength <= 0)
-            return "";
-
-        var startIndex = (text.Length - targetLength) / 2;
-        var endIndex = startIndex + targetLength;
-
-        if (endIndex > text.Length)
-            endIndex = text.Length;
-        if (startIndex < 0)
-            startIndex = 0;
-
-        var result = text[startIndex..endIndex];
-        var resultWidth = Helper.EstimateTextWidth(result);
-
-        while (resultWidth > maxWidth && result.Length > 0)
         {
-            if (result.Length <= 1)
-                break;
+            return text;
+        }
+
+        var targetLength = Math.Max(0, (int)(text.Length * (maxWidth / totalWidth)));
+        if (targetLength == 0)
+        {
+            return "";
+        }
+
+        var startIndex = Math.Max(0, (text.Length - targetLength) / 2);
+        var endIndex = Math.Min(text.Length, startIndex + targetLength);
+        var result = text[startIndex..endIndex];
+
+        while (Helper.EstimateTextWidth(result) > maxWidth && result.Length > 1)
+        {
             result = result[1..^1];
-            resultWidth = Helper.EstimateTextWidth(result);
         }
 
         return result;

@@ -281,46 +281,76 @@ public enum MenuHorizontalOverflowStyle
 /// <summary>
 /// Horizontal text display style configuration for menu options.
 /// </summary>
-/// <param name="MaxWidth">The maximum display width for menu option text in relative units.</param>
-/// <param name="OverflowStyle">The overflow behavior to apply when text exceeds MaxWidth.</param>
-/// <param name="TicksPerScroll">Number of ticks before scrolling by one character.</param>
-public readonly record struct MenuHorizontalStyle(float MaxWidth, MenuHorizontalOverflowStyle OverflowStyle = MenuHorizontalOverflowStyle.TruncateEnd, int TicksPerScroll = 16)
+public readonly record struct MenuHorizontalStyle
 {
     /// <summary>
-    /// Creates a horizontal style with truncate end behavior (most common).
+    /// The maximum display width for menu option text in relative units.
     /// </summary>
-    public static MenuHorizontalStyle Truncate(float maxWidth) => new(maxWidth, MenuHorizontalOverflowStyle.TruncateEnd);
+    public required float MaxWidth { get; init; }
+
+    /// <summary>
+    /// The overflow behavior to apply when text exceeds MaxWidth.
+    /// </summary>
+    public MenuHorizontalOverflowStyle OverflowStyle { get; init; }
+
+    /// <summary>
+    /// Number of ticks before scrolling by one character.
+    /// </summary>
+    public int TicksPerScroll { get; init; }
+
+    public MenuHorizontalStyle()
+    {
+        OverflowStyle = MenuHorizontalOverflowStyle.TruncateEnd;
+        TicksPerScroll = 16;
+    }
+
+    /// <summary>
+    /// Creates a horizontal style with default behavior.
+    /// </summary>
+    public static MenuHorizontalStyle Default(float maxWidth) =>
+        new() { MaxWidth = maxWidth, OverflowStyle = MenuHorizontalOverflowStyle.TruncateEnd };
+
+    /// <summary>
+    /// Creates a horizontal style with truncate end behavior.
+    /// </summary>
+    public static MenuHorizontalStyle TruncateEnd(float maxWidth) =>
+        new() { MaxWidth = maxWidth, OverflowStyle = MenuHorizontalOverflowStyle.TruncateEnd };
 
     /// <summary>
     /// Creates a horizontal style with truncate both ends behavior.
     /// </summary>
-    public static MenuHorizontalStyle TruncateBothEnds(float maxWidth) => new(maxWidth, MenuHorizontalOverflowStyle.TruncateBothEnds);
+    public static MenuHorizontalStyle TruncateBothEnds(float maxWidth) =>
+        new() { MaxWidth = maxWidth, OverflowStyle = MenuHorizontalOverflowStyle.TruncateBothEnds };
 
     /// <summary>
     /// Creates a horizontal style with scroll left fade behavior.
     /// </summary>
     /// <param name="maxWidth">Maximum display width for text.</param>
     /// <param name="ticksPerScroll">Number of ticks before scrolling by one character.</param>
-    public static MenuHorizontalStyle ScrollLeftFade(float maxWidth, int ticksPerScroll = 16) => new(maxWidth, MenuHorizontalOverflowStyle.ScrollLeftFade, ticksPerScroll);
+    public static MenuHorizontalStyle ScrollLeftFade(float maxWidth, int ticksPerScroll = 16) =>
+        new() { MaxWidth = maxWidth, OverflowStyle = MenuHorizontalOverflowStyle.ScrollLeftFade, TicksPerScroll = ticksPerScroll };
 
     /// <summary>
     /// Creates a horizontal style with scroll right fade behavior.
     /// </summary>
     /// <param name="maxWidth">Maximum display width for text.</param>
     /// <param name="ticksPerScroll">Number of ticks before scrolling by one character.</param>
-    public static MenuHorizontalStyle ScrollRightFade(float maxWidth, int ticksPerScroll = 16) => new(maxWidth, MenuHorizontalOverflowStyle.ScrollRightFade, ticksPerScroll);
+    public static MenuHorizontalStyle ScrollRightFade(float maxWidth, int ticksPerScroll = 16) =>
+        new() { MaxWidth = maxWidth, OverflowStyle = MenuHorizontalOverflowStyle.ScrollRightFade, TicksPerScroll = ticksPerScroll };
 
     /// <summary>
     /// Creates a horizontal style with scroll left loop behavior.
     /// </summary>
     /// <param name="maxWidth">Maximum display width for text.</param>
     /// <param name="ticksPerScroll">Number of ticks before scrolling by one character.</param>
-    public static MenuHorizontalStyle ScrollLeftLoop(float maxWidth, int ticksPerScroll = 16) => new(maxWidth, MenuHorizontalOverflowStyle.ScrollLeftLoop, ticksPerScroll);
+    public static MenuHorizontalStyle ScrollLeftLoop(float maxWidth, int ticksPerScroll = 16) =>
+        new() { MaxWidth = maxWidth, OverflowStyle = MenuHorizontalOverflowStyle.ScrollLeftLoop, TicksPerScroll = ticksPerScroll };
 
     /// <summary>
     /// Creates a horizontal style with scroll right loop behavior.
     /// </summary>
     /// <param name="maxWidth">Maximum display width for text.</param>
     /// <param name="ticksPerScroll">Number of ticks before scrolling by one character.</param>
-    public static MenuHorizontalStyle ScrollRightLoop(float maxWidth, int ticksPerScroll = 16) => new(maxWidth, MenuHorizontalOverflowStyle.ScrollRightLoop, ticksPerScroll);
+    public static MenuHorizontalStyle ScrollRightLoop(float maxWidth, int ticksPerScroll = 16) =>
+        new() { MaxWidth = maxWidth, OverflowStyle = MenuHorizontalOverflowStyle.ScrollRightLoop, TicksPerScroll = ticksPerScroll };
 }
