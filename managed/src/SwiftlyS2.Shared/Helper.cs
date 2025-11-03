@@ -97,6 +97,12 @@ public static class Helper
     >= '\u4E00' and <= '\u9FFF' => 2.0f, // CJK Unified Ideographs
     >= '\u3000' and <= '\u303F' => 2.0f, // CJK Symbols and Punctuation
     >= '\uFF00' and <= '\uFFEF' => 2.0f, // Halfwidth and Fullwidth Forms
+    >= '\uAC00' and <= '\uD7AF' => 2.2f, // Hangul Syllables
+    >= '\u1100' and <= '\u11FF' => 2.2f, // Hangul Jamo
+    >= '\u3130' and <= '\u318F' => 2.2f, // Hangul Compatibility Jamo
+    >= '\u3040' and <= '\u309F' => 2.05f, // Hiragana
+    >= '\u30A0' and <= '\u30FF' => 2.05f, // Katakana
+    >= '\u31F0' and <= '\u31FF' => 2.05f, // Katakana Phonetic Extensions
     >= 'A' and <= 'Z' => 1.2f,
     >= 'a' and <= 'z' => 1.0f,
     >= '0' and <= '9' => 1.0f,

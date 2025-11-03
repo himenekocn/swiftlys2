@@ -611,13 +611,13 @@ public class TestPlugin : BasePlugin
     settingsMenu.Builder.AddText("123456789012345678901234567890");
     settingsMenu.Builder.AddText("一二三四五六七八九十一二三四五六七八九十");
     settingsMenu.Builder.AddText("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
-    settingsMenu.Builder.AddText("问候世界，Swiftlys2 满怀热爱而来", overflowStyle: MenuHorizontalStyle.ScrollRightLoop(26f, 8));
-    settingsMenu.Builder.AddText("世界へ、Swiftlys2 より愛を込めて");
-    settingsMenu.Builder.AddText("세상에 인사를, Swiftlys2가 사랑을 담아");
-    settingsMenu.Builder.AddText("Приветствуем мир с любовью от Swiftlys2");
-    settingsMenu.Builder.AddText("Salutăm lumea cu dragoste din Swiftlys2");
-    settingsMenu.Builder.AddText("Greetings to the world, with love from Swiftlys2");
-    settingsMenu.Builder.AddText("Saluton al la mondo, kun amo de Swiftlys2");
+    settingsMenu.Builder.AddText("Swiftlys2 向这广袤世界致以温柔问候", overflowStyle: MenuHorizontalStyle.ScrollRightLoop(26f, 8));
+    settingsMenu.Builder.AddText("Swiftlys2 からこの広大なる世界へ温かい挨拶を");
+    settingsMenu.Builder.AddText("Swiftlys2 가 이 넓은 세상에 따뜻한 인사를 전합니다");
+    settingsMenu.Builder.AddText("Swiftlys2 приветствует этот прекрасный мир");
+    settingsMenu.Builder.AddText("Swiftlys2 salută această lume minunată");
+    settingsMenu.Builder.AddText("Swiftlys2 extends warmest greetings to this wondrous world");
+    settingsMenu.Builder.AddText("Swiftlys2 sendas korajn salutojn al ĉi tiu mirinda mondo");
 
     // settingsMenu.Builder.AddProgressBar("8. ProgressBar", () => 0.5f);
 
