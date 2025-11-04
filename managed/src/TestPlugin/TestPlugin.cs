@@ -564,9 +564,7 @@ public class TestPlugin : BasePlugin
     settingsMenu.Builder.Design.MaxVisibleItems(5);
 
     // settingsMenu.Builder.Design.MaxVisibleItems(Random.Shared.Next(-2, 8));
-
     if (context.Args.Length < 1 || !int.TryParse(context.Args[0], out int vtype)) vtype = 0;
-
     settingsMenu.Builder.Design.SetVerticalScrollStyle(vtype switch
     {
       1 => MenuVerticalScrollStyle.LinearScroll,
@@ -580,6 +578,7 @@ public class TestPlugin : BasePlugin
       1 => MenuHorizontalStyle.TruncateBothEnds(26f),
       2 => MenuHorizontalStyle.ScrollLeftFade(26f, 8, 128),
       3 => MenuHorizontalStyle.ScrollLeftLoop(26f, 8, 128),
+      1337 => MenuHorizontalStyle.TruncateEnd(0f),
       _ => MenuHorizontalStyle.TruncateEnd(26f)
     });
     

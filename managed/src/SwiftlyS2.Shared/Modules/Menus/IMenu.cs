@@ -284,10 +284,27 @@ public enum MenuHorizontalOverflowStyle
 /// </summary>
 public readonly record struct MenuHorizontalStyle
 {
+    private readonly float maxWidth;
+
     /// <summary>
     /// The maximum display width for menu option text in relative units.
     /// </summary>
-    public required float MaxWidth { get; init; }
+    public required float MaxWidth
+    {
+        get => maxWidth;
+        init
+        {
+            if (value < 1f)
+            {
+                Spectre.Console.AnsiConsole.WriteException(new ArgumentOutOfRangeException(nameof(MaxWidth), $"MaxWidth: value {value:F3} is out of range."));
+                maxWidth = 1f;
+            }
+            else
+            {
+                maxWidth = value;
+            }
+        }
+    }
 
     /// <summary>
     /// The overflow behavior to apply when text exceeds MaxWidth.
@@ -314,8 +331,8 @@ public readonly record struct MenuHorizontalStyle
     /// <summary>
     /// Creates a horizontal style with default behavior.
     /// </summary>
-    public static MenuHorizontalStyle Default(float maxWidth) =>
-        new() { MaxWidth = maxWidth, OverflowStyle = MenuHorizontalOverflowStyle.TruncateEnd };
+    public static MenuHorizontalStyle Default =>
+        new() { MaxWidth = 26, OverflowStyle = MenuHorizontalOverflowStyle.TruncateEnd };
 
     /// <summary>
     /// Creates a horizontal style with truncate end behavior.
