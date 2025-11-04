@@ -575,6 +575,7 @@ public class TestPlugin : BasePlugin
     if (context.Args.Length < 2 || !int.TryParse(context.Args[1], out int htype)) htype = 0;
     settingsMenu.Builder.Design.SetGlobalHorizontalStyle(htype switch
     {
+      0 => MenuHorizontalStyle.Default,
       1 => MenuHorizontalStyle.TruncateBothEnds(26f),
       2 => MenuHorizontalStyle.ScrollLeftFade(26f, 8, 128),
       3 => MenuHorizontalStyle.ScrollLeftLoop(26f, 8, 128),
