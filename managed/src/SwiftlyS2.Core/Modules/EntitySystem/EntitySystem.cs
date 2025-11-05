@@ -423,6 +423,7 @@ internal class EntitySystemService : IEntitySystemService, IDisposable {
     { typeof(CFuncTimescale), "func_timescale" },
     { typeof(CFuncTankTrain), "func_tanktrain" },
     { typeof(CFuncShatterglass), "func_shatterglass" },
+    { typeof(CFuncRetakeBarrier), "func_retakebarrier" },
     { typeof(CFuncRotator), "func_rotator" },
     { typeof(CFuncRotating), "func_rotating" },
     { typeof(CFuncPropRespawnZone), "func_proprrespawnzone" },

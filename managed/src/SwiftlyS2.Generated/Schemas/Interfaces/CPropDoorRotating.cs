@@ -24,6 +24,8 @@ public partial interface CPropDoorRotating : CBasePropDoor, ISchemaClass<CPropDo
   
   public ref PropDoorRotatingOpenDirection_e CurrentOpenDirection { get; }
   
+  public ref doorCheck_e DefaultCheckDirection { get; }
+  
   public ref float AjarAngle { get; }
   
   public ref QAngle RotationAjarDeprecated { get; }

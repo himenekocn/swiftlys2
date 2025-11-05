@@ -11,7 +11,7 @@ namespace SwiftlyS2.Shared.SchemaDefinitions;
 public partial interface CNmSnapWeaponTask : CNmPoseTask, ISchemaClass<CNmSnapWeaponTask> {
 
   static CNmSnapWeaponTask ISchemaClass<CNmSnapWeaponTask>.From(nint handle) => new CNmSnapWeaponTaskImpl(handle);
-  static int ISchemaClass<CNmSnapWeaponTask>.Size => 88;
+  static int ISchemaClass<CNmSnapWeaponTask>.Size => 96;
 
 
 

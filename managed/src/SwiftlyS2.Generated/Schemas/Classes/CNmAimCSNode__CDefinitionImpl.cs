@@ -21,6 +21,9 @@ internal partial class CNmAimCSNode__CDefinitionImpl : CNmPassthroughNode__CDefi
   public ref short HorizontalAngleNodeIdx {
     get => ref _Handle.AsRef<short>(Schema.GetOffset(0xE1CD14C28E2FD3DB));
   }
+  public ref short WeaponCategoryNodeIdx {
+    get => ref _Handle.AsRef<short>(Schema.GetOffset(0xE1CD14C216D198E4));
+  }
   public ref short EnabledNodeIdx {
     get => ref _Handle.AsRef<short>(Schema.GetOffset(0xE1CD14C2F7CDF5E9));
   }

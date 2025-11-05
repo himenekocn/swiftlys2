@@ -11,7 +11,7 @@ namespace SwiftlyS2.Shared.SchemaDefinitions;
 public partial interface SummaryTakeDamageInfo_t : ISchemaClass<SummaryTakeDamageInfo_t> {
 
   static SummaryTakeDamageInfo_t ISchemaClass<SummaryTakeDamageInfo_t>.From(nint handle) => new SummaryTakeDamageInfo_tImpl(handle);
-  static int ISchemaClass<SummaryTakeDamageInfo_t>.Size => 344;
+  static int ISchemaClass<SummaryTakeDamageInfo_t>.Size => 352;
 
   
   public ref int SummarisedCount { get; }

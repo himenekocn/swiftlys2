@@ -18,8 +18,8 @@ internal partial class CCSPlayer_PingServicesImpl : CPlayerPawnComponentImpl, CC
   public SchemaUntypedField PlayerPingTokens {
     get => new SchemaUntypedField(_Handle + Schema.GetOffset(0xC78D79CA55696280));
   }
-  public ref CHandle<CBaseEntity> PlayerPing {
-    get => ref _Handle.AsRef<CHandle<CBaseEntity>>(Schema.GetOffset(0xC78D79CA464EEA6E));
+  public ref CHandle<CPlayerPing> PlayerPing {
+    get => ref _Handle.AsRef<CHandle<CPlayerPing>>(Schema.GetOffset(0xC78D79CA464EEA6E));
   }
 
   public void PlayerPingUpdated() {

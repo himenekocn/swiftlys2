@@ -30,6 +30,9 @@ internal partial class CPropDoorRotatingImpl : CBasePropDoorImpl, CPropDoorRotat
   public ref PropDoorRotatingOpenDirection_e CurrentOpenDirection {
     get => ref _Handle.AsRef<PropDoorRotatingOpenDirection_e>(Schema.GetOffset(0x289EB6132BAD86EE));
   }
+  public ref doorCheck_e DefaultCheckDirection {
+    get => ref _Handle.AsRef<doorCheck_e>(Schema.GetOffset(0x289EB6134191E768));
+  }
   public ref float AjarAngle {
     get => ref _Handle.AsRef<float>(Schema.GetOffset(0x289EB613CD456612));
   }

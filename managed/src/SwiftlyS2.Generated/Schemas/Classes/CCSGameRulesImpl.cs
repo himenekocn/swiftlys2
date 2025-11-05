@@ -51,6 +51,9 @@ internal partial class CCSGameRulesImpl : CTeamplayRulesImpl, CCSGameRules {
   public ref bool MatchWaitingForResume {
     get => ref _Handle.AsRef<bool>(Schema.GetOffset(0x6295CF6597B2188B));
   }
+  public ref int FreezeTime {
+    get => ref _Handle.AsRef<int>(Schema.GetOffset(0x6295CF6525D5D12E));
+  }
   public ref int RoundTime {
     get => ref _Handle.AsRef<int>(Schema.GetOffset(0x6295CF659A5A5155));
   }
@@ -267,9 +270,6 @@ internal partial class CCSGameRulesImpl : CTeamplayRulesImpl, CCSGameRules {
   }
   public ref bool EndMatchOnThink {
     get => ref _Handle.AsRef<bool>(Schema.GetOffset(0x6295CF650888575A));
-  }
-  public ref int FreezeTime {
-    get => ref _Handle.AsRef<int>(Schema.GetOffset(0x6295CF6525D5D12E));
   }
   public ref int NumTerrorist {
     get => ref _Handle.AsRef<int>(Schema.GetOffset(0x6295CF65E58F0B9A));
@@ -649,6 +649,9 @@ internal partial class CCSGameRulesImpl : CTeamplayRulesImpl, CCSGameRules {
   }
   public void MatchWaitingForResumeUpdated() {
     Schema.Update(_Handle, 0x6295CF6597B2188B);
+  }
+  public void FreezeTimeUpdated() {
+    Schema.Update(_Handle, 0x6295CF6525D5D12E);
   }
   public void RoundTimeUpdated() {
     Schema.Update(_Handle, 0x6295CF659A5A5155);

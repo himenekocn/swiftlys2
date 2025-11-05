@@ -11,7 +11,7 @@ namespace SwiftlyS2.Shared.SchemaDefinitions;
 public partial interface CRetakeGameRules : ISchemaClass<CRetakeGameRules> {
 
   static CRetakeGameRules ISchemaClass<CRetakeGameRules>.From(nint handle) => new CRetakeGameRulesImpl(handle);
-  static int ISchemaClass<CRetakeGameRules>.Size => 400;
+  static int ISchemaClass<CRetakeGameRules>.Size => 496;
 
   
   public ref int MatchSeed { get; }
@@ -23,10 +23,13 @@ public partial interface CRetakeGameRules : ISchemaClass<CRetakeGameRules> {
   public ref int FirstSecondHalfRound { get; }
   
   public ref int BombSite { get; }
+  
+  public ref CHandle<CCSPlayerPawn> BombPlanter { get; }
 
   public void MatchSeedUpdated();
   public void BlockersPresentUpdated();
   public void RoundInProgressUpdated();
   public void FirstSecondHalfRoundUpdated();
   public void BombSiteUpdated();
+  public void BombPlanterUpdated();
 }

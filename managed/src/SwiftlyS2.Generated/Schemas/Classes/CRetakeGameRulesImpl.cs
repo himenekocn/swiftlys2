@@ -30,6 +30,9 @@ internal partial class CRetakeGameRulesImpl : SchemaClass, CRetakeGameRules {
   public ref int BombSite {
     get => ref _Handle.AsRef<int>(Schema.GetOffset(0x34813D49E7E88ECF));
   }
+  public ref CHandle<CCSPlayerPawn> BombPlanter {
+    get => ref _Handle.AsRef<CHandle<CCSPlayerPawn>>(Schema.GetOffset(0x34813D491A1306A3));
+  }
 
   public void MatchSeedUpdated() {
     Schema.Update(_Handle, 0x34813D492DE0044B);
@@ -45,5 +48,8 @@ internal partial class CRetakeGameRulesImpl : SchemaClass, CRetakeGameRules {
   }
   public void BombSiteUpdated() {
     Schema.Update(_Handle, 0x34813D49E7E88ECF);
+  }
+  public void BombPlanterUpdated() {
+    Schema.Update(_Handle, 0x34813D491A1306A3);
   }
 }

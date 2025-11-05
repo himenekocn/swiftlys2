@@ -300,9 +300,6 @@ internal partial class CCSPlayerPawnImpl : CCSPlayerPawnBaseImpl, CCSPlayerPawn 
   public ref int LastHitBox {
     get => ref _Handle.AsRef<int>(Schema.GetOffset(0xC7614AAB9B4C64DB));
   }
-  public ref int LastHealth {
-    get => ref _Handle.AsRef<int>(Schema.GetOffset(0xC7614AAB3697C5BB));
-  }
   public CCSBot? Bot {
     get {
       var ptr = _Handle.Read<nint>(Schema.GetOffset(0xC7614AAB172AF0B4));
