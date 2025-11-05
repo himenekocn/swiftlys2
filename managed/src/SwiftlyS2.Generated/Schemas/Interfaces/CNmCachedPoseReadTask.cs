@@ -11,7 +11,7 @@ namespace SwiftlyS2.Shared.SchemaDefinitions;
 public partial interface CNmCachedPoseReadTask : CNmPoseTask, ISchemaClass<CNmCachedPoseReadTask> {
 
   static CNmCachedPoseReadTask ISchemaClass<CNmCachedPoseReadTask>.From(nint handle) => new CNmCachedPoseReadTaskImpl(handle);
-  static int ISchemaClass<CNmCachedPoseReadTask>.Size => 88;
+  static int ISchemaClass<CNmCachedPoseReadTask>.Size => 96;
 
 
 

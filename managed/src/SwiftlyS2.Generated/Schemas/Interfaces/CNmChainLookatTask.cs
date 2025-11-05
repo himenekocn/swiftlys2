@@ -11,7 +11,7 @@ namespace SwiftlyS2.Shared.SchemaDefinitions;
 public partial interface CNmChainLookatTask : CNmPoseTask, ISchemaClass<CNmChainLookatTask> {
 
   static CNmChainLookatTask ISchemaClass<CNmChainLookatTask>.From(nint handle) => new CNmChainLookatTaskImpl(handle);
-  static int ISchemaClass<CNmChainLookatTask>.Size => 136;
+  static int ISchemaClass<CNmChainLookatTask>.Size => 144;
 
   
   public ref int ChainEndBoneIdx { get; }

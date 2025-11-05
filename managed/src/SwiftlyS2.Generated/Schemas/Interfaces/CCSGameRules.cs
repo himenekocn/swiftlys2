@@ -11,7 +11,7 @@ namespace SwiftlyS2.Shared.SchemaDefinitions;
 public partial interface CCSGameRules : CTeamplayRules, ISchemaClass<CCSGameRules> {
 
   static CCSGameRules ISchemaClass<CCSGameRules>.From(nint handle) => new CCSGameRulesImpl(handle);
-  static int ISchemaClass<CCSGameRules>.Size => 70608;
+  static int ISchemaClass<CCSGameRules>.Size => 70704;
 
   
   public ref bool FreezePeriod { get; }
@@ -37,6 +37,8 @@ public partial interface CCSGameRules : CTeamplayRules, ISchemaClass<CCSGameRule
   public ref bool TechnicalTimeOut { get; }
   
   public ref bool MatchWaitingForResume { get; }
+  
+  public ref int FreezeTime { get; }
   
   public ref int RoundTime { get; }
   
@@ -172,8 +174,6 @@ public partial interface CCSGameRules : CTeamplayRules, ISchemaClass<CCSGameRule
   public ref bool EndMatchOnRoundReset { get; }
   
   public ref bool EndMatchOnThink { get; }
-  
-  public ref int FreezeTime { get; }
   
   public ref int NumTerrorist { get; }
   
@@ -406,6 +406,7 @@ public partial interface CCSGameRules : CTeamplayRules, ISchemaClass<CCSGameRule
   public void CTTimeOutsUpdated();
   public void TechnicalTimeOutUpdated();
   public void MatchWaitingForResumeUpdated();
+  public void FreezeTimeUpdated();
   public void RoundTimeUpdated();
   public void MatchStartTimeUpdated();
   public void RoundStartTimeUpdated();

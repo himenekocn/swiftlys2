@@ -11,7 +11,7 @@ namespace SwiftlyS2.Shared.SchemaDefinitions;
 public partial interface CNmScaleTask : CNmPoseTask, ISchemaClass<CNmScaleTask> {
 
   static CNmScaleTask ISchemaClass<CNmScaleTask>.From(nint handle) => new CNmScaleTaskImpl(handle);
-  static int ISchemaClass<CNmScaleTask>.Size => 168;
+  static int ISchemaClass<CNmScaleTask>.Size => 176;
 
 
 

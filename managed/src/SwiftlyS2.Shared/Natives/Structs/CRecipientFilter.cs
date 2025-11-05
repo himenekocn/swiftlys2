@@ -16,8 +16,10 @@ public struct CRecipientFilter
 {
     private nint _pVTable;
     public ulong RecipientsMask;
+    public int PredictedSlot;
     public NetChannelBufType_t BufferType;
     public bool InitMessage;
+    public bool DisabledPrediction;
 
     public CRecipientFilter( NetChannelBufType_t BufType = NetChannelBufType_t.BUF_RELIABLE, bool bInitMessage = false )
     {
@@ -129,13 +131,20 @@ internal static class CRecipientFilterVtable
         return &filter->RecipientsMask;
     }
 
+    [UnmanagedCallersOnly]
+    public unsafe static int GetPredictedSlot( CRecipientFilter* filter )
+    {
+        return filter->PredictedSlot;
+    }
+
     static unsafe CRecipientFilterVtable()
     {
-        pCRecipientFilterVTable = Marshal.AllocHGlobal(sizeof(nint) * 4);
-        Span<nint> vtable = new((void*)pCRecipientFilterVTable, 4);
+        pCRecipientFilterVTable = Marshal.AllocHGlobal(sizeof(nint) * 5);
+        Span<nint> vtable = new((void*)pCRecipientFilterVTable, 5);
         vtable[0] = (nint)(delegate* unmanaged< CRecipientFilter*, void >)(&Destructor);
         vtable[1] = (nint)(delegate* unmanaged< CRecipientFilter*, NetChannelBufType_t >)(&GetNetworkBufType);
         vtable[2] = (nint)(delegate* unmanaged< CRecipientFilter*, bool >)(&IsInitMessage);
         vtable[3] = (nint)(delegate* unmanaged< CRecipientFilter*, ulong* >)(&GetRecipients);
+        vtable[4] = (nint)(delegate* unmanaged< CRecipientFilter*, int >)(&GetPredictedSlot);
     }
 }

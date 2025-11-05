@@ -17,7 +17,7 @@ public partial interface CCSPlayer_PingServices : CPlayerPawnComponent, ISchemaC
   // GameTime_t
   public SchemaUntypedField PlayerPingTokens { get; }
   
-  public ref CHandle<CBaseEntity> PlayerPing { get; }
+  public ref CHandle<CPlayerPing> PlayerPing { get; }
 
   public void PlayerPingUpdated();
 }

@@ -11,7 +11,7 @@ namespace SwiftlyS2.Shared.SchemaDefinitions;
 public partial interface CCSPlayer_MovementServices : CPlayer_MovementServices_Humanoid, ISchemaClass<CCSPlayer_MovementServices> {
 
   static CCSPlayer_MovementServices ISchemaClass<CCSPlayer_MovementServices>.From(nint handle) => new CCSPlayer_MovementServicesImpl(handle);
-  static int ISchemaClass<CCSPlayer_MovementServices>.Size => 1512;
+  static int ISchemaClass<CCSPlayer_MovementServices>.Size => 3600;
 
   
   public ref Vector LadderNormal { get; }
@@ -95,6 +95,8 @@ public partial interface CCSPlayer_MovementServices : CPlayer_MovementServices_H
   public ref bool WasSurfing { get; }
   
   public ref Vector InputRotated { get; }
+  
+  public ref bool JumpApexPending { get; }
 
   public void LadderNormalUpdated();
   public void LadderSurfacePropIndexUpdated();
@@ -115,4 +117,5 @@ public partial interface CCSPlayer_MovementServices : CPlayer_MovementServices_H
   public void OffsetTickStashedSpeedUpdated();
   public void StaminaUpdated();
   public void WasSurfingUpdated();
+  public void JumpApexPendingUpdated();
 }

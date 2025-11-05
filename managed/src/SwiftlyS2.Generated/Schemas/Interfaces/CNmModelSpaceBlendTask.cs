@@ -11,7 +11,7 @@ namespace SwiftlyS2.Shared.SchemaDefinitions;
 public partial interface CNmModelSpaceBlendTask : CNmBlendTaskBase, ISchemaClass<CNmModelSpaceBlendTask> {
 
   static CNmModelSpaceBlendTask ISchemaClass<CNmModelSpaceBlendTask>.From(nint handle) => new CNmModelSpaceBlendTaskImpl(handle);
-  static int ISchemaClass<CNmModelSpaceBlendTask>.Size => 216;
+  static int ISchemaClass<CNmModelSpaceBlendTask>.Size => 224;
 
 
 

@@ -18,6 +18,8 @@ public partial interface CNmAimCSNode__CDefinition : CNmPassthroughNode__CDefini
   
   public ref short HorizontalAngleNodeIdx { get; }
   
+  public ref short WeaponCategoryNodeIdx { get; }
+  
   public ref short EnabledNodeIdx { get; }
   
   public ref float BlendTimeSeconds { get; }

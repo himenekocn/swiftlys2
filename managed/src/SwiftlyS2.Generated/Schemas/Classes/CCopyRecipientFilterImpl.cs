@@ -21,6 +21,9 @@ internal partial class CCopyRecipientFilterImpl : SchemaClass, CCopyRecipientFil
   public ref CUtlVector<uint> Recipients {
     get => ref _Handle.AsRef<CUtlVector<uint>>(Schema.GetOffset(0xB27F546CDF6522D1));
   }
+  public ref uint SlotPlayerExcludedDueToPrediction {
+    get => ref _Handle.AsRef<uint>(Schema.GetOffset(0xB27F546CA4F2B69C));
+  }
 
 
 }

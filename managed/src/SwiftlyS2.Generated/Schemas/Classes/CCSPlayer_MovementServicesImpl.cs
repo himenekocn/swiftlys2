@@ -138,6 +138,9 @@ internal partial class CCSPlayer_MovementServicesImpl : CPlayer_MovementServices
   public ref Vector InputRotated {
     get => ref _Handle.AsRef<Vector>(Schema.GetOffset(0xD20D9A03853EE154));
   }
+  public ref bool JumpApexPending {
+    get => ref _Handle.AsRef<bool>(Schema.GetOffset(0xD20D9A03B2669F50));
+  }
 
   public void LadderNormalUpdated() {
     Schema.Update(_Handle, 0xD20D9A0308F3CAF6);
@@ -195,5 +198,8 @@ internal partial class CCSPlayer_MovementServicesImpl : CPlayer_MovementServices
   }
   public void WasSurfingUpdated() {
     Schema.Update(_Handle, 0xD20D9A03C30201EE);
+  }
+  public void JumpApexPendingUpdated() {
+    Schema.Update(_Handle, 0xD20D9A03B2669F50);
   }
 }
