@@ -20,7 +20,7 @@ internal class SeparatorMenuOption : IOption
     public bool ShouldShow(IPlayer player) => true;
     public bool CanInteract(IPlayer player) => false;
 
-    public string GetDisplayText(IPlayer player)
+    public string GetDisplayText(IPlayer player, bool updateHorizontalStyle = false)
     {
         return $"<font color='{Menu!.RenderColor.ToHex(true)}'>{Text}</font>";
     }

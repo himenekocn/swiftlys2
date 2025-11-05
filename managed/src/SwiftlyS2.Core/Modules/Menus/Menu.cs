@@ -104,10 +104,10 @@ internal partial class Menu : IMenu
         OnMove?.Invoke(player);
         OnItemHovered?.Invoke(player, Options[SelectedIndex[player]]);
 
-        Rerender(player);
+        Rerender(player, false);
     }
 
-    public void Rerender(IPlayer player, bool updateDisplayText = false)
+    public void Rerender(IPlayer player, bool updateHorizontalStyle = false)
     {
         BeforeRender?.Invoke(player);
 
@@ -187,10 +187,7 @@ internal partial class Menu : IMenu
                         html.Append("\u00A0\u00A0\u00A0 ");
                     }
 
-                    if (updateDisplayText)
-                    {
-                        html.Append(option.GetDisplayText(player));
-                    }
+                    html.Append(option.GetDisplayText(player, updateHorizontalStyle));
 
                     html.Append("<br>");
                 }
@@ -212,10 +209,7 @@ internal partial class Menu : IMenu
                         html.Append("\u00A0\u00A0\u00A0 ");
                     }
 
-                    if (updateDisplayText)
-                    {
-                        html.Append(option.GetDisplayText(player));
-                    }
+                    html.Append(option.GetDisplayText(player, updateHorizontalStyle));
 
                     html.Append("<br>");
                 }
@@ -280,7 +274,7 @@ internal partial class Menu : IMenu
             _Core.Event.OnTick += OnTickRender;
         }
 
-        Rerender(player);
+        Rerender(player, true);
         OnOpen?.Invoke(player);
         if (ShouldFreeze == true) SetFreezeState(player, true);
 
@@ -389,7 +383,7 @@ internal partial class Menu : IMenu
                 break;
         }
 
-        Rerender(player);
+        Rerender(player, false);
     }
 
     public bool IsOptionSlider(IPlayer player)
@@ -427,7 +421,7 @@ internal partial class Menu : IMenu
         pawn.MoveTypeUpdated();
     }
 
-    internal string ApplyHorizontalStyle(string text, MenuHorizontalStyle? overflowStyle = null)
+    internal string ApplyHorizontalStyle(string text, MenuHorizontalStyle? overflowStyle = null, bool updateHorizontalStyle = false)
     {
         var activeStyle = overflowStyle ?? HorizontalStyle;
 
@@ -446,15 +440,15 @@ internal partial class Menu : IMenu
         {
             MenuHorizontalOverflowStyle.TruncateEnd => TruncateTextEnd(text, activeStyle.Value.MaxWidth),
             MenuHorizontalOverflowStyle.TruncateBothEnds => TruncateTextBothEnds(text, activeStyle.Value.MaxWidth),
-            MenuHorizontalOverflowStyle.ScrollLeftFade => ScrollTextWithFade(text, activeStyle.Value.MaxWidth, true, activeStyle),
-            MenuHorizontalOverflowStyle.ScrollRightFade => ScrollTextWithFade(text, activeStyle.Value.MaxWidth, false, activeStyle),
-            MenuHorizontalOverflowStyle.ScrollLeftLoop => ScrollTextWithLoop($"{text.TrimEnd()} ", activeStyle.Value.MaxWidth, true, activeStyle),
-            MenuHorizontalOverflowStyle.ScrollRightLoop => ScrollTextWithLoop($" {text.TrimStart()}", activeStyle.Value.MaxWidth, false, activeStyle),
+            MenuHorizontalOverflowStyle.ScrollLeftFade => ScrollTextWithFade(updateHorizontalStyle, text, activeStyle.Value.MaxWidth, true, activeStyle),
+            MenuHorizontalOverflowStyle.ScrollRightFade => ScrollTextWithFade(updateHorizontalStyle, text, activeStyle.Value.MaxWidth, false, activeStyle),
+            MenuHorizontalOverflowStyle.ScrollLeftLoop => ScrollTextWithLoop(updateHorizontalStyle, $"{text.TrimEnd()} ", activeStyle.Value.MaxWidth, true, activeStyle),
+            MenuHorizontalOverflowStyle.ScrollRightLoop => ScrollTextWithLoop(updateHorizontalStyle, $" {text.TrimStart()}", activeStyle.Value.MaxWidth, false, activeStyle),
             _ => text
         };
     }
 
-    private string ScrollTextWithFade(string text, float maxWidth, bool scrollLeft, MenuHorizontalStyle? style = null)
+    private string ScrollTextWithFade(bool updateHorizontalStyle, string text, float maxWidth, bool scrollLeft, MenuHorizontalStyle? style = null)
     {
         // Prepare scroll data and validate
         var (plainChars, segments, targetCharCount) = PrepareScrollData(text, maxWidth);
@@ -468,7 +462,7 @@ internal partial class Menu : IMenu
         }
 
         // Update scroll offset (allow scrolling beyond end for complete fade-out)
-        var offset = UpdateScrollOffset(StripHtmlTags(text), scrollLeft, plainChars.Length + 1, style);
+        var offset = UpdateScrollOffset(updateHorizontalStyle, StripHtmlTags(text), scrollLeft, plainChars.Length + 1, style);
 
         // Calculate visible character range
         var (skipStart, skipEnd) = scrollLeft
@@ -518,7 +512,7 @@ internal partial class Menu : IMenu
         return result.ToString();
     }
 
-    private string ScrollTextWithLoop(string text, float maxWidth, bool scrollLeft, MenuHorizontalStyle? style = null)
+    private string ScrollTextWithLoop(bool updateHorizontalStyle, string text, float maxWidth, bool scrollLeft, MenuHorizontalStyle? style = null)
     {
         // Prepare scroll data and validate
         var (plainChars, segments, targetCharCount) = PrepareScrollData(text, maxWidth);
@@ -532,7 +526,7 @@ internal partial class Menu : IMenu
         }
 
         // Update scroll offset for circular wrapping
-        var offset = UpdateScrollOffset(StripHtmlTags(text), scrollLeft, plainChars.Length, style);
+        var offset = UpdateScrollOffset(updateHorizontalStyle, StripHtmlTags(text), scrollLeft, plainChars.Length, style);
 
         // Build character-to-tags mapping for circular access
         Dictionary<int, List<string>> charToActiveTags = [];
@@ -866,12 +860,13 @@ internal partial class Menu
     /// Updates and returns the scroll offset for the given text.
     /// The offset increments based on tick count and wraps around at the specified length.
     /// </summary>
+    /// <param name="updateHorizontalStyle">Whether to update the horizontal style.</param>
     /// <param name="plainText">The plain text being scrolled.</param>
     /// <param name="scrollLeft">Whether scrolling left or right.</param>
     /// <param name="wrapLength">The length at which the offset wraps around.</param>
     /// <param name="style">Optional horizontal style settings.</param>
     /// <returns>The current scroll offset.</returns>
-    private int UpdateScrollOffset(string plainText, bool scrollLeft, int wrapLength, MenuHorizontalStyle? style)
+    private int UpdateScrollOffset(bool updateHorizontalStyle, string plainText, bool scrollLeft, int wrapLength, MenuHorizontalStyle? style)
     {
         var key = $"{plainText}_{scrollLeft}";
         ScrollOffsets.TryAdd(key, 0);
@@ -889,7 +884,7 @@ internal partial class Menu
         }
 
         // Increment call count and scroll when threshold is reached
-        if (++ScrollCallCounts[key] >= ticksPerScroll)
+        if (updateHorizontalStyle && ++ScrollCallCounts[key] >= ticksPerScroll)
         {
             ScrollCallCounts[key] = 0;
             var newOffset = (ScrollOffsets[key] + 1) % wrapLength;

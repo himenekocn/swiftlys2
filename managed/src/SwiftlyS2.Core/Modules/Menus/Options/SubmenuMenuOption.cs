@@ -42,7 +42,7 @@ internal class SubmenuMenuOption : IOption
         return EnabledCheck?.Invoke(player) ?? true;
     }
 
-    public string GetDisplayText(IPlayer player)
+    public string GetDisplayText(IPlayer player, bool updateHorizontalStyle = false)
     {
         var sizeClass = MenuSizeHelper.GetSizeClass(Size);
 

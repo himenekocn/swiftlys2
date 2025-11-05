@@ -554,6 +554,20 @@ public class TestPlugin : BasePlugin
     return HookResult.Continue;
   }
 
+  [Command("i76")]
+  public void TestIssue76Command(ICommandContext context)
+  {
+      var player = context.Sender!;
+      IMenu settingsMenu = Core.Menus.CreateMenu("Settings");
+      // Add the following code to render text properly
+      //settingsMenu.Builder.AddText("123", overflowStyle: MenuHorizontalStyle.ScrollLeftLoop(25f));
+      settingsMenu.Builder.AddText("123");
+      settingsMenu.Builder.AddText("1234");
+      settingsMenu.Builder.AddText("12355");
+
+      Core.Menus.OpenMenu(player, settingsMenu);
+  }
+
   [Command("mt")]
   public void MenuTestCommand(ICommandContext context)
   {

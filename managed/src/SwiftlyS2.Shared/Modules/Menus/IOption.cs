@@ -50,8 +50,9 @@ public interface IOption
     /// Gets the display text for this option as it should appear to the specified player.
     /// </summary>
     /// <param name="player">The player requesting the display text.</param>
+    /// <param name="updateHorizontalStyle">Indicates whether to update the horizontal style of the text.</param>
     /// <returns>The formatted display text for the option.</returns>
-    public string GetDisplayText(IPlayer player);
+    public string GetDisplayText(IPlayer player, bool updateHorizontalStyle);
 
     /// <summary>
     /// Gets the text size configuration for this option.

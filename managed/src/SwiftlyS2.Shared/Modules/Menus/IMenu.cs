@@ -175,8 +175,8 @@ public interface IMenu
     /// Updates the menu display with current state and options.
     /// </summary>
     /// <param name="player">The player to re-render the menu for.</param>
-    /// <param name="updateDisplayText">True to update display text, false to render without updating display text.</param>
-    public void Rerender(IPlayer player, bool updateDisplayText = false);
+    /// <param name="updateHorizontalStyle">True to update horizontal style, false to render without updating horizontal style.</param>
+    public void Rerender(IPlayer player, bool updateHorizontalStyle = false);
 
     /// <summary>
     /// Determines whether the currently selected option is selectable for the specified player.
