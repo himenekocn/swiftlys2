@@ -8,7 +8,7 @@ internal class SubmenuMenuOption : IOption
 {
     public string Text { get; set; }
     public IMenu? Submenu { get; set; }
-    public Func<IMenu>? SubmenuBuilder { get; set; }
+    public Func<Task<IMenu>>? SubmenuBuilderAsync { get; set; }
     public Func<IPlayer, bool>? VisibilityCheck { get; set; }
     public Func<IPlayer, bool>? EnabledCheck { get; set; }
     public IMenuTextSize Size { get; set; }
@@ -18,31 +18,34 @@ internal class SubmenuMenuOption : IOption
     public bool Visible => true;
     public bool Enabled => true;
 
-    public SubmenuMenuOption(string text, IMenu? submenu = null, IMenuTextSize size = IMenuTextSize.Medium)
+    public SubmenuMenuOption( string text, IMenu? submenu = null, IMenuTextSize size = IMenuTextSize.Medium )
     {
         Text = text;
         Submenu = submenu;
         Size = size;
     }
 
-    public SubmenuMenuOption(string text, Func<IMenu> submenuBuilder, IMenuTextSize size = IMenuTextSize.Medium)
+    public SubmenuMenuOption( string text, Func<IMenu> submenuBuilder, IMenuTextSize size = IMenuTextSize.Medium )
     {
         Text = text;
-        SubmenuBuilder = submenuBuilder;
+        SubmenuBuilderAsync = () => Task.FromResult(submenuBuilder());
         Size = size;
     }
 
-    public bool ShouldShow(IPlayer player)
+    public SubmenuMenuOption( string text, Func<Task<IMenu>> asyncSubmenuBuilder, IMenuTextSize size = IMenuTextSize.Medium )
     {
-        return VisibilityCheck?.Invoke(player) ?? true;
+        Text = text;
+        SubmenuBuilderAsync = asyncSubmenuBuilder;
+        Size = size;
     }
 
-    public bool CanInteract(IPlayer player)
-    {
-        return EnabledCheck?.Invoke(player) ?? true;
-    }
+    public bool ShouldShow( IPlayer player ) => VisibilityCheck?.Invoke(player) ?? true;
 
-    public string GetDisplayText(IPlayer player)
+    public bool CanInteract( IPlayer player ) => EnabledCheck?.Invoke(player) ?? true;
+
+    public bool HasSound() => true;
+
+    public string GetDisplayText( IPlayer player, bool updateHorizontalStyle = false )
     {
         var sizeClass = MenuSizeHelper.GetSizeClass(Size);
 
@@ -61,8 +64,18 @@ internal class SubmenuMenuOption : IOption
         return Size;
     }
 
-    public IMenu? GetSubmenu()
+    public async Task<IMenu?> GetSubmenuAsync()
     {
-        return Submenu ?? SubmenuBuilder?.Invoke();
+        if (Submenu != null)
+        {
+            return Submenu;
+        }
+
+        if (SubmenuBuilderAsync != null)
+        {
+            return await SubmenuBuilderAsync.Invoke();
+        }
+
+        return null;
     }
 }

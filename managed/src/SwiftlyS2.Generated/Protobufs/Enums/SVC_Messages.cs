@@ -33,4 +33,5 @@ public enum SVC_Messages
   svc_Broadcast_Command = 74,
   svc_HltvFixupOperatorStatus = 75,
   svc_UserCmds = 76,
+  svc_NextMsgPredicted = 77,
 }

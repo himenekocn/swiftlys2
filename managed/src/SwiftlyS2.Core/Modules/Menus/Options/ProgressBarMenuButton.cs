@@ -4,7 +4,7 @@ using SwiftlyS2.Core.Menus;
 
 namespace SwiftlyS2.Core.Menu.Options;
 
-internal class ProgressBarMenuOption(string text, Func<float> progressProvider, int barWidth = 20, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null) : IOption
+internal class ProgressBarMenuOption( string text, Func<float> progressProvider, int barWidth = 20, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null ) : IOption
 {
     public string Text { get; set; } = text;
     public Func<float> ProgressProvider { get; set; } = progressProvider;
@@ -19,10 +19,11 @@ internal class ProgressBarMenuOption(string text, Func<float> progressProvider, 
     public bool Visible => true;
     public bool Enabled => false;
 
-    public bool ShouldShow(IPlayer player) => true;
-    public bool CanInteract(IPlayer player) => false;
+    public bool ShouldShow( IPlayer player ) => true;
+    public bool CanInteract( IPlayer player ) => false;
+    public bool HasSound() => false;
 
-    public string GetDisplayText(IPlayer player)
+    public string GetDisplayText( IPlayer player, bool updateHorizontalStyle = false )
     {
         var sizeClass = MenuSizeHelper.GetSizeClass(Size);
 
@@ -37,7 +38,7 @@ internal class ProgressBarMenuOption(string text, Func<float> progressProvider, 
             bar += $"<font color='#666666'>{EmptyChar}</font>";
 
         var percentage = ShowPercentage ? $" {(int)(progress * 100)}%" : "";
-        return $"<font class='{sizeClass}'>{((Menu as Menus.Menu)?.ApplyHorizontalStyle(Text, OverflowStyle) ?? Text)}: {bar}{percentage}</font>";
+        return $"<font class='{sizeClass}'>{((Menu as Menus.Menu)?.ApplyHorizontalStyle(Text, OverflowStyle, updateHorizontalStyle) ?? Text)}: {bar}{percentage}</font>";
     }
 
     public IMenuTextSize GetTextSize()

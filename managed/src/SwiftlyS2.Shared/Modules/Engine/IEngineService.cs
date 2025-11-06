@@ -8,7 +8,7 @@ public interface IEngineService
     /// <summary>
     /// The IP address of the server.
     /// </summary>
-    public string ServerIP { get; }
+    public string? ServerIP { get; }
 
     /// <summary>
     /// Gets the map that the server is running

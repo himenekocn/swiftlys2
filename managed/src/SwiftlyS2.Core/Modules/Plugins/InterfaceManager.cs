@@ -3,7 +3,7 @@ using SwiftlyS2.Shared;
 
 namespace SwiftlyS2.Core.Modules.Plugins;
 
-public class InterfaceManager : IInterfaceManager, IDisposable
+internal class InterfaceManager : IInterfaceManager, IDisposable
 {
   private ServiceCollection _ServiceCollection { get; set; } = new();
   private ServiceProvider? _ServiceProvider { get; set; }

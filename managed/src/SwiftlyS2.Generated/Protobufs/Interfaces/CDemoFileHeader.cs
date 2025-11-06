@@ -13,7 +13,7 @@ public interface CDemoFileHeader : ITypedProtobuf<CDemoFileHeader>
   public string DemoFileStamp { get; set; }
 
 
-  public int NetworkProtocol { get; set; }
+  public int PatchVersion { get; set; }
 
 
   public string ServerName { get; set; }

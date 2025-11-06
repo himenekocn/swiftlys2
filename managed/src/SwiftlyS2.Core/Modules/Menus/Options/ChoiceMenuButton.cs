@@ -23,7 +23,7 @@ internal class ChoiceMenuOption : IOption
 
     public string SelectedChoice => Choices.Count > 0 ? Choices[SelectedIndex] : "";
 
-    public ChoiceMenuOption(string text, IEnumerable<string> choices, string? defaultChoice = null, Action<IPlayer, string>? onChange = null, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null)
+    public ChoiceMenuOption( string text, IEnumerable<string> choices, string? defaultChoice = null, Action<IPlayer, string>? onChange = null, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null )
     {
         Text = text;
         Choices = [.. choices];
@@ -40,7 +40,7 @@ internal class ChoiceMenuOption : IOption
         OverflowStyle = overflowStyle;
     }
 
-    public ChoiceMenuOption(string text, IEnumerable<string> choices, string? defaultChoice, Action<IPlayer, IOption, string>? onChange, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null)
+    public ChoiceMenuOption( string text, IEnumerable<string> choices, string? defaultChoice, Action<IPlayer, IOption, string>? onChange, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null )
     {
         Text = text;
         Choices = [.. choices];
@@ -57,23 +57,19 @@ internal class ChoiceMenuOption : IOption
         OverflowStyle = overflowStyle;
     }
 
-    public bool ShouldShow(IPlayer player)
-    {
-        return VisibilityCheck?.Invoke(player) ?? true;
-    }
+    public bool ShouldShow( IPlayer player ) => VisibilityCheck?.Invoke(player) ?? true;
 
-    public bool CanInteract(IPlayer player)
-    {
-        return EnabledCheck?.Invoke(player) ?? true;
-    }
+    public bool CanInteract( IPlayer player ) => EnabledCheck?.Invoke(player) ?? true;
 
-    public string GetDisplayText(IPlayer player)
+    public bool HasSound() => true;
+
+    public string GetDisplayText( IPlayer player, bool updateHorizontalStyle = false )
     {
         var sizeClass = MenuSizeHelper.GetSizeClass(Size);
 
         var choice = $"<font color='{Menu!.RenderColor.ToHex(true)}'>[</font>{SelectedChoice}<font color='{Menu.RenderColor.ToHex(true)}'>]</font>";
 
-        var text = (Menu as Menus.Menu)?.ApplyHorizontalStyle(Text, OverflowStyle) ?? Text;
+        var text = (Menu as Menus.Menu)?.ApplyHorizontalStyle(Text, OverflowStyle, updateHorizontalStyle) ?? Text;
         if (!CanInteract(player))
         {
             return $"<font class='{sizeClass}' color='grey'>{text}: {choice}</font>";
@@ -86,16 +82,22 @@ internal class ChoiceMenuOption : IOption
         return Size;
     }
 
-    public void Next(IPlayer player)
+    public void Next( IPlayer player )
     {
-        if (!CanInteract(player) || Choices.Count == 0) return;
+        if (!CanInteract(player) || Choices.Count == 0)
+        {
+            return;
+        }
         SelectedIndex = (SelectedIndex + 1) % Choices.Count;
         OnChange?.Invoke(player, SelectedChoice);
         OnChangeWithOption?.Invoke(player, this, SelectedChoice);
     }
-    public void Previous(IPlayer player)
+    public void Previous( IPlayer player )
     {
-        if (!CanInteract(player) || Choices.Count == 0) return;
+        if (!CanInteract(player) || Choices.Count == 0)
+        {
+            return;
+        }
         SelectedIndex = (SelectedIndex - 1 + Choices.Count) % Choices.Count;
         OnChange?.Invoke(player, SelectedChoice);
         OnChangeWithOption?.Invoke(player, this, SelectedChoice);

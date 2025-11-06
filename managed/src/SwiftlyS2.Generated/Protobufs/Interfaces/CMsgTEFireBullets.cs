@@ -59,4 +59,7 @@ public interface CMsgTEFireBullets : ITypedProtobuf<CMsgTEFireBullets>, INetMess
 
   public uint AttackType { get; set; }
 
+
+  public CMsgTEFireBullets_Extra Extra { get; }
+
 }

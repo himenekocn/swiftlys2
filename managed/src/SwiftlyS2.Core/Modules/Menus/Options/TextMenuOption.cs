@@ -17,7 +17,7 @@ internal class TextMenuOption : IOption
     public bool Visible => true;
     public bool Enabled => false;
 
-    public TextMenuOption(string text, ITextAlign alignment = ITextAlign.Left, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null)
+    public TextMenuOption( string text, ITextAlign alignment = ITextAlign.Left, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null )
     {
         Text = text;
         Alignment = alignment;
@@ -25,7 +25,7 @@ internal class TextMenuOption : IOption
         OverflowStyle = overflowStyle;
     }
 
-    public TextMenuOption(Func<string> dynamicText, ITextAlign alignment = ITextAlign.Left, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null)
+    public TextMenuOption( Func<string> dynamicText, ITextAlign alignment = ITextAlign.Left, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null )
     {
         Text = string.Empty;
         DynamicText = dynamicText;
@@ -34,28 +34,24 @@ internal class TextMenuOption : IOption
         OverflowStyle = overflowStyle;
     }
 
-    public bool ShouldShow(IPlayer player)
-    {
-        return VisibilityCheck?.Invoke(player) ?? true;
-    }
+    public bool ShouldShow( IPlayer player ) => VisibilityCheck?.Invoke(player) ?? true;
 
-    public bool CanInteract(IPlayer player)
-    {
-        return true;
-    }
+    public bool CanInteract( IPlayer player ) => true;
 
-    public string GetDisplayText(IPlayer player)
+    public bool HasSound() => false;
+
+    public string GetDisplayText( IPlayer player, bool updateHorizontalStyle )
     {
         var text = DynamicText?.Invoke() ?? Text;
 
-        text = (Menu as Menus.Menu)?.ApplyHorizontalStyle(text, OverflowStyle) ?? text;
+
+        text = (Menu as Menus.Menu)?.ApplyHorizontalStyle(text, OverflowStyle, updateHorizontalStyle) ?? text;
 
         var sizeClass = MenuSizeHelper.GetSizeClass(Size);
 
         text = $"<font class='{sizeClass}'>{text}</font>";
 
-        return Alignment switch
-        {
+        return Alignment switch {
             ITextAlign.Center => $"<center>{text}</center>",
             ITextAlign.Right => $"<div align='right'>{text}</div>",
             _ => text

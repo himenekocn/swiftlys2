@@ -4,6 +4,8 @@ using SwiftlyS2.Shared.Services;
 using SwiftlyS2.Core.Extensions;
 using SwiftlyS2.Shared.Natives;
 using SwiftlyS2.Shared.SchemaDefinitions;
+using SwiftlyS2.Shared.SteamAPI;
+using Spectre.Console;
 
 namespace SwiftlyS2.Core.Services;
 
@@ -16,7 +18,19 @@ internal class EngineService : IEngineService
         this._commandTrackedManager = commandTrackedManager;
     }
 
-    public string ServerIP => NativeEngineHelpers.GetServerIP();
+    public string? ServerIP {
+        get {
+            try
+            {
+                return SteamGameServer.GetPublicIP().ToString();
+            }
+            catch (Exception e)
+            {
+                AnsiConsole.WriteException(e);
+                return null;
+            }
+        }
+    }
 
     public ref CGlobalVars GlobalVars => ref NativeEngineHelpers.GetGlobalVars().AsRef<CGlobalVars>();
 
