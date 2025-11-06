@@ -18,8 +18,8 @@ internal class CDemoFileHeaderImpl : TypedProtobuf<CDemoFileHeader>, CDemoFileHe
   { get => Accessor.GetString("demo_file_stamp"); set => Accessor.SetString("demo_file_stamp", value); }
 
 
-  public int NetworkProtocol
-  { get => Accessor.GetInt32("network_protocol"); set => Accessor.SetInt32("network_protocol", value); }
+  public int PatchVersion
+  { get => Accessor.GetInt32("patch_version"); set => Accessor.SetInt32("patch_version", value); }
 
 
   public string ServerName

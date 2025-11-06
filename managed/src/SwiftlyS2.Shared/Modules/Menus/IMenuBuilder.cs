@@ -17,14 +17,14 @@ public interface IMenuBuilder
     /// </summary>
     /// <param name="menu">The menu instance to build and configure.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
-    IMenuBuilder SetMenu(IMenu menu);
+    IMenuBuilder SetMenu( IMenu menu );
 
     /// <summary>
     /// Sets whether the menu should have associated sounds for interactions.
     /// </summary>
     /// <param name="hasSound">Enables/disables sound effects for menu interactions.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
-    IMenuBuilder HasSound(bool hasSound);
+    IMenuBuilder HasSound( bool hasSound );
 
     /// <summary>
     /// Adds a clickable button option to the menu.
@@ -35,7 +35,7 @@ public interface IMenuBuilder
     /// <param name="size">The text size for the button display. Defaults to Medium.</param>
     /// <param name="overflowStyle">The overflow style for the text. Defaults to null.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
-    IMenuBuilder AddButton(string text, Action<IPlayer>? onClick = null, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null);
+    IMenuBuilder AddButton( string text, Action<IPlayer>? onClick = null, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null );
 
     /// <summary>
     /// Adds a clickable button option to the menu.
@@ -46,7 +46,7 @@ public interface IMenuBuilder
     /// <param name="size">The text size for the button display. Defaults to Medium.</param>
     /// <param name="overflowStyle">The overflow style for the text. Defaults to null.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
-    IMenuBuilder AddButton(string text, Action<IPlayer, IOption>? onClick, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null);
+    IMenuBuilder AddButton( string text, Action<IPlayer, IOption>? onClick, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null );
 
     /// <summary>
     /// Adds a toggle switch option to the menu that can be turned on or off.
@@ -58,7 +58,7 @@ public interface IMenuBuilder
     /// <param name="size">The text size for the toggle display. Defaults to Medium.</param>
     /// <param name="overflowStyle">The overflow style for the text. Defaults to null.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
-    IMenuBuilder AddToggle(string text, bool defaultValue = false, Action<IPlayer, bool>? onToggle = null, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null);
+    IMenuBuilder AddToggle( string text, bool defaultValue = false, Action<IPlayer, bool>? onToggle = null, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null );
 
     /// <summary>
     /// Adds a toggle switch option to the menu that can be turned on or off.
@@ -70,7 +70,7 @@ public interface IMenuBuilder
     /// <param name="size">The text size for the toggle display. Defaults to Medium.</param>
     /// <param name="overflowStyle">The overflow style for the text. Defaults to null.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
-    IMenuBuilder AddToggle(string text, bool defaultValue, Action<IPlayer, IOption, bool>? onToggle, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null);
+    IMenuBuilder AddToggle( string text, bool defaultValue, Action<IPlayer, IOption, bool>? onToggle, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null );
 
     /// <summary>
     /// Adds a slider option to the menu for selecting numeric values within a specified range.
@@ -85,7 +85,7 @@ public interface IMenuBuilder
     /// <param name="size">The text size for the slider display. Defaults to Medium.</param>
     /// <param name="overflowStyle">The overflow style for the text. Defaults to null.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
-    IMenuBuilder AddSlider(string text, float min, float max, float defaultValue, float step = 1, Action<IPlayer, float>? onChange = null, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null);
+    IMenuBuilder AddSlider( string text, float min, float max, float defaultValue, float step = 1, Action<IPlayer, float>? onChange = null, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null );
 
     /// <summary>
     /// Adds a slider option to the menu for selecting numeric values within a specified range.
@@ -100,7 +100,7 @@ public interface IMenuBuilder
     /// <param name="size">The text size for the slider display. Defaults to Medium.</param>
     /// <param name="overflowStyle">The overflow style for the text. Defaults to null.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
-    IMenuBuilder AddSlider(string text, float min, float max, float defaultValue, float step, Action<IPlayer, IOption, float>? onChange, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null);
+    IMenuBuilder AddSlider( string text, float min, float max, float defaultValue, float step, Action<IPlayer, IOption, float>? onChange, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null );
 
     /// <summary>
     /// Adds an asynchronous button option to the menu that executes async operations.
@@ -111,7 +111,7 @@ public interface IMenuBuilder
     /// <param name="size">The text size for the button display. Defaults to Medium.</param>
     /// <param name="overflowStyle">The overflow style for the text. Defaults to null.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
-    IMenuBuilder AddAsyncButton(string text, Func<IPlayer, Task> onClickAsync, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null);
+    IMenuBuilder AddAsyncButton( string text, Func<IPlayer, Task> onClickAsync, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null );
 
     /// <summary>
     /// Adds an asynchronous button option to the menu that executes async operations.
@@ -122,7 +122,7 @@ public interface IMenuBuilder
     /// <param name="size">The text size for the button display. Defaults to Medium.</param>
     /// <param name="overflowStyle">The overflow style for the text. Defaults to null.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
-    IMenuBuilder AddAsyncButton(string text, Func<IPlayer, IOption, Task> onClickAsync, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null);
+    IMenuBuilder AddAsyncButton( string text, Func<IPlayer, IOption, Task> onClickAsync, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null );
 
     /// <summary>
     /// Adds a non-interactive text display option to the menu.
@@ -133,7 +133,7 @@ public interface IMenuBuilder
     /// <param name="size">The text size for the display. Defaults to Medium.</param>
     /// <param name="overflowStyle">The overflow style for the text. Defaults to null.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
-    IMenuBuilder AddText(string text, ITextAlign alignment = ITextAlign.Left, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null);
+    IMenuBuilder AddText( string text, ITextAlign alignment = ITextAlign.Left, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null );
 
     /// <summary>
     /// Adds a submenu option that navigates to another menu when selected.
@@ -143,7 +143,7 @@ public interface IMenuBuilder
     /// <param name="submenu">The submenu instance to navigate to.</param>
     /// <param name="size">The text size for the submenu display. Defaults to Medium.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
-    IMenuBuilder AddSubmenu(string text, IMenu submenu, IMenuTextSize size = IMenuTextSize.Medium);
+    IMenuBuilder AddSubmenu( string text, IMenu submenu, IMenuTextSize size = IMenuTextSize.Medium );
 
     /// <summary>
     /// Adds a submenu option that navigates to another menu when selected.
@@ -152,7 +152,7 @@ public interface IMenuBuilder
     /// <param name="text">The display text for the submenu option.</param>
     /// <param name="submenu">The submenu instance to navigate to.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
-    IMenuBuilder AddSubmenu(string text, IMenu submenu);
+    IMenuBuilder AddSubmenu( string text, IMenu submenu );
 
     /// <summary>
     /// Adds a submenu option that creates and navigates to a dynamically built menu when selected.
@@ -162,7 +162,7 @@ public interface IMenuBuilder
     /// <param name="submenuBuilder">A function that returns the submenu instance when called.</param>
     /// <param name="size">The text size for the submenu display. Defaults to Medium.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
-    IMenuBuilder AddSubmenu(string text, Func<IMenu> submenuBuilder, IMenuTextSize size = IMenuTextSize.Medium);
+    IMenuBuilder AddSubmenu( string text, Func<IMenu> submenuBuilder, IMenuTextSize size = IMenuTextSize.Medium );
 
     /// <summary>
     /// Adds a submenu option that creates and navigates to a dynamically built menu when selected.
@@ -171,7 +171,26 @@ public interface IMenuBuilder
     /// <param name="text">The display text for the submenu option.</param>
     /// <param name="submenuBuilder">A function that returns the submenu instance when called.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
-    IMenuBuilder AddSubmenu(string text, Func<IMenu> submenuBuilder);
+    IMenuBuilder AddSubmenu( string text, Func<IMenu> submenuBuilder );
+
+    /// <summary>
+    /// Adds a submenu option that creates and navigates to a dynamically built menu when selected.
+    /// The submenu is constructed on-demand using the provided asynchronous builder function.
+    /// </summary>
+    /// <param name="text">The display text for the submenu option.</param>
+    /// <param name="submenuBuilder">An asynchronous function that returns the submenu instance when called.</param>
+    /// <param name="size">The text size for the submenu display. Defaults to Medium.</param>
+    /// <returns>The current menu builder instance for method chaining.</returns>
+    IMenuBuilder AddSubmenu( string text, Func<Task<IMenu>> submenuBuilder, IMenuTextSize size = IMenuTextSize.Medium );
+
+    /// <summary>
+    /// Adds a submenu option that creates and navigates to a dynamically built menu when selected.
+    /// The submenu is constructed on-demand using the provided asynchronous builder function.
+    /// </summary>
+    /// <param name="text">The display text for the submenu option.</param>
+    /// <param name="submenuBuilder">An asynchronous function that returns the submenu instance when called.</param>
+    /// <returns>The current menu builder instance for method chaining.</returns>
+    IMenuBuilder AddSubmenu( string text, Func<Task<IMenu>> submenuBuilder );
 
     /// <summary>
     /// Adds a choice selection option that allows players to select from multiple predefined options.
@@ -184,7 +203,7 @@ public interface IMenuBuilder
     /// <param name="size">The text size for the choice display. Defaults to Medium.</param>
     /// <param name="overflowStyle">The overflow style for the text. Defaults to null.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
-    IMenuBuilder AddChoice(string text, string[] choices, string? defaultChoice = null, Action<IPlayer, string>? onChange = null, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null);
+    IMenuBuilder AddChoice( string text, string[] choices, string? defaultChoice = null, Action<IPlayer, string>? onChange = null, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null );
 
     // /// <summary>
     // /// Adds a choice selection option that allows players to select from multiple predefined options.
@@ -210,7 +229,7 @@ public interface IMenuBuilder
     /// <param name="size">The text size for the choice display. Defaults to Medium.</param>
     /// <param name="overflowStyle">The overflow style for the text. Defaults to null.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
-    IMenuBuilder AddChoice(string text, string[] choices, string? defaultChoice, Action<IPlayer, IOption, string>? onChange, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null);
+    IMenuBuilder AddChoice( string text, string[] choices, string? defaultChoice, Action<IPlayer, IOption, string>? onChange, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null );
 
     /// <summary>
     /// Adds a visual separator line to the menu for organizing content.
@@ -229,7 +248,7 @@ public interface IMenuBuilder
     /// <param name="size">The text size for the progress bar display. Defaults to Medium.</param>
     /// <param name="overflowStyle">The overflow style for the text. Defaults to null.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
-    IMenuBuilder AddProgressBar(string text, Func<float> progressProvider, int barWidth = 20, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null);
+    IMenuBuilder AddProgressBar( string text, Func<float> progressProvider, int barWidth = 20, IMenuTextSize size = IMenuTextSize.Medium, MenuHorizontalStyle? overflowStyle = null );
 
     /// <summary>
     /// Adds a progress bar display option that shows dynamic progress information.
@@ -240,7 +259,7 @@ public interface IMenuBuilder
     /// <param name="barWidth">The character width of the progress bar.</param>
     /// <param name="overflowStyle">The overflow style for the text. Defaults to null.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
-    IMenuBuilder AddProgressBar(string text, Func<float> progressProvider, int barWidth, MenuHorizontalStyle? overflowStyle = null);
+    IMenuBuilder AddProgressBar( string text, Func<float> progressProvider, int barWidth, MenuHorizontalStyle? overflowStyle = null );
 
     /// <summary>
     /// Sets the parent menu for the menu being built, creating a hierarchical menu structure.
@@ -248,7 +267,7 @@ public interface IMenuBuilder
     /// </summary>
     /// <param name="parent">The parent menu instance.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
-    IMenuBuilder WithParent(IMenu parent);
+    IMenuBuilder WithParent( IMenu parent );
 
     /// <summary>
     /// Sets a condition that determines when the menu should be visible to players.
@@ -256,7 +275,7 @@ public interface IMenuBuilder
     /// </summary>
     /// <param name="condition">A function that takes a player and returns true if the menu should be visible.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
-    IMenuBuilder VisibleWhen(Func<IPlayer, bool> condition);
+    IMenuBuilder VisibleWhen( Func<IPlayer, bool> condition );
 
     /// <summary>
     /// Sets a condition that determines when the menu should be enabled for interaction.
@@ -264,7 +283,7 @@ public interface IMenuBuilder
     /// </summary>
     /// <param name="condition">A function that takes a player and returns true if the menu should be enabled.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
-    IMenuBuilder EnabledWhen(Func<IPlayer, bool> condition);
+    IMenuBuilder EnabledWhen( Func<IPlayer, bool> condition );
 
     /// <summary>
     /// Configures the menu to automatically close when any option is selected.
@@ -279,7 +298,7 @@ public interface IMenuBuilder
     /// </summary>
     /// <param name="seconds">The number of seconds after which to automatically close the menu.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
-    IMenuBuilder AutoClose(float seconds);
+    IMenuBuilder AutoClose( float seconds );
 
     /// <summary>
     /// Overrides the default button(s) used for selecting menu options.
@@ -288,7 +307,7 @@ public interface IMenuBuilder
     /// <param name="buttonNames">The names of the buttons to use for selection.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
     [Obsolete("Use Design.OverrideSelectButton instead")]
-    IMenuBuilder OverrideSelectButton(params string[] buttonNames);
+    IMenuBuilder OverrideSelectButton( params string[] buttonNames );
 
     /// <summary>
     /// Overrides the default button(s) used for moving through menu options.
@@ -297,7 +316,7 @@ public interface IMenuBuilder
     /// <param name="buttonNames">The names of the buttons to use for movement.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
     [Obsolete("Use Design.OverrideMoveButton instead")]
-    IMenuBuilder OverrideMoveButton(params string[] buttonNames);
+    IMenuBuilder OverrideMoveButton( params string[] buttonNames );
 
     /// <summary>
     /// Overrides the default button(s) used for exiting or closing the menu.
@@ -306,7 +325,7 @@ public interface IMenuBuilder
     /// <param name="buttonNames">The names of the buttons to use for exiting.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
     [Obsolete("Use Design.OverrideExitButton instead")]
-    IMenuBuilder OverrideExitButton(params string[] buttonNames);
+    IMenuBuilder OverrideExitButton( params string[] buttonNames );
 
     /// <summary>
     /// Sets the maximum number of menu items visible at once.
@@ -320,7 +339,7 @@ public interface IMenuBuilder
     /// A warning will be logged when clamping occurs.
     /// </remarks>
     [Obsolete("Use Design.MaxVisibleItems instead")]
-    IMenuBuilder MaxVisibleItems(int count);
+    IMenuBuilder MaxVisibleItems( int count );
 
     /// <summary>
     /// Configures the menu to not freeze player movement when displayed.
@@ -343,7 +362,7 @@ public interface IMenuBuilder
     /// <param name="color">The color to use for menu rendering.</param>
     /// <returns>The current menu builder instance for method chaining.</returns>
     [Obsolete("Use Design.SetColor instead")]
-    IMenuBuilder SetColor(Color color);
+    IMenuBuilder SetColor( Color color );
 }
 
 /// <summary>

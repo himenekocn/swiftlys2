@@ -50,7 +50,7 @@ internal class AsyncButtonMenuOption : IOption
         return !IsLoading && (EnabledCheck?.Invoke(player) ?? true);
     }
 
-    public string GetDisplayText(IPlayer player)
+    public string GetDisplayText(IPlayer player, bool updateHorizontalStyle = false)
     {
         var sizeClass = MenuSizeHelper.GetSizeClass(Size);
 
@@ -59,7 +59,7 @@ internal class AsyncButtonMenuOption : IOption
             return $"<font class='{sizeClass}' color='#ffaa00'>{_loadingText ?? "Loading..."}</font>";
         }
 
-        var text = (Menu as Menus.Menu)?.ApplyHorizontalStyle(Text, OverflowStyle) ?? Text;
+        var text = (Menu as Menus.Menu)?.ApplyHorizontalStyle(Text, OverflowStyle, updateHorizontalStyle) ?? Text;
         if (!CanInteract(player))
         {
             return $"<font class='{sizeClass}' color='grey'>{text}</font>";

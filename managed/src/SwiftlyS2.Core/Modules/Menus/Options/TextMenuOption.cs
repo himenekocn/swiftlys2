@@ -44,11 +44,12 @@ internal class TextMenuOption : IOption
         return true;
     }
 
-    public string GetDisplayText(IPlayer player)
+    public string GetDisplayText(IPlayer player, bool updateHorizontalStyle)
     {
         var text = DynamicText?.Invoke() ?? Text;
 
-        text = (Menu as Menus.Menu)?.ApplyHorizontalStyle(text, OverflowStyle) ?? text;
+
+        text = (Menu as Menus.Menu)?.ApplyHorizontalStyle(text, OverflowStyle, updateHorizontalStyle) ?? text;
 
         var sizeClass = MenuSizeHelper.GetSizeClass(Size);
 

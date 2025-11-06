@@ -132,10 +132,18 @@ internal static class CRecipientFilterVtable
     }
 
     [UnmanagedCallersOnly]
-    public unsafe static int GetPredictedSlot( CRecipientFilter* filter )
+    public unsafe static int* GetPredictedSlotWindows( CRecipientFilter* filter, int* pPlayerSlot )
+    {
+        *pPlayerSlot = filter->PredictedSlot;
+        return pPlayerSlot;
+    }
+
+    [UnmanagedCallersOnly]
+    public unsafe static int GetPredictedSlotLinux( CRecipientFilter* filter )
     {
         return filter->PredictedSlot;
     }
+
 
     static unsafe CRecipientFilterVtable()
     {
@@ -145,6 +153,13 @@ internal static class CRecipientFilterVtable
         vtable[1] = (nint)(delegate* unmanaged< CRecipientFilter*, NetChannelBufType_t >)(&GetNetworkBufType);
         vtable[2] = (nint)(delegate* unmanaged< CRecipientFilter*, bool >)(&IsInitMessage);
         vtable[3] = (nint)(delegate* unmanaged< CRecipientFilter*, ulong* >)(&GetRecipients);
-        vtable[4] = (nint)(delegate* unmanaged< CRecipientFilter*, int >)(&GetPredictedSlot);
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            vtable[4] = (nint)(delegate* unmanaged< CRecipientFilter*, int*, int* >)(&GetPredictedSlotWindows);
+        }
+        else
+        {
+            vtable[4] = (nint)(delegate* unmanaged< CRecipientFilter*, int >)(&GetPredictedSlotLinux);
+        }
     }
 }

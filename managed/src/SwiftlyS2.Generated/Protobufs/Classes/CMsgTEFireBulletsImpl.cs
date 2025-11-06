@@ -73,4 +73,8 @@ internal class CMsgTEFireBulletsImpl : NetMessage<CMsgTEFireBullets>, CMsgTEFire
   public uint AttackType
   { get => Accessor.GetUInt32("attack_type"); set => Accessor.SetUInt32("attack_type", value); }
 
+
+  public CMsgTEFireBullets_Extra Extra
+  { get => new CMsgTEFireBullets_ExtraImpl(NativeNetMessages.GetNestedMessage(Address, "extra"), false); }
+
 }

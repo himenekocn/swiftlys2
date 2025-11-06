@@ -50,13 +50,13 @@ internal class ToggleMenuOption : IOption
         return EnabledCheck?.Invoke(player) ?? true;
     }
 
-    public string GetDisplayText(IPlayer player)
+    public string GetDisplayText(IPlayer player, bool updateHorizontalStyle = false)
     {
         var sizeClass = MenuSizeHelper.GetSizeClass(Size);
 
         var status = Value ? "<font color='#008000'>✔</font>" : "<font color='#FF0000'>✘</font>";
 
-        var text = (Menu as Menus.Menu)?.ApplyHorizontalStyle(Text, OverflowStyle) ?? Text;
+        var text = (Menu as Menus.Menu)?.ApplyHorizontalStyle(Text, OverflowStyle, updateHorizontalStyle) ?? Text;
         if (!CanInteract(player))
         {
             return $"<font class='{sizeClass}' color='grey'>{text}: {status}/</font>";

@@ -56,7 +56,7 @@ internal class DynamicMenuOption : IOption
         return _onClick != null && (_enabledCheck?.Invoke(player) ?? true);
     }
 
-    public string GetDisplayText(IPlayer player)
+    public string GetDisplayText(IPlayer player, bool updateHorizontalStyle = false)
     {
         var sizeClass = MenuSizeHelper.GetSizeClass(_size);
 
@@ -69,7 +69,7 @@ internal class DynamicMenuOption : IOption
 
             if (oldText != _cachedText && Menu != null)
             {
-                Menu.Rerender(player, true);
+                Menu.Rerender(player, false);
             }
         }
 

@@ -57,7 +57,7 @@ internal class SliderMenuButton : IOption
         return EnabledCheck?.Invoke(player) ?? true;
     }
 
-    public string GetDisplayText(IPlayer player)
+    public string GetDisplayText(IPlayer player, bool updateHorizontalStyle = false)
     {
         var sizeClass = MenuSizeHelper.GetSizeClass(Size);
 
@@ -75,7 +75,7 @@ internal class SliderMenuButton : IOption
         }
         slider += $"<font color='#ff3333'>)</font> {Value:F1}";
 
-        var text = (Menu as Menus.Menu)?.ApplyHorizontalStyle(Text, OverflowStyle) ?? Text;
+        var text = (Menu as Menus.Menu)?.ApplyHorizontalStyle(Text, OverflowStyle, updateHorizontalStyle) ?? Text;
         if (!CanInteract(player))
         {
             return $"<font class='{sizeClass}' color='grey'>{text}: {slider}</font>";
