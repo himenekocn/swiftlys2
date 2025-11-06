@@ -567,10 +567,14 @@ def parse_interface(f, interface):
     else:
         bGameServerVersion = False
 
+    # Check if this is a client interface (not GameServer)
+    isClientInterface = not ('GameServer' in interface.name)
+
     print(" - " + interface.name)
-    g_Output.append('\tpublic static class ' + interface.name[1:] + ' {')
 
-
+    # Only create wrapper class for GameServer interfaces
+    if not isClientInterface:
+        g_Output.append('\tpublic static class ' + interface.name[1:] + ' {')
 
     if not bGameServerVersion:
         g_NativeMethods.append("#region " + interface.name[1:])
@@ -582,50 +586,58 @@ def parse_interface(f, interface):
                 if not bGameServerVersion:
                     g_NativeMethods[-1] = "#endif"
 
-                g_Output[-1] = "#endif"
+                if not isClientInterface:
+                    g_Output[-1] = "#endif"
                 lastIfStatement = None
 
                 if func.ifstatements:
                     g_NativeMethods.append("#if " + func.ifstatements.replace("defined(", "").replace(")", ""))
-                    g_Output.append("#if " + func.ifstatements.replace("defined(", "").replace(")", ""))
+                    if not isClientInterface:
+                        g_Output.append("#if " + func.ifstatements.replace("defined(", "").replace(")", ""))
                     lastIfStatement = func.ifstatements
             elif func.ifstatements:
                 if not bGameServerVersion:
                     g_NativeMethods[-1] = "#if " + func.ifstatements.replace("defined(", "").replace(")", "")
                     g_NativeMethods[-1] = "#if " + func.ifstatements.replace("defined(", "").replace(")", "")
 
-                g_Output[-1] = "#if " + func.ifstatements.replace("defined(", "").replace(")", "")
+                if not isClientInterface:
+                    g_Output[-1] = "#if " + func.ifstatements.replace("defined(", "").replace(")", "")
                 lastIfStatement = func.ifstatements
 
         if func.private:
             continue
 
-        parse_func(f, interface, func)
+        parse_func(f, interface, func, isClientInterface)
 
     # Remove last whitespace
     if not bGameServerVersion:
         del g_NativeMethods[-1]
 
-    del g_Output[-1]
+    if not isClientInterface:
+        del g_Output[-1]
 
     if lastIfStatement is not None:
         if not bGameServerVersion:
             g_NativeMethods.append("#endif")
 
-        g_Output.append("#endif")
+        if not isClientInterface:
+            g_Output.append("#endif")
 
     if not bGameServerVersion:
         g_NativeMethods.append("#endregion")
 
-    g_Output.append("\t}")
+    # Only close wrapper class for GameServer interfaces
+    if not isClientInterface:
+        g_Output.append("\t}")
 
-def parse_func(f, interface, func):
+def parse_func(f, interface, func, isClientInterface=False):
     strEntryPoint = interface.name + '_' + func.name
 
     if "GameServer" in interface.name and interface.name != "ISteamGameServer" and interface.name != "ISteamGameServerStats":
         bGameServerVersion = True
     else:
         bGameServerVersion = False
+
     for attr in func.attributes:
         if attr.name == "STEAM_FLAT_NAME":
             strEntryPoint = interface.name + '_' + attr.value
@@ -658,6 +670,7 @@ def parse_func(f, interface, func):
     outstringsize = args[4][1]
     args_with_explicit_count = args[5]
 
+    # Always generate DllImport for all interfaces (client and server)
     if not bGameServerVersion:
         g_NativeMethods.append("\t\t[DllImport(NativeLibraryName, EntryPoint = \"SteamAPI_{0}\", CallingConvention = CallingConvention.Cdecl)]".format(strEntryPoint))
 
@@ -666,6 +679,10 @@ def parse_func(f, interface, func):
 
         g_NativeMethods.append("\t\tpublic static extern {0} {1}({2});".format(returntype, strEntryPoint, pinvokeargs))
         g_NativeMethods.append("")
+
+    # Only generate wrapper methods for GameServer interfaces (skip client interfaces)
+    if isClientInterface:
+        return
 
     functionBody = []
 

@@ -1,8 +1,10 @@
 using System.Runtime.InteropServices;
 using IntPtr = System.IntPtr;
 
-namespace SwiftlyS2.Shared.SteamAPI {
-	public static class Constants {
+namespace SwiftlyS2.Shared.SteamAPI
+{
+	public static class Constants
+	{
 		public const string STEAMAPPS_INTERFACE_VERSION = "STEAMAPPS_INTERFACE_VERSION008";
 		public const string STEAMAPPTICKET_INTERFACE_VERSION = "STEAMAPPTICKET_INTERFACE_VERSION001";
 		public const string STEAMCLIENT_INTERFACE_VERSION = "SteamClient021";
@@ -37,7 +39,7 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		public const string STEAMUTILS_INTERFACE_VERSION = "SteamUtils010";
 		public const string STEAMVIDEO_INTERFACE_VERSION = "STEAMVIDEO_INTERFACE_V007";
 		public const int k_cubAppProofOfPurchaseKeyMax = 240; // max supported length of a legacy cd key
-		// maximum length of friend group name (not including terminating nul!)
+															  // maximum length of friend group name (not including terminating nul!)
 		public const int k_cchMaxFriendsGroupName = 64;
 		// maximum number of groups a single user is allowed
 		public const int k_cFriendsGroupLimit = 100;
@@ -45,9 +47,9 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		// special values for FriendGameInfo_t::m_usQueryPort
 		public const ushort k_usFriendGameInfoQueryPort_NotInitialized = 0xFFFF; // We haven't asked the GS for this query port's actual value yet.  Was #define QUERY_PORT_NOT_INITIALIZED in older versions of Steamworks SDK.
 		public const ushort k_usFriendGameInfoQueryPort_Error = 0xFFFE; // We were unable to get the query port for this server.  Was #define QUERY_PORT_ERROR in older versions of Steamworks SDK.
-		// maximum number of characters in a user's name. Two flavors; one for UTF-8 and one for UTF-16.
-		// The UTF-8 version has to be very generous to accomodate characters that get large when encoded
-		// in UTF-8.
+																		// maximum number of characters in a user's name. Two flavors; one for UTF-8 and one for UTF-16.
+																		// The UTF-8 version has to be very generous to accomodate characters that get large when encoded
+																		// in UTF-8.
 		public const int k_cchPersonaNameMax = 128;
 		public const int k_cwchPersonaNameMax = 32;
 		// size limit on chat room or member metadata
@@ -60,10 +62,10 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		public const int k_unFavoriteFlagNone = 0x00;
 		public const int k_unFavoriteFlagFavorite = 0x01; // this game favorite entry is for the favorites list
 		public const int k_unFavoriteFlagHistory = 0x02; // this game favorite entry is for the history list
-		//-----------------------------------------------------------------------------
-		// Purpose: Defines the largest allowed file size. Cloud files cannot be written
-		// in a single chunk over 100MB (and cannot be over 200MB total.)
-		//-----------------------------------------------------------------------------
+														 //-----------------------------------------------------------------------------
+														 // Purpose: Defines the largest allowed file size. Cloud files cannot be written
+														 // in a single chunk over 100MB (and cannot be over 200MB total.)
+														 //-----------------------------------------------------------------------------
 		public const int k_unMaxCloudFileChunkSize = 100 * 1024 * 1024;
 		public const int k_cchPublishedDocumentTitleMax = 128 + 1;
 		public const int k_cchPublishedDocumentDescriptionMax = 8000;
@@ -81,7 +83,7 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		public const int k_ScreenshotThumbWidth = 200;
 		public const int k_unMaxTimelinePriority = 1000;
 		public const int k_unTimelinePriority_KeepCurrentValue = 1000000; // Use with UpdateRangeTimelineEvent to not change the priority
-		public const float k_flMaxTimelineEventDuration = 600.0f;
+		public const float k_flMaxTimelineEventDuration = 600;
 		public const int k_cchMaxPhaseIDLength = 64;
 		public const int kNumUGCResultsPerPage = 50;
 		public const int k_cchDeveloperMetadataMax = 5000;
@@ -182,9 +184,9 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		public const int k_nSteamNetworkConnectionInfoFlags_Fast = 8; // The connection is "fast" and "reliable".  Either internal/localhost (check the address to find out), or the peer is on the same LAN.  (Probably.  It's based on the address and the ping time, this is actually hard to determine unambiguously).
 		public const int k_nSteamNetworkConnectionInfoFlags_Relayed = 16; // The connection is relayed somehow (SDR or TURN).
 		public const int k_nSteamNetworkConnectionInfoFlags_DualWifi = 32; // We're taking advantage of dual-wifi multi-path
-		//
-		// Network messages
-		//
+																		   //
+																		   // Network messages
+																		   //
 		/// Max size of a single message that we can SEND.
 		/// Note: We might be wiling to receive larger messages,
 		/// and our peer might, too.
@@ -225,7 +227,7 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		// and then immediately flushing the messages using ISteamNetworkingSockets::FlushMessagesOnConnection
 		// or ISteamNetworkingMessages::FlushMessagesToUser.  (But using this flag is more efficient since you
 		// only make one API call.)
-		public const int k_nSteamNetworkingSend_UnreliableNoNagle = k_nSteamNetworkingSend_Unreliable|k_nSteamNetworkingSend_NoNagle;
+		public const int k_nSteamNetworkingSend_UnreliableNoNagle = k_nSteamNetworkingSend_Unreliable | k_nSteamNetworkingSend_NoNagle;
 		// If the message cannot be sent very soon (because the connection is still doing some initial
 		// handshaking, route negotiations, etc), then just drop it.  This is only applicable for unreliable
 		// messages.  Using this flag on reliable messages is invalid.
@@ -241,7 +243,7 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		//   will not be placed on the wire in the next ~200ms or so.
 		//
 		// If a message is dropped for these reasons, k_EResultIgnored will be returned.
-		public const int k_nSteamNetworkingSend_UnreliableNoDelay = k_nSteamNetworkingSend_Unreliable|k_nSteamNetworkingSend_NoDelay|k_nSteamNetworkingSend_NoNagle;
+		public const int k_nSteamNetworkingSend_UnreliableNoDelay = k_nSteamNetworkingSend_Unreliable | k_nSteamNetworkingSend_NoDelay | k_nSteamNetworkingSend_NoNagle;
 		// Reliable message send. Can send up to k_cbMaxSteamNetworkingSocketsMessageSizeSend bytes in a single message.
 		// Does fragmentation/re-assembly of messages under the hood, as well as a sliding window for
 		// efficient sends of large chunks of data.
@@ -255,7 +257,7 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		// Send a message reliably, but bypass Nagle's algorithm.
 		//
 		// Migration note: This is equivalent to k_EP2PSendReliable
-		public const int k_nSteamNetworkingSend_ReliableNoNagle = k_nSteamNetworkingSend_Reliable|k_nSteamNetworkingSend_NoNagle;
+		public const int k_nSteamNetworkingSend_ReliableNoNagle = k_nSteamNetworkingSend_Reliable | k_nSteamNetworkingSend_NoNagle;
 		// By default, message sending is queued, and the work of encryption and talking to
 		// the operating system sockets, etc is done on a service thread.  This is usually a
 		// a performance win when messages are sent from the "main thread".  However, if this
@@ -308,7 +310,7 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		public const int k_nSteamNetworkingConfig_P2P_Transport_ICE_Enable_All = 0x7fffffff;
 		public const int k_uAccountIdInvalid = 0;
 		public const ulong k_ulPartyBeaconIdInvalid = 0;
-		public const int INVALID_HTTPREQUEST_HANDLE		= 0;
+		public const int INVALID_HTTPREQUEST_HANDLE = 0;
 		public const int STEAM_INPUT_MAX_COUNT = 16;
 		public const int STEAM_INPUT_MAX_ANALOG_ACTIONS = 24;
 		public const int STEAM_INPUT_MAX_DIGITAL_ACTIONS = 256;

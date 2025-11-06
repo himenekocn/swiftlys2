@@ -1,12 +1,15 @@
 using System.Runtime.InteropServices;
 using IntPtr = System.IntPtr;
 
-namespace SwiftlyS2.Shared.SteamAPI {
-	public static class SteamGameServerUGC {
+namespace SwiftlyS2.Shared.SteamAPI
+{
+	public static class SteamGameServerUGC
+	{
 		/// <summary>
 		/// <para> Query UGC associated with a user. Creator app id or consumer app id must be valid and be set to the current running app. unPage should start at 1.</para>
 		/// </summary>
-		public static UGCQueryHandle_t CreateQueryUserUGCRequest(AccountID_t unAccountID, EUserUGCList eListType, EUGCMatchingUGCType eMatchingUGCType, EUserUGCListSortOrder eSortOrder, AppId_t nCreatorAppID, AppId_t nConsumerAppID, uint unPage) {
+		public static UGCQueryHandle_t CreateQueryUserUGCRequest( AccountID_t unAccountID, EUserUGCList eListType, EUGCMatchingUGCType eMatchingUGCType, EUserUGCListSortOrder eSortOrder, AppId_t nCreatorAppID, AppId_t nConsumerAppID, uint unPage )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return (UGCQueryHandle_t)NativeMethods.ISteamUGC_CreateQueryUserUGCRequest(CSteamGameServerAPIContext.GetSteamUGC(), unAccountID, eListType, eMatchingUGCType, eSortOrder, nCreatorAppID, nConsumerAppID, unPage);
 		}
@@ -14,7 +17,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> Query for all matching UGC. Creator app id or consumer app id must be valid and be set to the current running app. unPage should start at 1.</para>
 		/// </summary>
-		public static UGCQueryHandle_t CreateQueryAllUGCRequest(EUGCQuery eQueryType, EUGCMatchingUGCType eMatchingeMatchingUGCTypeFileType, AppId_t nCreatorAppID, AppId_t nConsumerAppID, uint unPage) {
+		public static UGCQueryHandle_t CreateQueryAllUGCRequest( EUGCQuery eQueryType, EUGCMatchingUGCType eMatchingeMatchingUGCTypeFileType, AppId_t nCreatorAppID, AppId_t nConsumerAppID, uint unPage )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return (UGCQueryHandle_t)NativeMethods.ISteamUGC_CreateQueryAllUGCRequestPage(CSteamGameServerAPIContext.GetSteamUGC(), eQueryType, eMatchingeMatchingUGCTypeFileType, nCreatorAppID, nConsumerAppID, unPage);
 		}
@@ -22,9 +26,11 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> Query for all matching UGC using the new deep paging interface. Creator app id or consumer app id must be valid and be set to the current running app. pchCursor should be set to NULL or "*" to get the first result set.</para>
 		/// </summary>
-		public static UGCQueryHandle_t CreateQueryAllUGCRequest(EUGCQuery eQueryType, EUGCMatchingUGCType eMatchingeMatchingUGCTypeFileType, AppId_t nCreatorAppID, AppId_t nConsumerAppID, string pchCursor = null) {
+		public static UGCQueryHandle_t CreateQueryAllUGCRequest( EUGCQuery eQueryType, EUGCMatchingUGCType eMatchingeMatchingUGCTypeFileType, AppId_t nCreatorAppID, AppId_t nConsumerAppID, string pchCursor = null )
+		{
 			InteropHelp.TestIfAvailableGameServer();
-			using (var pchCursor2 = new InteropHelp.UTF8StringHandle(pchCursor)) {
+			using (var pchCursor2 = new InteropHelp.UTF8StringHandle(pchCursor))
+			{
 				return (UGCQueryHandle_t)NativeMethods.ISteamUGC_CreateQueryAllUGCRequestCursor(CSteamGameServerAPIContext.GetSteamUGC(), eQueryType, eMatchingeMatchingUGCTypeFileType, nCreatorAppID, nConsumerAppID, pchCursor2);
 			}
 		}
@@ -32,7 +38,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> Query for the details of the given published file ids (the RequestUGCDetails call is deprecated and replaced with this)</para>
 		/// </summary>
-		public static UGCQueryHandle_t CreateQueryUGCDetailsRequest(PublishedFileId_t[] pvecPublishedFileID, uint unNumPublishedFileIDs) {
+		public static UGCQueryHandle_t CreateQueryUGCDetailsRequest( PublishedFileId_t[] pvecPublishedFileID, uint unNumPublishedFileIDs )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return (UGCQueryHandle_t)NativeMethods.ISteamUGC_CreateQueryUGCDetailsRequest(CSteamGameServerAPIContext.GetSteamUGC(), pvecPublishedFileID, unNumPublishedFileIDs);
 		}
@@ -40,7 +47,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> Send the query to Steam</para>
 		/// </summary>
-		public static SteamAPICall_t SendQueryUGCRequest(UGCQueryHandle_t handle) {
+		public static SteamAPICall_t SendQueryUGCRequest( UGCQueryHandle_t handle )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return (SteamAPICall_t)NativeMethods.ISteamUGC_SendQueryUGCRequest(CSteamGameServerAPIContext.GetSteamUGC(), handle);
 		}
@@ -48,17 +56,20 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> Retrieve an individual result after receiving the callback for querying UGC</para>
 		/// </summary>
-		public static bool GetQueryUGCResult(UGCQueryHandle_t handle, uint index, out SteamUGCDetails_t pDetails) {
+		public static bool GetQueryUGCResult( UGCQueryHandle_t handle, uint index, out SteamUGCDetails_t pDetails )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_GetQueryUGCResult(CSteamGameServerAPIContext.GetSteamUGC(), handle, index, out pDetails);
 		}
 
-		public static uint GetQueryUGCNumTags(UGCQueryHandle_t handle, uint index) {
+		public static uint GetQueryUGCNumTags( UGCQueryHandle_t handle, uint index )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_GetQueryUGCNumTags(CSteamGameServerAPIContext.GetSteamUGC(), handle, index);
 		}
 
-		public static bool GetQueryUGCTag(UGCQueryHandle_t handle, uint index, uint indexTag, out string pchValue, uint cchValueSize) {
+		public static bool GetQueryUGCTag( UGCQueryHandle_t handle, uint index, uint indexTag, out string pchValue, uint cchValueSize )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			IntPtr pchValue2 = Marshal.AllocHGlobal((int)cchValueSize);
 			bool ret = NativeMethods.ISteamUGC_GetQueryUGCTag(CSteamGameServerAPIContext.GetSteamUGC(), handle, index, indexTag, pchValue2, cchValueSize);
@@ -67,7 +78,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 			return ret;
 		}
 
-		public static bool GetQueryUGCTagDisplayName(UGCQueryHandle_t handle, uint index, uint indexTag, out string pchValue, uint cchValueSize) {
+		public static bool GetQueryUGCTagDisplayName( UGCQueryHandle_t handle, uint index, uint indexTag, out string pchValue, uint cchValueSize )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			IntPtr pchValue2 = Marshal.AllocHGlobal((int)cchValueSize);
 			bool ret = NativeMethods.ISteamUGC_GetQueryUGCTagDisplayName(CSteamGameServerAPIContext.GetSteamUGC(), handle, index, indexTag, pchValue2, cchValueSize);
@@ -76,7 +88,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 			return ret;
 		}
 
-		public static bool GetQueryUGCPreviewURL(UGCQueryHandle_t handle, uint index, out string pchURL, uint cchURLSize) {
+		public static bool GetQueryUGCPreviewURL( UGCQueryHandle_t handle, uint index, out string pchURL, uint cchURLSize )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			IntPtr pchURL2 = Marshal.AllocHGlobal((int)cchURLSize);
 			bool ret = NativeMethods.ISteamUGC_GetQueryUGCPreviewURL(CSteamGameServerAPIContext.GetSteamUGC(), handle, index, pchURL2, cchURLSize);
@@ -85,7 +98,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 			return ret;
 		}
 
-		public static bool GetQueryUGCMetadata(UGCQueryHandle_t handle, uint index, out string pchMetadata, uint cchMetadatasize) {
+		public static bool GetQueryUGCMetadata( UGCQueryHandle_t handle, uint index, out string pchMetadata, uint cchMetadatasize )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			IntPtr pchMetadata2 = Marshal.AllocHGlobal((int)cchMetadatasize);
 			bool ret = NativeMethods.ISteamUGC_GetQueryUGCMetadata(CSteamGameServerAPIContext.GetSteamUGC(), handle, index, pchMetadata2, cchMetadatasize);
@@ -94,22 +108,26 @@ namespace SwiftlyS2.Shared.SteamAPI {
 			return ret;
 		}
 
-		public static bool GetQueryUGCChildren(UGCQueryHandle_t handle, uint index, PublishedFileId_t[] pvecPublishedFileID, uint cMaxEntries) {
+		public static bool GetQueryUGCChildren( UGCQueryHandle_t handle, uint index, PublishedFileId_t[] pvecPublishedFileID, uint cMaxEntries )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_GetQueryUGCChildren(CSteamGameServerAPIContext.GetSteamUGC(), handle, index, pvecPublishedFileID, cMaxEntries);
 		}
 
-		public static bool GetQueryUGCStatistic(UGCQueryHandle_t handle, uint index, EItemStatistic eStatType, out ulong pStatValue) {
+		public static bool GetQueryUGCStatistic( UGCQueryHandle_t handle, uint index, EItemStatistic eStatType, out ulong pStatValue )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_GetQueryUGCStatistic(CSteamGameServerAPIContext.GetSteamUGC(), handle, index, eStatType, out pStatValue);
 		}
 
-		public static uint GetQueryUGCNumAdditionalPreviews(UGCQueryHandle_t handle, uint index) {
+		public static uint GetQueryUGCNumAdditionalPreviews( UGCQueryHandle_t handle, uint index )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_GetQueryUGCNumAdditionalPreviews(CSteamGameServerAPIContext.GetSteamUGC(), handle, index);
 		}
 
-		public static bool GetQueryUGCAdditionalPreview(UGCQueryHandle_t handle, uint index, uint previewIndex, out string pchURLOrVideoID, uint cchURLSize, out string pchOriginalFileName, uint cchOriginalFileNameSize, out EItemPreviewType pPreviewType) {
+		public static bool GetQueryUGCAdditionalPreview( UGCQueryHandle_t handle, uint index, uint previewIndex, out string pchURLOrVideoID, uint cchURLSize, out string pchOriginalFileName, uint cchOriginalFileNameSize, out EItemPreviewType pPreviewType )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			IntPtr pchURLOrVideoID2 = Marshal.AllocHGlobal((int)cchURLSize);
 			IntPtr pchOriginalFileName2 = Marshal.AllocHGlobal((int)cchOriginalFileNameSize);
@@ -121,12 +139,14 @@ namespace SwiftlyS2.Shared.SteamAPI {
 			return ret;
 		}
 
-		public static uint GetQueryUGCNumKeyValueTags(UGCQueryHandle_t handle, uint index) {
+		public static uint GetQueryUGCNumKeyValueTags( UGCQueryHandle_t handle, uint index )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_GetQueryUGCNumKeyValueTags(CSteamGameServerAPIContext.GetSteamUGC(), handle, index);
 		}
 
-		public static bool GetQueryUGCKeyValueTag(UGCQueryHandle_t handle, uint index, uint keyValueTagIndex, out string pchKey, uint cchKeySize, out string pchValue, uint cchValueSize) {
+		public static bool GetQueryUGCKeyValueTag( UGCQueryHandle_t handle, uint index, uint keyValueTagIndex, out string pchKey, uint cchKeySize, out string pchValue, uint cchValueSize )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			IntPtr pchKey2 = Marshal.AllocHGlobal((int)cchKeySize);
 			IntPtr pchValue2 = Marshal.AllocHGlobal((int)cchValueSize);
@@ -141,10 +161,12 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> Return the first value matching the pchKey. Note that a key may map to multiple values.  Returns false if there was an error or no matching value was found.</para>
 		/// </summary>
-		public static bool GetQueryUGCKeyValueTag(UGCQueryHandle_t handle, uint index, string pchKey, out string pchValue, uint cchValueSize) {
+		public static bool GetQueryUGCKeyValueTag( UGCQueryHandle_t handle, uint index, string pchKey, out string pchValue, uint cchValueSize )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			IntPtr pchValue2 = Marshal.AllocHGlobal((int)cchValueSize);
-			using (var pchKey2 = new InteropHelp.UTF8StringHandle(pchKey)) {
+			using (var pchKey2 = new InteropHelp.UTF8StringHandle(pchKey))
+			{
 				bool ret = NativeMethods.ISteamUGC_GetQueryFirstUGCKeyValueTag(CSteamGameServerAPIContext.GetSteamUGC(), handle, index, pchKey2, pchValue2, cchValueSize);
 				pchValue = ret ? InteropHelp.PtrToStringUTF8(pchValue2) : null;
 				Marshal.FreeHGlobal(pchValue2);
@@ -155,12 +177,14 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> Some items can specify that they have a version that is valid for a range of game versions (Steam branch)</para>
 		/// </summary>
-		public static uint GetNumSupportedGameVersions(UGCQueryHandle_t handle, uint index) {
+		public static uint GetNumSupportedGameVersions( UGCQueryHandle_t handle, uint index )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_GetNumSupportedGameVersions(CSteamGameServerAPIContext.GetSteamUGC(), handle, index);
 		}
 
-		public static bool GetSupportedGameVersionData(UGCQueryHandle_t handle, uint index, uint versionIndex, out string pchGameBranchMin, out string pchGameBranchMax, uint cchGameBranchSize) {
+		public static bool GetSupportedGameVersionData( UGCQueryHandle_t handle, uint index, uint versionIndex, out string pchGameBranchMin, out string pchGameBranchMax, uint cchGameBranchSize )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			IntPtr pchGameBranchMin2 = Marshal.AllocHGlobal((int)cchGameBranchSize);
 			IntPtr pchGameBranchMax2 = Marshal.AllocHGlobal((int)cchGameBranchSize);
@@ -172,7 +196,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 			return ret;
 		}
 
-		public static uint GetQueryUGCContentDescriptors(UGCQueryHandle_t handle, uint index, out EUGCContentDescriptorID pvecDescriptors, uint cMaxEntries) {
+		public static uint GetQueryUGCContentDescriptors( UGCQueryHandle_t handle, uint index, out EUGCContentDescriptorID pvecDescriptors, uint cMaxEntries )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_GetQueryUGCContentDescriptors(CSteamGameServerAPIContext.GetSteamUGC(), handle, index, out pvecDescriptors, cMaxEntries);
 		}
@@ -180,7 +205,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> Release the request to free up memory, after retrieving results</para>
 		/// </summary>
-		public static bool ReleaseQueryUGCRequest(UGCQueryHandle_t handle) {
+		public static bool ReleaseQueryUGCRequest( UGCQueryHandle_t handle )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_ReleaseQueryUGCRequest(CSteamGameServerAPIContext.GetSteamUGC(), handle);
 		}
@@ -188,9 +214,11 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> Options to set for querying UGC</para>
 		/// </summary>
-		public static bool AddRequiredTag(UGCQueryHandle_t handle, string pTagName) {
+		public static bool AddRequiredTag( UGCQueryHandle_t handle, string pTagName )
+		{
 			InteropHelp.TestIfAvailableGameServer();
-			using (var pTagName2 = new InteropHelp.UTF8StringHandle(pTagName)) {
+			using (var pTagName2 = new InteropHelp.UTF8StringHandle(pTagName))
+			{
 				return NativeMethods.ISteamUGC_AddRequiredTag(CSteamGameServerAPIContext.GetSteamUGC(), handle, pTagName2);
 			}
 		}
@@ -198,66 +226,80 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> match any of the tags in this group</para>
 		/// </summary>
-		public static bool AddRequiredTagGroup(UGCQueryHandle_t handle, System.Collections.Generic.IList<string> pTagGroups) {
+		public static bool AddRequiredTagGroup( UGCQueryHandle_t handle, System.Collections.Generic.IList<string> pTagGroups )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_AddRequiredTagGroup(CSteamGameServerAPIContext.GetSteamUGC(), handle, new InteropHelp.SteamParamStringArray(pTagGroups));
 		}
 
-		public static bool AddExcludedTag(UGCQueryHandle_t handle, string pTagName) {
+		public static bool AddExcludedTag( UGCQueryHandle_t handle, string pTagName )
+		{
 			InteropHelp.TestIfAvailableGameServer();
-			using (var pTagName2 = new InteropHelp.UTF8StringHandle(pTagName)) {
+			using (var pTagName2 = new InteropHelp.UTF8StringHandle(pTagName))
+			{
 				return NativeMethods.ISteamUGC_AddExcludedTag(CSteamGameServerAPIContext.GetSteamUGC(), handle, pTagName2);
 			}
 		}
 
-		public static bool SetReturnOnlyIDs(UGCQueryHandle_t handle, bool bReturnOnlyIDs) {
+		public static bool SetReturnOnlyIDs( UGCQueryHandle_t handle, bool bReturnOnlyIDs )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_SetReturnOnlyIDs(CSteamGameServerAPIContext.GetSteamUGC(), handle, bReturnOnlyIDs);
 		}
 
-		public static bool SetReturnKeyValueTags(UGCQueryHandle_t handle, bool bReturnKeyValueTags) {
+		public static bool SetReturnKeyValueTags( UGCQueryHandle_t handle, bool bReturnKeyValueTags )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_SetReturnKeyValueTags(CSteamGameServerAPIContext.GetSteamUGC(), handle, bReturnKeyValueTags);
 		}
 
-		public static bool SetReturnLongDescription(UGCQueryHandle_t handle, bool bReturnLongDescription) {
+		public static bool SetReturnLongDescription( UGCQueryHandle_t handle, bool bReturnLongDescription )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_SetReturnLongDescription(CSteamGameServerAPIContext.GetSteamUGC(), handle, bReturnLongDescription);
 		}
 
-		public static bool SetReturnMetadata(UGCQueryHandle_t handle, bool bReturnMetadata) {
+		public static bool SetReturnMetadata( UGCQueryHandle_t handle, bool bReturnMetadata )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_SetReturnMetadata(CSteamGameServerAPIContext.GetSteamUGC(), handle, bReturnMetadata);
 		}
 
-		public static bool SetReturnChildren(UGCQueryHandle_t handle, bool bReturnChildren) {
+		public static bool SetReturnChildren( UGCQueryHandle_t handle, bool bReturnChildren )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_SetReturnChildren(CSteamGameServerAPIContext.GetSteamUGC(), handle, bReturnChildren);
 		}
 
-		public static bool SetReturnAdditionalPreviews(UGCQueryHandle_t handle, bool bReturnAdditionalPreviews) {
+		public static bool SetReturnAdditionalPreviews( UGCQueryHandle_t handle, bool bReturnAdditionalPreviews )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_SetReturnAdditionalPreviews(CSteamGameServerAPIContext.GetSteamUGC(), handle, bReturnAdditionalPreviews);
 		}
 
-		public static bool SetReturnTotalOnly(UGCQueryHandle_t handle, bool bReturnTotalOnly) {
+		public static bool SetReturnTotalOnly( UGCQueryHandle_t handle, bool bReturnTotalOnly )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_SetReturnTotalOnly(CSteamGameServerAPIContext.GetSteamUGC(), handle, bReturnTotalOnly);
 		}
 
-		public static bool SetReturnPlaytimeStats(UGCQueryHandle_t handle, uint unDays) {
+		public static bool SetReturnPlaytimeStats( UGCQueryHandle_t handle, uint unDays )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_SetReturnPlaytimeStats(CSteamGameServerAPIContext.GetSteamUGC(), handle, unDays);
 		}
 
-		public static bool SetLanguage(UGCQueryHandle_t handle, string pchLanguage) {
+		public static bool SetLanguage( UGCQueryHandle_t handle, string pchLanguage )
+		{
 			InteropHelp.TestIfAvailableGameServer();
-			using (var pchLanguage2 = new InteropHelp.UTF8StringHandle(pchLanguage)) {
+			using (var pchLanguage2 = new InteropHelp.UTF8StringHandle(pchLanguage))
+			{
 				return NativeMethods.ISteamUGC_SetLanguage(CSteamGameServerAPIContext.GetSteamUGC(), handle, pchLanguage2);
 			}
 		}
 
-		public static bool SetAllowCachedResponse(UGCQueryHandle_t handle, uint unMaxAgeSeconds) {
+		public static bool SetAllowCachedResponse( UGCQueryHandle_t handle, uint unMaxAgeSeconds )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_SetAllowCachedResponse(CSteamGameServerAPIContext.GetSteamUGC(), handle, unMaxAgeSeconds);
 		}
@@ -265,7 +307,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> admin queries return hidden items</para>
 		/// </summary>
-		public static bool SetAdminQuery(UGCUpdateHandle_t handle, bool bAdminQuery) {
+		public static bool SetAdminQuery( UGCUpdateHandle_t handle, bool bAdminQuery )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_SetAdminQuery(CSteamGameServerAPIContext.GetSteamUGC(), handle, bAdminQuery);
 		}
@@ -273,9 +316,11 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> Options only for querying user UGC</para>
 		/// </summary>
-		public static bool SetCloudFileNameFilter(UGCQueryHandle_t handle, string pMatchCloudFileName) {
+		public static bool SetCloudFileNameFilter( UGCQueryHandle_t handle, string pMatchCloudFileName )
+		{
 			InteropHelp.TestIfAvailableGameServer();
-			using (var pMatchCloudFileName2 = new InteropHelp.UTF8StringHandle(pMatchCloudFileName)) {
+			using (var pMatchCloudFileName2 = new InteropHelp.UTF8StringHandle(pMatchCloudFileName))
+			{
 				return NativeMethods.ISteamUGC_SetCloudFileNameFilter(CSteamGameServerAPIContext.GetSteamUGC(), handle, pMatchCloudFileName2);
 			}
 		}
@@ -283,37 +328,45 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> Options only for querying all UGC</para>
 		/// </summary>
-		public static bool SetMatchAnyTag(UGCQueryHandle_t handle, bool bMatchAnyTag) {
+		public static bool SetMatchAnyTag( UGCQueryHandle_t handle, bool bMatchAnyTag )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_SetMatchAnyTag(CSteamGameServerAPIContext.GetSteamUGC(), handle, bMatchAnyTag);
 		}
 
-		public static bool SetSearchText(UGCQueryHandle_t handle, string pSearchText) {
+		public static bool SetSearchText( UGCQueryHandle_t handle, string pSearchText )
+		{
 			InteropHelp.TestIfAvailableGameServer();
-			using (var pSearchText2 = new InteropHelp.UTF8StringHandle(pSearchText)) {
+			using (var pSearchText2 = new InteropHelp.UTF8StringHandle(pSearchText))
+			{
 				return NativeMethods.ISteamUGC_SetSearchText(CSteamGameServerAPIContext.GetSteamUGC(), handle, pSearchText2);
 			}
 		}
 
-		public static bool SetRankedByTrendDays(UGCQueryHandle_t handle, uint unDays) {
+		public static bool SetRankedByTrendDays( UGCQueryHandle_t handle, uint unDays )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_SetRankedByTrendDays(CSteamGameServerAPIContext.GetSteamUGC(), handle, unDays);
 		}
 
-		public static bool SetTimeCreatedDateRange(UGCQueryHandle_t handle, uint rtStart, uint rtEnd) {
+		public static bool SetTimeCreatedDateRange( UGCQueryHandle_t handle, uint rtStart, uint rtEnd )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_SetTimeCreatedDateRange(CSteamGameServerAPIContext.GetSteamUGC(), handle, rtStart, rtEnd);
 		}
 
-		public static bool SetTimeUpdatedDateRange(UGCQueryHandle_t handle, uint rtStart, uint rtEnd) {
+		public static bool SetTimeUpdatedDateRange( UGCQueryHandle_t handle, uint rtStart, uint rtEnd )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_SetTimeUpdatedDateRange(CSteamGameServerAPIContext.GetSteamUGC(), handle, rtStart, rtEnd);
 		}
 
-		public static bool AddRequiredKeyValueTag(UGCQueryHandle_t handle, string pKey, string pValue) {
+		public static bool AddRequiredKeyValueTag( UGCQueryHandle_t handle, string pKey, string pValue )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			using (var pKey2 = new InteropHelp.UTF8StringHandle(pKey))
-			using (var pValue2 = new InteropHelp.UTF8StringHandle(pValue)) {
+			using (var pValue2 = new InteropHelp.UTF8StringHandle(pValue))
+			{
 				return NativeMethods.ISteamUGC_AddRequiredKeyValueTag(CSteamGameServerAPIContext.GetSteamUGC(), handle, pKey2, pValue2);
 			}
 		}
@@ -321,7 +374,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> DEPRECATED - Use CreateQueryUGCDetailsRequest call above instead!</para>
 		/// </summary>
-		public static SteamAPICall_t RequestUGCDetails(PublishedFileId_t nPublishedFileID, uint unMaxAgeSeconds) {
+		public static SteamAPICall_t RequestUGCDetails( PublishedFileId_t nPublishedFileID, uint unMaxAgeSeconds )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return (SteamAPICall_t)NativeMethods.ISteamUGC_RequestUGCDetails(CSteamGameServerAPIContext.GetSteamUGC(), nPublishedFileID, unMaxAgeSeconds);
 		}
@@ -330,7 +384,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <para> Steam Workshop Creator API</para>
 		/// <para> create new item for this app with no content attached yet</para>
 		/// </summary>
-		public static SteamAPICall_t CreateItem(AppId_t nConsumerAppId, EWorkshopFileType eFileType) {
+		public static SteamAPICall_t CreateItem( AppId_t nConsumerAppId, EWorkshopFileType eFileType )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return (SteamAPICall_t)NativeMethods.ISteamUGC_CreateItem(CSteamGameServerAPIContext.GetSteamUGC(), nConsumerAppId, eFileType);
 		}
@@ -338,7 +393,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> start an UGC item update. Set changed properties before commiting update with CommitItemUpdate()</para>
 		/// </summary>
-		public static UGCUpdateHandle_t StartItemUpdate(AppId_t nConsumerAppId, PublishedFileId_t nPublishedFileID) {
+		public static UGCUpdateHandle_t StartItemUpdate( AppId_t nConsumerAppId, PublishedFileId_t nPublishedFileID )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return (UGCUpdateHandle_t)NativeMethods.ISteamUGC_StartItemUpdate(CSteamGameServerAPIContext.GetSteamUGC(), nConsumerAppId, nPublishedFileID);
 		}
@@ -346,9 +402,11 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> change the title of an UGC item</para>
 		/// </summary>
-		public static bool SetItemTitle(UGCUpdateHandle_t handle, string pchTitle) {
+		public static bool SetItemTitle( UGCUpdateHandle_t handle, string pchTitle )
+		{
 			InteropHelp.TestIfAvailableGameServer();
-			using (var pchTitle2 = new InteropHelp.UTF8StringHandle(pchTitle)) {
+			using (var pchTitle2 = new InteropHelp.UTF8StringHandle(pchTitle))
+			{
 				return NativeMethods.ISteamUGC_SetItemTitle(CSteamGameServerAPIContext.GetSteamUGC(), handle, pchTitle2);
 			}
 		}
@@ -356,9 +414,11 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> change the description of an UGC item</para>
 		/// </summary>
-		public static bool SetItemDescription(UGCUpdateHandle_t handle, string pchDescription) {
+		public static bool SetItemDescription( UGCUpdateHandle_t handle, string pchDescription )
+		{
 			InteropHelp.TestIfAvailableGameServer();
-			using (var pchDescription2 = new InteropHelp.UTF8StringHandle(pchDescription)) {
+			using (var pchDescription2 = new InteropHelp.UTF8StringHandle(pchDescription))
+			{
 				return NativeMethods.ISteamUGC_SetItemDescription(CSteamGameServerAPIContext.GetSteamUGC(), handle, pchDescription2);
 			}
 		}
@@ -366,9 +426,11 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> specify the language of the title or description that will be set</para>
 		/// </summary>
-		public static bool SetItemUpdateLanguage(UGCUpdateHandle_t handle, string pchLanguage) {
+		public static bool SetItemUpdateLanguage( UGCUpdateHandle_t handle, string pchLanguage )
+		{
 			InteropHelp.TestIfAvailableGameServer();
-			using (var pchLanguage2 = new InteropHelp.UTF8StringHandle(pchLanguage)) {
+			using (var pchLanguage2 = new InteropHelp.UTF8StringHandle(pchLanguage))
+			{
 				return NativeMethods.ISteamUGC_SetItemUpdateLanguage(CSteamGameServerAPIContext.GetSteamUGC(), handle, pchLanguage2);
 			}
 		}
@@ -376,9 +438,11 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> change the metadata of an UGC item (max = k_cchDeveloperMetadataMax)</para>
 		/// </summary>
-		public static bool SetItemMetadata(UGCUpdateHandle_t handle, string pchMetaData) {
+		public static bool SetItemMetadata( UGCUpdateHandle_t handle, string pchMetaData )
+		{
 			InteropHelp.TestIfAvailableGameServer();
-			using (var pchMetaData2 = new InteropHelp.UTF8StringHandle(pchMetaData)) {
+			using (var pchMetaData2 = new InteropHelp.UTF8StringHandle(pchMetaData))
+			{
 				return NativeMethods.ISteamUGC_SetItemMetadata(CSteamGameServerAPIContext.GetSteamUGC(), handle, pchMetaData2);
 			}
 		}
@@ -386,7 +450,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> change the visibility of an UGC item</para>
 		/// </summary>
-		public static bool SetItemVisibility(UGCUpdateHandle_t handle, ERemoteStoragePublishedFileVisibility eVisibility) {
+		public static bool SetItemVisibility( UGCUpdateHandle_t handle, ERemoteStoragePublishedFileVisibility eVisibility )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_SetItemVisibility(CSteamGameServerAPIContext.GetSteamUGC(), handle, eVisibility);
 		}
@@ -394,7 +459,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> change the tags of an UGC item</para>
 		/// </summary>
-		public static bool SetItemTags(UGCUpdateHandle_t updateHandle, System.Collections.Generic.IList<string> pTags, bool bAllowAdminTags = false) {
+		public static bool SetItemTags( UGCUpdateHandle_t updateHandle, System.Collections.Generic.IList<string> pTags, bool bAllowAdminTags = false )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_SetItemTags(CSteamGameServerAPIContext.GetSteamUGC(), updateHandle, new InteropHelp.SteamParamStringArray(pTags), bAllowAdminTags);
 		}
@@ -402,9 +468,11 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> update item content from this local folder</para>
 		/// </summary>
-		public static bool SetItemContent(UGCUpdateHandle_t handle, string pszContentFolder) {
+		public static bool SetItemContent( UGCUpdateHandle_t handle, string pszContentFolder )
+		{
 			InteropHelp.TestIfAvailableGameServer();
-			using (var pszContentFolder2 = new InteropHelp.UTF8StringHandle(pszContentFolder)) {
+			using (var pszContentFolder2 = new InteropHelp.UTF8StringHandle(pszContentFolder))
+			{
 				return NativeMethods.ISteamUGC_SetItemContent(CSteamGameServerAPIContext.GetSteamUGC(), handle, pszContentFolder2);
 			}
 		}
@@ -412,9 +480,11 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para>  change preview image file for this item. pszPreviewFile points to local image file, which must be under 1MB in size</para>
 		/// </summary>
-		public static bool SetItemPreview(UGCUpdateHandle_t handle, string pszPreviewFile) {
+		public static bool SetItemPreview( UGCUpdateHandle_t handle, string pszPreviewFile )
+		{
 			InteropHelp.TestIfAvailableGameServer();
-			using (var pszPreviewFile2 = new InteropHelp.UTF8StringHandle(pszPreviewFile)) {
+			using (var pszPreviewFile2 = new InteropHelp.UTF8StringHandle(pszPreviewFile))
+			{
 				return NativeMethods.ISteamUGC_SetItemPreview(CSteamGameServerAPIContext.GetSteamUGC(), handle, pszPreviewFile2);
 			}
 		}
@@ -422,7 +492,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para>  use legacy upload for a single small file. The parameter to SetItemContent() should either be a directory with one file or the full path to the file.  The file must also be less than 10MB in size.</para>
 		/// </summary>
-		public static bool SetAllowLegacyUpload(UGCUpdateHandle_t handle, bool bAllowLegacyUpload) {
+		public static bool SetAllowLegacyUpload( UGCUpdateHandle_t handle, bool bAllowLegacyUpload )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_SetAllowLegacyUpload(CSteamGameServerAPIContext.GetSteamUGC(), handle, bAllowLegacyUpload);
 		}
@@ -430,7 +501,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> remove all existing key-value tags (you can add new ones via the AddItemKeyValueTag function)</para>
 		/// </summary>
-		public static bool RemoveAllItemKeyValueTags(UGCUpdateHandle_t handle) {
+		public static bool RemoveAllItemKeyValueTags( UGCUpdateHandle_t handle )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_RemoveAllItemKeyValueTags(CSteamGameServerAPIContext.GetSteamUGC(), handle);
 		}
@@ -438,9 +510,11 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> remove any existing key-value tags with the specified key</para>
 		/// </summary>
-		public static bool RemoveItemKeyValueTags(UGCUpdateHandle_t handle, string pchKey) {
+		public static bool RemoveItemKeyValueTags( UGCUpdateHandle_t handle, string pchKey )
+		{
 			InteropHelp.TestIfAvailableGameServer();
-			using (var pchKey2 = new InteropHelp.UTF8StringHandle(pchKey)) {
+			using (var pchKey2 = new InteropHelp.UTF8StringHandle(pchKey))
+			{
 				return NativeMethods.ISteamUGC_RemoveItemKeyValueTags(CSteamGameServerAPIContext.GetSteamUGC(), handle, pchKey2);
 			}
 		}
@@ -448,10 +522,12 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> add new key-value tags for the item. Note that there can be multiple values for a tag.</para>
 		/// </summary>
-		public static bool AddItemKeyValueTag(UGCUpdateHandle_t handle, string pchKey, string pchValue) {
+		public static bool AddItemKeyValueTag( UGCUpdateHandle_t handle, string pchKey, string pchValue )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			using (var pchKey2 = new InteropHelp.UTF8StringHandle(pchKey))
-			using (var pchValue2 = new InteropHelp.UTF8StringHandle(pchValue)) {
+			using (var pchValue2 = new InteropHelp.UTF8StringHandle(pchValue))
+			{
 				return NativeMethods.ISteamUGC_AddItemKeyValueTag(CSteamGameServerAPIContext.GetSteamUGC(), handle, pchKey2, pchValue2);
 			}
 		}
@@ -459,9 +535,11 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para>  add preview file for this item. pszPreviewFile points to local file, which must be under 1MB in size</para>
 		/// </summary>
-		public static bool AddItemPreviewFile(UGCUpdateHandle_t handle, string pszPreviewFile, EItemPreviewType type) {
+		public static bool AddItemPreviewFile( UGCUpdateHandle_t handle, string pszPreviewFile, EItemPreviewType type )
+		{
 			InteropHelp.TestIfAvailableGameServer();
-			using (var pszPreviewFile2 = new InteropHelp.UTF8StringHandle(pszPreviewFile)) {
+			using (var pszPreviewFile2 = new InteropHelp.UTF8StringHandle(pszPreviewFile))
+			{
 				return NativeMethods.ISteamUGC_AddItemPreviewFile(CSteamGameServerAPIContext.GetSteamUGC(), handle, pszPreviewFile2, type);
 			}
 		}
@@ -469,9 +547,11 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para>  add preview video for this item</para>
 		/// </summary>
-		public static bool AddItemPreviewVideo(UGCUpdateHandle_t handle, string pszVideoID) {
+		public static bool AddItemPreviewVideo( UGCUpdateHandle_t handle, string pszVideoID )
+		{
 			InteropHelp.TestIfAvailableGameServer();
-			using (var pszVideoID2 = new InteropHelp.UTF8StringHandle(pszVideoID)) {
+			using (var pszVideoID2 = new InteropHelp.UTF8StringHandle(pszVideoID))
+			{
 				return NativeMethods.ISteamUGC_AddItemPreviewVideo(CSteamGameServerAPIContext.GetSteamUGC(), handle, pszVideoID2);
 			}
 		}
@@ -479,9 +559,11 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para>  updates an existing preview file for this item. pszPreviewFile points to local file, which must be under 1MB in size</para>
 		/// </summary>
-		public static bool UpdateItemPreviewFile(UGCUpdateHandle_t handle, uint index, string pszPreviewFile) {
+		public static bool UpdateItemPreviewFile( UGCUpdateHandle_t handle, uint index, string pszPreviewFile )
+		{
 			InteropHelp.TestIfAvailableGameServer();
-			using (var pszPreviewFile2 = new InteropHelp.UTF8StringHandle(pszPreviewFile)) {
+			using (var pszPreviewFile2 = new InteropHelp.UTF8StringHandle(pszPreviewFile))
+			{
 				return NativeMethods.ISteamUGC_UpdateItemPreviewFile(CSteamGameServerAPIContext.GetSteamUGC(), handle, index, pszPreviewFile2);
 			}
 		}
@@ -489,9 +571,11 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para>  updates an existing preview video for this item</para>
 		/// </summary>
-		public static bool UpdateItemPreviewVideo(UGCUpdateHandle_t handle, uint index, string pszVideoID) {
+		public static bool UpdateItemPreviewVideo( UGCUpdateHandle_t handle, uint index, string pszVideoID )
+		{
 			InteropHelp.TestIfAvailableGameServer();
-			using (var pszVideoID2 = new InteropHelp.UTF8StringHandle(pszVideoID)) {
+			using (var pszVideoID2 = new InteropHelp.UTF8StringHandle(pszVideoID))
+			{
 				return NativeMethods.ISteamUGC_UpdateItemPreviewVideo(CSteamGameServerAPIContext.GetSteamUGC(), handle, index, pszVideoID2);
 			}
 		}
@@ -499,17 +583,20 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> remove a preview by index starting at 0 (previews are sorted)</para>
 		/// </summary>
-		public static bool RemoveItemPreview(UGCUpdateHandle_t handle, uint index) {
+		public static bool RemoveItemPreview( UGCUpdateHandle_t handle, uint index )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_RemoveItemPreview(CSteamGameServerAPIContext.GetSteamUGC(), handle, index);
 		}
 
-		public static bool AddContentDescriptor(UGCUpdateHandle_t handle, EUGCContentDescriptorID descid) {
+		public static bool AddContentDescriptor( UGCUpdateHandle_t handle, EUGCContentDescriptorID descid )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_AddContentDescriptor(CSteamGameServerAPIContext.GetSteamUGC(), handle, descid);
 		}
 
-		public static bool RemoveContentDescriptor(UGCUpdateHandle_t handle, EUGCContentDescriptorID descid) {
+		public static bool RemoveContentDescriptor( UGCUpdateHandle_t handle, EUGCContentDescriptorID descid )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_RemoveContentDescriptor(CSteamGameServerAPIContext.GetSteamUGC(), handle, descid);
 		}
@@ -517,10 +604,12 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> an empty string for either parameter means that it will match any version on that end of the range. This will only be applied if the actual content has been changed.</para>
 		/// </summary>
-		public static bool SetRequiredGameVersions(UGCUpdateHandle_t handle, string pszGameBranchMin, string pszGameBranchMax) {
+		public static bool SetRequiredGameVersions( UGCUpdateHandle_t handle, string pszGameBranchMin, string pszGameBranchMax )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			using (var pszGameBranchMin2 = new InteropHelp.UTF8StringHandle(pszGameBranchMin))
-			using (var pszGameBranchMax2 = new InteropHelp.UTF8StringHandle(pszGameBranchMax)) {
+			using (var pszGameBranchMax2 = new InteropHelp.UTF8StringHandle(pszGameBranchMax))
+			{
 				return NativeMethods.ISteamUGC_SetRequiredGameVersions(CSteamGameServerAPIContext.GetSteamUGC(), handle, pszGameBranchMin2, pszGameBranchMax2);
 			}
 		}
@@ -528,14 +617,17 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> commit update process started with StartItemUpdate()</para>
 		/// </summary>
-		public static SteamAPICall_t SubmitItemUpdate(UGCUpdateHandle_t handle, string pchChangeNote) {
+		public static SteamAPICall_t SubmitItemUpdate( UGCUpdateHandle_t handle, string pchChangeNote )
+		{
 			InteropHelp.TestIfAvailableGameServer();
-			using (var pchChangeNote2 = new InteropHelp.UTF8StringHandle(pchChangeNote)) {
+			using (var pchChangeNote2 = new InteropHelp.UTF8StringHandle(pchChangeNote))
+			{
 				return (SteamAPICall_t)NativeMethods.ISteamUGC_SubmitItemUpdate(CSteamGameServerAPIContext.GetSteamUGC(), handle, pchChangeNote2);
 			}
 		}
 
-		public static EItemUpdateStatus GetItemUpdateProgress(UGCUpdateHandle_t handle, out ulong punBytesProcessed, out ulong punBytesTotal) {
+		public static EItemUpdateStatus GetItemUpdateProgress( UGCUpdateHandle_t handle, out ulong punBytesProcessed, out ulong punBytesTotal )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_GetItemUpdateProgress(CSteamGameServerAPIContext.GetSteamUGC(), handle, out punBytesProcessed, out punBytesTotal);
 		}
@@ -543,22 +635,26 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> Steam Workshop Consumer API</para>
 		/// </summary>
-		public static SteamAPICall_t SetUserItemVote(PublishedFileId_t nPublishedFileID, bool bVoteUp) {
+		public static SteamAPICall_t SetUserItemVote( PublishedFileId_t nPublishedFileID, bool bVoteUp )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return (SteamAPICall_t)NativeMethods.ISteamUGC_SetUserItemVote(CSteamGameServerAPIContext.GetSteamUGC(), nPublishedFileID, bVoteUp);
 		}
 
-		public static SteamAPICall_t GetUserItemVote(PublishedFileId_t nPublishedFileID) {
+		public static SteamAPICall_t GetUserItemVote( PublishedFileId_t nPublishedFileID )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return (SteamAPICall_t)NativeMethods.ISteamUGC_GetUserItemVote(CSteamGameServerAPIContext.GetSteamUGC(), nPublishedFileID);
 		}
 
-		public static SteamAPICall_t AddItemToFavorites(AppId_t nAppId, PublishedFileId_t nPublishedFileID) {
+		public static SteamAPICall_t AddItemToFavorites( AppId_t nAppId, PublishedFileId_t nPublishedFileID )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return (SteamAPICall_t)NativeMethods.ISteamUGC_AddItemToFavorites(CSteamGameServerAPIContext.GetSteamUGC(), nAppId, nPublishedFileID);
 		}
 
-		public static SteamAPICall_t RemoveItemFromFavorites(AppId_t nAppId, PublishedFileId_t nPublishedFileID) {
+		public static SteamAPICall_t RemoveItemFromFavorites( AppId_t nAppId, PublishedFileId_t nPublishedFileID )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return (SteamAPICall_t)NativeMethods.ISteamUGC_RemoveItemFromFavorites(CSteamGameServerAPIContext.GetSteamUGC(), nAppId, nPublishedFileID);
 		}
@@ -566,7 +662,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> subscribe to this item, will be installed ASAP</para>
 		/// </summary>
-		public static SteamAPICall_t SubscribeItem(PublishedFileId_t nPublishedFileID) {
+		public static SteamAPICall_t SubscribeItem( PublishedFileId_t nPublishedFileID )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return (SteamAPICall_t)NativeMethods.ISteamUGC_SubscribeItem(CSteamGameServerAPIContext.GetSteamUGC(), nPublishedFileID);
 		}
@@ -574,7 +671,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> unsubscribe from this item, will be uninstalled after game quits</para>
 		/// </summary>
-		public static SteamAPICall_t UnsubscribeItem(PublishedFileId_t nPublishedFileID) {
+		public static SteamAPICall_t UnsubscribeItem( PublishedFileId_t nPublishedFileID )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return (SteamAPICall_t)NativeMethods.ISteamUGC_UnsubscribeItem(CSteamGameServerAPIContext.GetSteamUGC(), nPublishedFileID);
 		}
@@ -582,7 +680,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> number of subscribed items</para>
 		/// </summary>
-		public static uint GetNumSubscribedItems(bool bIncludeLocallyDisabled = false) {
+		public static uint GetNumSubscribedItems( bool bIncludeLocallyDisabled = false )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_GetNumSubscribedItems(CSteamGameServerAPIContext.GetSteamUGC(), bIncludeLocallyDisabled);
 		}
@@ -590,7 +689,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> all subscribed item PublishFileIDs</para>
 		/// </summary>
-		public static uint GetSubscribedItems(PublishedFileId_t[] pvecPublishedFileID, uint cMaxEntries, bool bIncludeLocallyDisabled = false) {
+		public static uint GetSubscribedItems( PublishedFileId_t[] pvecPublishedFileID, uint cMaxEntries, bool bIncludeLocallyDisabled = false )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_GetSubscribedItems(CSteamGameServerAPIContext.GetSteamUGC(), pvecPublishedFileID, cMaxEntries, bIncludeLocallyDisabled);
 		}
@@ -598,7 +698,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> get EItemState flags about item on this client</para>
 		/// </summary>
-		public static uint GetItemState(PublishedFileId_t nPublishedFileID) {
+		public static uint GetItemState( PublishedFileId_t nPublishedFileID )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_GetItemState(CSteamGameServerAPIContext.GetSteamUGC(), nPublishedFileID);
 		}
@@ -607,7 +708,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <para> get info about currently installed content on disc for items that have k_EItemStateInstalled set</para>
 		/// <para> if k_EItemStateLegacyItem is set, pchFolder contains the path to the legacy file itself (not a folder)</para>
 		/// </summary>
-		public static bool GetItemInstallInfo(PublishedFileId_t nPublishedFileID, out ulong punSizeOnDisk, out string pchFolder, uint cchFolderSize, out uint punTimeStamp) {
+		public static bool GetItemInstallInfo( PublishedFileId_t nPublishedFileID, out ulong punSizeOnDisk, out string pchFolder, uint cchFolderSize, out uint punTimeStamp )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			IntPtr pchFolder2 = Marshal.AllocHGlobal((int)cchFolderSize);
 			bool ret = NativeMethods.ISteamUGC_GetItemInstallInfo(CSteamGameServerAPIContext.GetSteamUGC(), nPublishedFileID, out punSizeOnDisk, pchFolder2, cchFolderSize, out punTimeStamp);
@@ -619,7 +721,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> get info about pending update for items that have k_EItemStateNeedsUpdate set. punBytesTotal will be valid after download started once</para>
 		/// </summary>
-		public static bool GetItemDownloadInfo(PublishedFileId_t nPublishedFileID, out ulong punBytesDownloaded, out ulong punBytesTotal) {
+		public static bool GetItemDownloadInfo( PublishedFileId_t nPublishedFileID, out ulong punBytesDownloaded, out ulong punBytesTotal )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_GetItemDownloadInfo(CSteamGameServerAPIContext.GetSteamUGC(), nPublishedFileID, out punBytesDownloaded, out punBytesTotal);
 		}
@@ -629,7 +732,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <para> then files on disk should not be used until callback received. If item is not subscribed to, it will be cached for some time.</para>
 		/// <para> If bHighPriority is set, any other item download will be suspended and this item downloaded ASAP.</para>
 		/// </summary>
-		public static bool DownloadItem(PublishedFileId_t nPublishedFileID, bool bHighPriority) {
+		public static bool DownloadItem( PublishedFileId_t nPublishedFileID, bool bHighPriority )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_DownloadItem(CSteamGameServerAPIContext.GetSteamUGC(), nPublishedFileID, bHighPriority);
 		}
@@ -638,9 +742,11 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <para> game servers can set a specific workshop folder before issuing any UGC commands.</para>
 		/// <para> This is helpful if you want to support multiple game servers running out of the same install folder</para>
 		/// </summary>
-		public static bool BInitWorkshopForGameServer(DepotId_t unWorkshopDepotID, string pszFolder) {
+		public static bool BInitWorkshopForGameServer( DepotId_t unWorkshopDepotID, string pszFolder )
+		{
 			InteropHelp.TestIfAvailableGameServer();
-			using (var pszFolder2 = new InteropHelp.UTF8StringHandle(pszFolder)) {
+			using (var pszFolder2 = new InteropHelp.UTF8StringHandle(pszFolder))
+			{
 				return NativeMethods.ISteamUGC_BInitWorkshopForGameServer(CSteamGameServerAPIContext.GetSteamUGC(), unWorkshopDepotID, pszFolder2);
 			}
 		}
@@ -648,7 +754,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> SuspendDownloads( true ) will suspend all workshop downloads until SuspendDownloads( false ) is called or the game ends</para>
 		/// </summary>
-		public static void SuspendDownloads(bool bSuspend) {
+		public static void SuspendDownloads( bool bSuspend )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			NativeMethods.ISteamUGC_SuspendDownloads(CSteamGameServerAPIContext.GetSteamUGC(), bSuspend);
 		}
@@ -656,17 +763,20 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> usage tracking</para>
 		/// </summary>
-		public static SteamAPICall_t StartPlaytimeTracking(PublishedFileId_t[] pvecPublishedFileID, uint unNumPublishedFileIDs) {
+		public static SteamAPICall_t StartPlaytimeTracking( PublishedFileId_t[] pvecPublishedFileID, uint unNumPublishedFileIDs )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return (SteamAPICall_t)NativeMethods.ISteamUGC_StartPlaytimeTracking(CSteamGameServerAPIContext.GetSteamUGC(), pvecPublishedFileID, unNumPublishedFileIDs);
 		}
 
-		public static SteamAPICall_t StopPlaytimeTracking(PublishedFileId_t[] pvecPublishedFileID, uint unNumPublishedFileIDs) {
+		public static SteamAPICall_t StopPlaytimeTracking( PublishedFileId_t[] pvecPublishedFileID, uint unNumPublishedFileIDs )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return (SteamAPICall_t)NativeMethods.ISteamUGC_StopPlaytimeTracking(CSteamGameServerAPIContext.GetSteamUGC(), pvecPublishedFileID, unNumPublishedFileIDs);
 		}
 
-		public static SteamAPICall_t StopPlaytimeTrackingForAllItems() {
+		public static SteamAPICall_t StopPlaytimeTrackingForAllItems()
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return (SteamAPICall_t)NativeMethods.ISteamUGC_StopPlaytimeTrackingForAllItems(CSteamGameServerAPIContext.GetSteamUGC());
 		}
@@ -674,12 +784,14 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> parent-child relationship or dependency management</para>
 		/// </summary>
-		public static SteamAPICall_t AddDependency(PublishedFileId_t nParentPublishedFileID, PublishedFileId_t nChildPublishedFileID) {
+		public static SteamAPICall_t AddDependency( PublishedFileId_t nParentPublishedFileID, PublishedFileId_t nChildPublishedFileID )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return (SteamAPICall_t)NativeMethods.ISteamUGC_AddDependency(CSteamGameServerAPIContext.GetSteamUGC(), nParentPublishedFileID, nChildPublishedFileID);
 		}
 
-		public static SteamAPICall_t RemoveDependency(PublishedFileId_t nParentPublishedFileID, PublishedFileId_t nChildPublishedFileID) {
+		public static SteamAPICall_t RemoveDependency( PublishedFileId_t nParentPublishedFileID, PublishedFileId_t nChildPublishedFileID )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return (SteamAPICall_t)NativeMethods.ISteamUGC_RemoveDependency(CSteamGameServerAPIContext.GetSteamUGC(), nParentPublishedFileID, nChildPublishedFileID);
 		}
@@ -687,12 +799,14 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> add/remove app dependence/requirements (usually DLC)</para>
 		/// </summary>
-		public static SteamAPICall_t AddAppDependency(PublishedFileId_t nPublishedFileID, AppId_t nAppID) {
+		public static SteamAPICall_t AddAppDependency( PublishedFileId_t nPublishedFileID, AppId_t nAppID )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return (SteamAPICall_t)NativeMethods.ISteamUGC_AddAppDependency(CSteamGameServerAPIContext.GetSteamUGC(), nPublishedFileID, nAppID);
 		}
 
-		public static SteamAPICall_t RemoveAppDependency(PublishedFileId_t nPublishedFileID, AppId_t nAppID) {
+		public static SteamAPICall_t RemoveAppDependency( PublishedFileId_t nPublishedFileID, AppId_t nAppID )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return (SteamAPICall_t)NativeMethods.ISteamUGC_RemoveAppDependency(CSteamGameServerAPIContext.GetSteamUGC(), nPublishedFileID, nAppID);
 		}
@@ -701,7 +815,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <para> request app dependencies. note that whatever callback you register for GetAppDependenciesResult_t may be called multiple times</para>
 		/// <para> until all app dependencies have been returned</para>
 		/// </summary>
-		public static SteamAPICall_t GetAppDependencies(PublishedFileId_t nPublishedFileID) {
+		public static SteamAPICall_t GetAppDependencies( PublishedFileId_t nPublishedFileID )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return (SteamAPICall_t)NativeMethods.ISteamUGC_GetAppDependencies(CSteamGameServerAPIContext.GetSteamUGC(), nPublishedFileID);
 		}
@@ -709,7 +824,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> delete the item without prompting the user</para>
 		/// </summary>
-		public static SteamAPICall_t DeleteItem(PublishedFileId_t nPublishedFileID) {
+		public static SteamAPICall_t DeleteItem( PublishedFileId_t nPublishedFileID )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return (SteamAPICall_t)NativeMethods.ISteamUGC_DeleteItem(CSteamGameServerAPIContext.GetSteamUGC(), nPublishedFileID);
 		}
@@ -717,7 +833,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> Show the app's latest Workshop EULA to the user in an overlay window, where they can accept it or not</para>
 		/// </summary>
-		public static bool ShowWorkshopEULA() {
+		public static bool ShowWorkshopEULA()
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_ShowWorkshopEULA(CSteamGameServerAPIContext.GetSteamUGC());
 		}
@@ -725,7 +842,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> Retrieve information related to the user's acceptance or not of the app's specific Workshop EULA</para>
 		/// </summary>
-		public static SteamAPICall_t GetWorkshopEULAStatus() {
+		public static SteamAPICall_t GetWorkshopEULAStatus()
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return (SteamAPICall_t)NativeMethods.ISteamUGC_GetWorkshopEULAStatus(CSteamGameServerAPIContext.GetSteamUGC());
 		}
@@ -733,7 +851,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> Return the user's community content descriptor preferences</para>
 		/// </summary>
-		public static uint GetUserContentDescriptorPreferences(out EUGCContentDescriptorID pvecDescriptors, uint cMaxEntries) {
+		public static uint GetUserContentDescriptorPreferences( out EUGCContentDescriptorID pvecDescriptors, uint cMaxEntries )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_GetUserContentDescriptorPreferences(CSteamGameServerAPIContext.GetSteamUGC(), out pvecDescriptors, cMaxEntries);
 		}
@@ -741,7 +860,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> Sets whether the item should be disabled locally or not. This means that it will not be returned in GetSubscribedItems() by default.</para>
 		/// </summary>
-		public static bool SetItemsDisabledLocally(out PublishedFileId_t pvecPublishedFileIDs, uint unNumPublishedFileIDs, bool bDisabledLocally) {
+		public static bool SetItemsDisabledLocally( out PublishedFileId_t pvecPublishedFileIDs, uint unNumPublishedFileIDs, bool bDisabledLocally )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_SetItemsDisabledLocally(CSteamGameServerAPIContext.GetSteamUGC(), out pvecPublishedFileIDs, unNumPublishedFileIDs, bDisabledLocally);
 		}
@@ -749,7 +869,8 @@ namespace SwiftlyS2.Shared.SteamAPI {
 		/// <summary>
 		/// <para> Set the local load order for these items. If there are any items not in the given list, they will sort by the time subscribed.</para>
 		/// </summary>
-		public static bool SetSubscriptionsLoadOrder(out PublishedFileId_t pvecPublishedFileIDs, uint unNumPublishedFileIDs) {
+		public static bool SetSubscriptionsLoadOrder( out PublishedFileId_t pvecPublishedFileIDs, uint unNumPublishedFileIDs )
+		{
 			InteropHelp.TestIfAvailableGameServer();
 			return NativeMethods.ISteamUGC_SetSubscriptionsLoadOrder(CSteamGameServerAPIContext.GetSteamUGC(), out pvecPublishedFileIDs, unNumPublishedFileIDs);
 		}
