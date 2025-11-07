@@ -61,6 +61,11 @@ public sealed class MenuEventArgs : EventArgs
 public interface IMenuAPI
 {
     /// <summary>
+    /// The builder used to construct and configure this menu.
+    /// </summary>
+    public IMenuBuilderAPI Builder { get; }
+
+    /// <summary>
     /// Configuration settings for this menu.
     /// </summary>
     public MenuConfiguration Configuration { get; }
@@ -81,29 +86,24 @@ public interface IMenuAPI
     public IReadOnlyList<IMenuOption> Options { get; }
 
     /// <summary>
-    /// The builder used to construct and configure this menu.
+    /// Fired before a player navigates to a different menu option.
     /// </summary>
-    public IMenuBuilderAPI Builder { get; }
+    public event EventHandler<MenuEventArgs>? BeforeSelectionMove;
 
     /// <summary>
-    /// Fired when a player navigates to a different menu option.
+    /// Fired after a player navigates to a different menu option.
     /// </summary>
-    public event EventHandler<MenuEventArgs>? SelectionMoved;
+    public event EventHandler<MenuEventArgs>? AfterSelectionMove;
 
     /// <summary>
-    /// Fired when a player selects a menu option. The Option property contains the selected option.
+    /// Fired when an option is about to enter the visible viewport.
     /// </summary>
-    public event EventHandler<MenuEventArgs>? OptionSelected;
+    public event EventHandler<MenuEventArgs>? OptionEntering;
 
     /// <summary>
-    /// Fired just before the menu is displayed to a player.
+    /// Fired when an option is about to leave the visible viewport.
     /// </summary>
-    public event EventHandler<MenuEventArgs>? BeforeRender;
-
-    /// <summary>
-    /// Fired after the menu has been displayed to a player.
-    /// </summary>
-    public event EventHandler<MenuEventArgs>? AfterRender;
+    public event EventHandler<MenuEventArgs>? OptionLeaving;
 
     /// <summary>
     /// Displays this menu to the specified player.
