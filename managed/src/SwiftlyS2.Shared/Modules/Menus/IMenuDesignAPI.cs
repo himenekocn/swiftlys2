@@ -25,4 +25,18 @@ public interface IMenuDesignAPI
     /// Values outside the range of 1-5 will be automatically clamped, and a warning will be logged.
     /// </remarks>
     public IMenuBuilderAPI MaxVisibleItems( int count = 5 );
+
+    /// <summary>
+    /// Sets the global option scroll style for the menu.
+    /// </summary>
+    /// <param name="style">The scroll style to apply to all options in the menu.</param>
+    /// <returns>The menu builder for method chaining.</returns>
+    public IMenuBuilderAPI SetGlobalOptionScrollStyle( MenuOptionScrollStyle style );
+
+    /// <summary>
+    /// Sets the global option text style for the menu.
+    /// </summary>
+    /// <param name="style">The text style to apply to all options in the menu.</param>
+    /// <returns>The menu builder for method chaining.</returns>
+    public IMenuBuilderAPI SetGlobalOptionTextStyle( MenuOptionTextStyle style );
 }

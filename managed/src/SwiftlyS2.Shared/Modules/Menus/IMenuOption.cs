@@ -311,3 +311,45 @@ public enum MenuOptionTextSize
     /// </summary>
     ExtraLarge
 }
+
+/// <summary>
+/// Defines the horizontal text overflow behavior for menu options.
+/// </summary>
+public enum MenuOptionTextStyle
+{
+    /// <summary>
+    /// Truncates text at the end when it exceeds the maximum width, keeping the start portion.
+    /// Example: "Very Long Text Item" becomes "Very Long..."
+    /// </summary>
+    TruncateEnd,
+
+    /// <summary>
+    /// Truncates text from both ends when it exceeds the maximum width, keeping the middle portion.
+    /// Example: "Very Long Text Item" becomes "Long Text"
+    /// </summary>
+    TruncateBothEnds,
+
+    /// <summary>
+    /// Scrolls text to the left with fade-out effect.
+    /// Text scrolls left and gradually fades out at the left edge.
+    /// </summary>
+    ScrollLeftFade,
+
+    /// <summary>
+    /// Scrolls text to the right with fade-out effect.
+    /// Text scrolls right and gradually fades out at the right edge.
+    /// </summary>
+    ScrollRightFade,
+
+    /// <summary>
+    /// Scrolls text to the left in a continuous loop.
+    /// Text exits from the left edge and re-enters from the right edge.
+    /// </summary>
+    ScrollLeftLoop,
+
+    /// <summary>
+    /// Scrolls text to the right in a continuous loop.
+    /// Text exits from the right edge and re-enters from the left edge.
+    /// </summary>
+    ScrollRightLoop
+}

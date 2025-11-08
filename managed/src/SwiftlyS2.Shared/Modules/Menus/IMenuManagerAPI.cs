@@ -120,10 +120,11 @@ public interface IMenuManagerAPI
     /// </summary>
     /// <param name="configuration">The configuration for the menu.</param>
     /// <param name="keybindOverrides">The keybind overrides for the menu.</param>
-    /// <param name="optionScrollStyle">The scroll style for the menu options.</param>
     /// <param name="parent">The parent menu, or null for no parent.</param>
+    /// <param name="optionScrollStyle">The scroll style for the menu options.</param>
+    /// <param name="optionTextStyle">The text overflow style for the menu options.</param>
     /// <returns>A new menu instance ready to be configured.</returns>
-    public IMenuAPI CreateMenu( MenuConfiguration configuration, MenuKeybindOverrides keybindOverrides, MenuOptionScrollStyle optionScrollStyle, IMenuAPI? parent = null );
+    public IMenuAPI CreateMenu( MenuConfiguration configuration, MenuKeybindOverrides keybindOverrides, IMenuAPI? parent = null, MenuOptionScrollStyle optionScrollStyle = MenuOptionScrollStyle.CenterFixed, MenuOptionTextStyle optionTextStyle = MenuOptionTextStyle.TruncateEnd );
 
     /// <summary>
     /// Gets the menu currently open for the specified player.

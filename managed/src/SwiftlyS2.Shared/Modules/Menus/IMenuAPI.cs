@@ -97,11 +97,6 @@ public sealed class MenuEventArgs : EventArgs
 public interface IMenuAPI
 {
     /// <summary>
-    /// The builder used to construct and configure this menu.
-    /// </summary>
-    public IMenuBuilderAPI? Builder { get; }
-
-    /// <summary>
     /// Configuration settings for this menu.
     /// </summary>
     public MenuConfiguration Configuration { get; }
@@ -112,9 +107,19 @@ public interface IMenuAPI
     public MenuKeybindOverrides KeybindOverrides { get; }
 
     /// <summary>
-    /// The scroll style for this menu.
+    /// The scroll style for this menu options.
     /// </summary>
     public MenuOptionScrollStyle OptionScrollStyle { get; }
+
+    /// <summary>
+    /// The text overflow style for menu options.
+    /// </summary>
+    public MenuOptionTextStyle OptionTextStyle { get; }
+
+    /// <summary>
+    /// The builder used to construct and configure this menu.
+    /// </summary>
+    public IMenuBuilderAPI? Builder { get; }
 
     /// <summary>
     /// The parent menu in a hierarchical menu structure, or null if this is a top-level menu.

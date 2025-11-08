@@ -241,7 +241,7 @@ public enum MenuVerticalScrollStyle
 /// <summary>
 /// Defines the horizontal text overflow behavior for menu options.
 /// </summary>
-[Obsolete("MenuHorizontalOverflowStyle will be deprecared at the release of SwiftlyS2. Please use MenuHorizontalStyle instead")]
+[Obsolete("MenuHorizontalOverflowStyle will be deprecared at the release of SwiftlyS2. Please use MenuOptionTextStyle instead")]
 public enum MenuHorizontalOverflowStyle
 {
     /// <summary>

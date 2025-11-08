@@ -251,7 +251,7 @@ internal sealed class MenuManagerAPI : IMenuManagerAPI
         return new MenuBuilderAPI(core);
     }
 
-    public IMenuAPI CreateMenu( MenuConfiguration configuration, MenuKeybindOverrides keybindOverrides, MenuOptionScrollStyle optionScrollStyle, IMenuAPI? parent = null )
+    public IMenuAPI CreateMenu( MenuConfiguration configuration, MenuKeybindOverrides keybindOverrides, IMenuAPI? parent = null, MenuOptionScrollStyle optionScrollStyle = MenuOptionScrollStyle.CenterFixed, MenuOptionTextStyle optionTextStyle = MenuOptionTextStyle.TruncateEnd )
     {
         var bindingList = new Dictionary<string, KeyBind> {
             ["Scroll"] = keybindOverrides.Move ?? buttonsScroll,
@@ -279,7 +279,7 @@ internal sealed class MenuManagerAPI : IMenuManagerAPI
             }
         }
 
-        return new MenuAPI(core, configuration, keybindOverrides, optionScrollStyle, null, parent);
+        return new MenuAPI(core, configuration, keybindOverrides, null, parent, optionScrollStyle, optionTextStyle);
     }
 
     public IMenuAPI? GetCurrentMenu( IPlayer player )

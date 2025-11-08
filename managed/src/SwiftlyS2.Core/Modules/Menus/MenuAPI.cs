@@ -10,11 +10,6 @@ namespace SwiftlyS2.Core.Menus;
 internal sealed class MenuAPI : IMenuAPI
 {
     /// <summary>
-    /// The builder used to construct and configure this menu.
-    /// </summary>
-    public IMenuBuilderAPI? Builder { get; init; } = null;
-
-    /// <summary>
     /// Configuration settings for this menu.
     /// </summary>
     public MenuConfiguration Configuration { get; init; }
@@ -25,14 +20,24 @@ internal sealed class MenuAPI : IMenuAPI
     public MenuKeybindOverrides KeybindOverrides { get; init; }
 
     /// <summary>
-    /// The scroll style for this menu.
+    /// The scroll style for this menu options.
     /// </summary>
     public MenuOptionScrollStyle OptionScrollStyle { get; init; }
 
     /// <summary>
+    /// The text overflow style for menu options.
+    /// </summary>
+    public MenuOptionTextStyle OptionTextStyle { get; init; }
+
+    /// <summary>
+    /// The builder used to construct and configure this menu.
+    /// </summary>
+    public IMenuBuilderAPI? Builder { get; init; }
+
+    /// <summary>
     /// The parent menu in a hierarchical menu structure, or null if this is a top-level menu.
     /// </summary>
-    public IMenuAPI? Parent { get; init; } = null;
+    public IMenuAPI? Parent { get; init; }
 
     /// <summary>
     /// Read-only collection of all options in this menu.
@@ -83,12 +88,13 @@ internal sealed class MenuAPI : IMenuAPI
     private readonly ConcurrentDictionary<IPlayer, CancellationTokenSource> autoCloseCancelTokens = new();
 
     // [SetsRequiredMembers]
-    public MenuAPI( ISwiftlyCore core, MenuConfiguration configuration, MenuKeybindOverrides keybindOverrides, MenuOptionScrollStyle optionScrollStyle, IMenuBuilderAPI? builder = null, IMenuAPI? parent = null )
+    public MenuAPI( ISwiftlyCore core, MenuConfiguration configuration, MenuKeybindOverrides keybindOverrides, IMenuBuilderAPI? builder = null, IMenuAPI? parent = null, MenuOptionScrollStyle optionScrollStyle = MenuOptionScrollStyle.CenterFixed, MenuOptionTextStyle optionTextStyle = MenuOptionTextStyle.TruncateEnd )
     {
         this.core = core;
         Configuration = configuration;
         KeybindOverrides = keybindOverrides;
         OptionScrollStyle = optionScrollStyle;
+        OptionTextStyle = optionTextStyle;
         Builder = builder;
         Parent = parent;
 
