@@ -1,0 +1,263 @@
+using System.Collections.Concurrent;
+using System.Text;
+using System.Text.RegularExpressions;
+using SwiftlyS2.Core.Menu.Options;
+using SwiftlyS2.Core.Natives;
+using SwiftlyS2.Shared;
+using SwiftlyS2.Shared.Menus;
+using SwiftlyS2.Shared.Natives;
+using SwiftlyS2.Shared.Players;
+using SwiftlyS2.Shared.SchemaDefinitions;
+
+namespace SwiftlyS2.Core.Menus;
+
+internal class MenuAPI : IMenuAPI
+{
+    /// <summary>
+    /// The builder used to construct and configure this menu.
+    /// </summary>
+    public IMenuBuilderAPI? Builder { get; init; } = null;
+
+    /// <summary>
+    /// Configuration settings for this menu.
+    /// </summary>
+    public required MenuConfiguration Configuration { get; init; }
+
+    /// <summary>
+    /// Keybind overrides for this menu.
+    /// </summary>
+    public required IMenuKeybindOverrides KeybindOverrides { get; init; }
+
+    /// <summary>
+    /// The parent menu in a hierarchical menu structure, or null if this is a top-level menu.
+    /// </summary>
+    public IMenuAPI? Parent { get; init; } = null;
+
+    /// <summary>
+    /// The title of this menu, displayed to players.
+    /// </summary>
+    /// <remarks>
+    /// This is a global property. Changing it will affect what all players see.
+    /// </remarks>
+    public string Title { get; set; } = "Menu";
+
+    /// <summary>
+    /// Whether to hide the menu title.
+    /// </summary>
+    /// <remarks>
+    /// This is a global property. Changing it will affect what all players see.
+    /// </remarks>
+    public bool HideTitle { get; set; } = false;
+
+    /// <summary>
+    /// Read-only collection of all options in this menu.
+    /// </summary>
+    public IReadOnlyList<IMenuOption> Options {
+        get {
+            lock (optionsLock)
+            {
+                return options.AsReadOnly();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Fired before a player navigates to a different menu option.
+    /// </summary>
+    public event EventHandler<MenuEventArgs>? BeforeSelectionMove;
+
+    /// <summary>
+    /// Fired after a player navigates to a different menu option.
+    /// </summary>
+    public event EventHandler<MenuEventArgs>? AfterSelectionMove;
+
+    // /// <summary>
+    // /// Fired when an option is about to enter the visible viewport.
+    // /// </summary>
+    // public event EventHandler<MenuEventArgs>? OptionEntering;
+
+    // /// <summary>
+    // /// Fired when an option is about to leave the visible viewport.
+    // /// </summary>
+    // public event EventHandler<MenuEventArgs>? OptionLeaving;
+
+    private readonly ISwiftlyCore core;
+    private readonly List<IMenuOption> options = new();
+    // TODO: Replace with `Lock` when framework is upgraded to .NET 10 for better lock performance
+    private readonly object optionsLock = new(); // Lock for synchronizing modifications to the `options`
+    // NOTE: Menu selection movement is entirely driven by changes to `selectedOptionIndex` (independent of any other variables)
+    private readonly ConcurrentDictionary<IPlayer, int> selectedOptionIndex = new(); // Stores the currently selected option index for each player
+    private int maxOptions = 0;
+    private readonly ConcurrentDictionary<IPlayer, int> selectedDisplayLine = new(); // Stores the currently selected display line index for each player (some options may span multiple lines)
+    private int maxDisplayLines = 0;
+    private readonly ConcurrentDictionary<IPlayer, CancellationTokenSource> autoCloseCancelTokens = new();
+
+    public MenuAPI( ISwiftlyCore core, MenuConfiguration configuration, IMenuKeybindOverrides keybindOverrides, IMenuBuilderAPI? builder = null, IMenuAPI? parent = null, string? title = null, bool hideTitle = false )
+    {
+        this.core = core;
+        Configuration = configuration;
+        KeybindOverrides = keybindOverrides;
+        Builder = builder;
+        Parent = parent;
+        Title = title ?? "Menu";
+        HideTitle = hideTitle;
+
+        options.Clear();
+        selectedOptionIndex.Clear();
+        selectedDisplayLine.Clear();
+        autoCloseCancelTokens.Clear();
+
+        maxOptions = 0;
+        maxDisplayLines = 0;
+
+        core.Event.OnTick += OnTick;
+    }
+
+    ~MenuAPI()
+    {
+        core.PlayerManager
+            .GetAllPlayers()
+            .ToList()
+            .ForEach(player => CloseForPlayer(player));
+
+        options.Clear();
+        selectedOptionIndex.Clear();
+        selectedDisplayLine.Clear();
+        autoCloseCancelTokens.Clear();
+
+        maxOptions = 0;
+        maxDisplayLines = 0;
+
+        core.Event.OnTick -= OnTick;
+    }
+
+    private void OnTick()
+    {
+        var players = core.PlayerManager
+            .GetAllPlayers()
+            .Where(player => player.IsValid && !player.IsFakeClient && selectedOptionIndex.TryGetValue(player, out _))
+            .ToList();
+
+        foreach (var player in players)
+        {
+            // TODO
+            BeforeSelectionMove?.Invoke(this, new MenuEventArgs { Player = player, Options = null });
+
+            // TODO
+
+            // TODO
+            AfterSelectionMove?.Invoke(this, new MenuEventArgs { Player = player, Options = null });
+        }
+    }
+
+    public void ShowForPlayer( IPlayer player )
+    {
+        _ = selectedOptionIndex.AddOrUpdate(player, 0, ( _, _ ) => 0);
+        _ = selectedDisplayLine.AddOrUpdate(player, 0, ( _, _ ) => 0);
+
+        if (!player.IsValid || player.IsFakeClient)
+        {
+            return;
+        }
+
+        SetFreezeState(player, Configuration.FreezePlayer);
+
+        if (Configuration.AutoCloseAfter > 0)
+        {
+            _ = autoCloseCancelTokens.AddOrUpdate(
+                player,
+                _ => core.Scheduler.DelayBySeconds(Configuration.AutoCloseAfter, () => CloseForPlayer(player)),
+                ( _, oldToken ) =>
+                {
+                    oldToken.Cancel();
+                    return core.Scheduler.DelayBySeconds(Configuration.AutoCloseAfter, () => CloseForPlayer(player));
+                }
+            );
+        }
+    }
+
+    public void CloseForPlayer( IPlayer player )
+    {
+        var keyExists = selectedOptionIndex.TryRemove(player, out _) || selectedDisplayLine.TryRemove(player, out _);
+
+        if (!player.IsValid || player.IsFakeClient)
+        {
+            return;
+        }
+
+        if (keyExists)
+        {
+            NativePlayer.ClearCenterMenuRender(player.PlayerID);
+        }
+
+        SetFreezeState(player, false);
+
+        if (autoCloseCancelTokens.TryRemove(player, out var token))
+        {
+            token.Cancel();
+        }
+    }
+
+    public void AddOption( IMenuOption option )
+    {
+        lock (optionsLock)
+        {
+            options.Add(option);
+            maxOptions = options.Count;
+            maxDisplayLines = options.Sum(option => option.LineCount);
+        }
+    }
+
+    public bool RemoveOption( IMenuOption option )
+    {
+        lock (optionsLock)
+        {
+            var result = options.Remove(option);
+            maxOptions = options.Count;
+            maxDisplayLines = options.Sum(option => option.LineCount);
+            return result;
+        }
+    }
+
+    public bool MoveToOption( IPlayer player, IMenuOption option )
+    {
+        lock (optionsLock)
+        {
+            var index = options.IndexOf(option);
+            return index >= 0 && index < maxOptions && selectedOptionIndex.TryGetValue(player, out var oldIndex) && selectedOptionIndex.TryUpdate(player, index, oldIndex);
+        }
+    }
+
+    public bool MoveToOptionIndex( IPlayer player, int index )
+    {
+        return index >= 0 && index < maxOptions && selectedOptionIndex.TryGetValue(player, out var oldIndex) && selectedOptionIndex.TryUpdate(player, index, oldIndex);
+    }
+
+    public IMenuOption? GetCurrentOption( IPlayer player )
+    {
+        return selectedOptionIndex.TryGetValue(player, out var index) ? options[index] : null;
+    }
+
+    public int GetCurrentOptionIndex( IPlayer player )
+    {
+        return selectedOptionIndex.TryGetValue(player, out var index) ? index : -1;
+    }
+
+    public int GetCurrentOptionDisplayLine( IPlayer player )
+    {
+        return selectedDisplayLine.TryGetValue(player, out var line) ? line : -1;
+    }
+
+    private static void SetFreezeState( IPlayer player, bool freeze )
+    {
+        if (!player.IsValid || player.IsFakeClient || !(player.PlayerPawn?.IsValid ?? false))
+        {
+            return;
+        }
+
+        var moveType = freeze ? MoveType_t.MOVETYPE_NONE : MoveType_t.MOVETYPE_WALK;
+        player.PlayerPawn.MoveType = moveType;
+        player.PlayerPawn.ActualMoveType = moveType;
+        player.PlayerPawn.MoveTypeUpdated();
+    }
+}

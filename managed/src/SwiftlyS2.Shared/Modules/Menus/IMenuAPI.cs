@@ -24,11 +24,6 @@ public record class MenuConfiguration
     public bool FreezePlayer { get; set; } = false;
 
     /// <summary>
-    /// Whether the menu automatically closes after the player selects an option.
-    /// </summary>
-    public bool CloseOnSelect { get; set; } = false;
-
-    /// <summary>
     /// The color used to render the menu interface.
     /// </summary>
     public Color RenderColor { get; set; } = default;
@@ -47,12 +42,12 @@ public sealed class MenuEventArgs : EventArgs
     /// <summary>
     /// The player who triggered this menu event.
     /// </summary>
-    public required IPlayer Player { get; init; }
+    public IPlayer? Player { get; init; } = null;
 
     /// <summary>
-    /// The menu option involved in this event, or null for lifecycle events like opening or closing the menu.
+    /// The menu options involved in this event.
     /// </summary>
-    public required IMenuOption Option { get; init; }
+    public IReadOnlyList<IMenuOption>? Options { get; init; } = null;
 }
 
 /// <summary>
@@ -63,7 +58,7 @@ public interface IMenuAPI
     /// <summary>
     /// The builder used to construct and configure this menu.
     /// </summary>
-    public IMenuBuilderAPI Builder { get; }
+    public IMenuBuilderAPI? Builder { get; }
 
     /// <summary>
     /// Configuration settings for this menu.
@@ -83,7 +78,18 @@ public interface IMenuAPI
     /// <summary>
     /// The menu title displayed to players.
     /// </summary>
-    public string Title { get; }
+    /// <remarks>
+    /// This is a global property. Changing it will affect what all players see.
+    /// </remarks>
+    public string Title { get; set; }
+
+    /// <summary>
+    /// Whether to hide the menu title.
+    /// </summary>
+    /// <remarks>
+    /// This is a global property. Changing it will affect what all players see.
+    /// </remarks>
+    public bool HideTitle { get; set; }
 
     /// <summary>
     /// Read-only collection of all options in this menu.
@@ -100,27 +106,27 @@ public interface IMenuAPI
     /// </summary>
     public event EventHandler<MenuEventArgs>? AfterSelectionMove;
 
-    /// <summary>
-    /// Fired when an option is about to enter the visible viewport.
-    /// </summary>
-    public event EventHandler<MenuEventArgs>? OptionEntering;
+    // /// <summary>
+    // /// Fired when an option is about to enter the visible viewport.
+    // /// </summary>
+    // public event EventHandler<MenuEventArgs>? OptionEntering;
 
-    /// <summary>
-    /// Fired when an option is about to leave the visible viewport.
-    /// </summary>
-    public event EventHandler<MenuEventArgs>? OptionLeaving;
+    // /// <summary>
+    // /// Fired when an option is about to leave the visible viewport.
+    // /// </summary>
+    // public event EventHandler<MenuEventArgs>? OptionLeaving;
 
     /// <summary>
     /// Displays this menu to the specified player.
     /// </summary>
     /// <param name="player">The player who will see the menu.</param>
-    public void Show( IPlayer player );
+    public void ShowForPlayer( IPlayer player );
 
     /// <summary>
     /// Closes this menu for the specified player.
     /// </summary>
     /// <param name="player">The player whose menu will be closed.</param>
-    public void Close( IPlayer player );
+    public void CloseForPlayer( IPlayer player );
 
     /// <summary>
     /// Adds a new option to this menu.
@@ -136,9 +142,39 @@ public interface IMenuAPI
     public bool RemoveOption( IMenuOption option );
 
     /// <summary>
+    /// Moves the player's selection to the specified option.
+    /// </summary>
+    /// <param name="player">The player whose selection to move.</param>
+    /// <param name="option">The option to move the selection to.</param>
+    /// <returns>True if the move was successful; false if the option was not found.</returns>
+    public bool MoveToOption( IPlayer player, IMenuOption option );
+
+    /// <summary>
+    /// Moves the player's selection to the specified option index.
+    /// </summary>
+    /// <param name="player">The player whose selection to move.</param>
+    /// <param name="index">The index of the option to move the selection to.</param>
+    /// <returns>True if the move was successful; false if the index was out of bounds.</returns>
+    public bool MoveToOptionIndex( IPlayer player, int index );
+
+    /// <summary>
     /// Gets the menu option currently highlighted by the specified player.
     /// </summary>
     /// <param name="player">The player whose current selection to retrieve.</param>
     /// <returns>The currently selected option, or null if nothing is selected.</returns>
     public IMenuOption? GetCurrentOption( IPlayer player );
+
+    /// <summary>
+    /// Gets the index of the currently highlighted option for the specified player.
+    /// </summary>
+    /// <param name="player">The player whose current selection index to retrieve.</param>
+    /// <returns>The index of the currently selected option, or -1 if nothing is selected.</returns>
+    public int GetCurrentOptionIndex( IPlayer player );
+
+    /// <summary>
+    /// Gets the display line index of the currently highlighted option for the specified player.
+    /// </summary>
+    /// <param name="player">The player whose current selection display line to retrieve.</param>
+    /// <returns>The display line index of the currently selected option, or -1 if nothing is selected.</returns>
+    public int GetCurrentOptionDisplayLine( IPlayer player );
 }

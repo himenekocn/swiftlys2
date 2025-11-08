@@ -285,8 +285,8 @@ internal class MenuManagerAPI : IMenuManagerAPI
             CloseMenuForPlayer(player, GetCurrentMenu(player)!);
         }
 
-        _ = openMenus.AddOrUpdate(player, _ => menu, ( _, _ ) => menu);
-        menu.Show(player);
+        _ = openMenus.AddOrUpdate(player, menu, ( _, _ ) => menu);
+        menu.ShowForPlayer(player);
         MenuOpened?.Invoke(this, new MenuManagerEventArgs { Player = player, Menu = menu });
     }
 
@@ -302,7 +302,7 @@ internal class MenuManagerAPI : IMenuManagerAPI
     {
         if (openMenus.TryRemove(player, out _))
         {
-            menu.Close(player);
+            menu.CloseForPlayer(player);
             MenuClosed?.Invoke(this, new MenuManagerEventArgs { Player = player, Menu = menu });
 
             if (menu.Parent != null)
@@ -319,7 +319,7 @@ internal class MenuManagerAPI : IMenuManagerAPI
             var currentMenu = kvp.Value;
             while (currentMenu != null)
             {
-                currentMenu.Close(kvp.Key);
+                currentMenu.CloseForPlayer(kvp.Key);
                 MenuClosed?.Invoke(this, new MenuManagerEventArgs { Player = kvp.Key, Menu = currentMenu });
                 currentMenu = currentMenu.Parent;
             }
