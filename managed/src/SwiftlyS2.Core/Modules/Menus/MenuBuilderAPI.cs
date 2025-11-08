@@ -8,7 +8,7 @@ internal sealed class MenuBuilderAPI : IMenuBuilderAPI
     /// <summary>
     /// Gets the design interface for this menu.
     /// </summary>
-    public IMenuDesignAPI Design { get => design ??= new MenuDesignAPI(configuration); }
+    public IMenuDesignAPI Design { get => design ??= new MenuDesignAPI(configuration, this); }
 
     private readonly ISwiftlyCore core;
     private readonly MenuConfiguration configuration = new();
@@ -20,6 +20,7 @@ internal sealed class MenuBuilderAPI : IMenuBuilderAPI
     public MenuBuilderAPI( ISwiftlyCore core )
     {
         this.core = core;
+        options.Clear();
     }
 
     public IMenuBuilderAPI WithParent( IMenuAPI parent )

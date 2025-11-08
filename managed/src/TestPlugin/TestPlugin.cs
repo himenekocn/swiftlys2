@@ -610,6 +610,22 @@ public class TestPlugin : BasePlugin
         Core.Menus.OpenMenu(player, settingsMenu);
     }
 
+    [Command("rmt")]
+    public void RefactoredMenuTestCommand( ICommandContext context )
+    {
+        var player = context.Sender!;
+        var menu = Core.MenusAPI
+            .CreateBuilder()
+            .FreezePlayer(true)
+            .AutoClose(15f)
+            .Design.MaxVisibleItems(5)
+            .Design.SetMenuTitle("Refactored Menu")
+            .Design.HideMenuTitle(false)
+            .Build();
+
+        Core.MenusAPI.OpenMenuForPlayer(player, menu);
+    }
+
     [Command("mt")]
     public void MenuTestCommand( ICommandContext context )
     {

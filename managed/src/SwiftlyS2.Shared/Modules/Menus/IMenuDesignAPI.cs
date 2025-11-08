@@ -6,23 +6,23 @@ public interface IMenuDesignAPI
     /// Sets the title of the menu.
     /// </summary>
     /// <param name="title">The title to display for the menu.</param>
-    /// <returns>This design interface for method chaining.</returns>
-    public IMenuDesignAPI SetMenuTitle( string? title = null );
+    /// <returns>The menu builder for method chaining.</returns>
+    public IMenuBuilderAPI SetMenuTitle( string? title = null );
 
     /// <summary>
     /// Hides the menu title.
     /// </summary>
     /// <param name="hide">True to hide the title, false to show it.</param>
-    /// <returns>This design interface for method chaining.</returns>
-    public IMenuDesignAPI HideMenuTitle( bool hide = false );
+    /// <returns>The menu builder for method chaining.</returns>
+    public IMenuBuilderAPI HideMenuTitle( bool hide = false );
 
     /// <summary>
     /// Sets how many menu items can be displayed on screen at once. Menus with more items will be paginated.
     /// </summary>
     /// <param name="count">Maximum visible items (clamped between 1 and 5).</param>
-    /// <returns>This design interface for method chaining.</returns>
+    /// <returns>The menu builder for method chaining.</returns>
     /// <remarks>
     /// Values outside the range of 1-5 will be automatically clamped, and a warning will be logged.
     /// </remarks>
-    public IMenuDesignAPI MaxVisibleItems( int count = 5 );
+    public IMenuBuilderAPI MaxVisibleItems( int count = 5 );
 }

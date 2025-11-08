@@ -5,31 +5,33 @@ namespace SwiftlyS2.Core.Menus;
 internal sealed class MenuDesignAPI : IMenuDesignAPI
 {
     private readonly MenuConfiguration configuration;
+    private readonly IMenuBuilderAPI builder;
 
-    public MenuDesignAPI( MenuConfiguration configuration )
+    public MenuDesignAPI( MenuConfiguration configuration, IMenuBuilderAPI builder )
     {
         this.configuration = configuration;
+        this.builder = builder;
     }
 
-    public IMenuDesignAPI SetMenuTitle( string? title = null )
+    public IMenuBuilderAPI SetMenuTitle( string? title = null )
     {
         configuration.Title = title ?? "Menu";
-        return this;
+        return builder;
     }
 
-    public IMenuDesignAPI HideMenuTitle( bool hide = false )
+    public IMenuBuilderAPI HideMenuTitle( bool hide = false )
     {
         configuration.HideTitle = hide;
-        return this;
+        return builder;
     }
 
-    public IMenuDesignAPI MaxVisibleItems( int count = 5 )
+    public IMenuBuilderAPI MaxVisibleItems( int count = 5 )
     {
         if (count < 1 || count > 5)
         {
             Spectre.Console.AnsiConsole.WriteException(new ArgumentOutOfRangeException(nameof(count), $"MaxVisibleItems: value {count} is out of range [1, 5]."));
         }
         configuration.MaxVisibleItems = Math.Clamp(count, 1, 5);
-        return this;
+        return builder;
     }
 }
