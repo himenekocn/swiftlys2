@@ -39,9 +39,6 @@ public:
     virtual bool ExistsConvar(std::string cvar_name) override;
     virtual EConVarType GetConvarType(std::string cvar_name) override;
 
-    virtual CVValue_t** GetMinValuePtrPtr(std::string cvar_name) override;
-    virtual CVValue_t** GetMaxValuePtrPtr(std::string cvar_name) override;
-
     virtual void* GetConvarDataAddress(std::string cvar_name) override;
     virtual ConvarValue GetConvarValue(std::string cvar_name) override;
 

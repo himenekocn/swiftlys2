@@ -47,9 +47,6 @@ public:
     virtual bool ExistsConvar(std::string cvar_name) = 0;
     virtual EConVarType GetConvarType(std::string cvar_name) = 0;
 
-    virtual CVValue_t** GetMinValuePtrPtr(std::string cvar_name) = 0;
-    virtual CVValue_t** GetMaxValuePtrPtr(std::string cvar_name) = 0;
-
     virtual void* GetConvarDataAddress(std::string cvar_name) = 0;
     virtual ConvarValue GetConvarValue(std::string cvar_name) = 0;
 

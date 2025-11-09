@@ -340,19 +340,6 @@ EConVarType CConvarManager::GetConvarType(std::string cvar_name)
     return cvar.GetType();
 }
 
-
-CVValue_t** CConvarManager::GetMinValuePtrPtr(std::string cvar_name)
-{
-    ConVarRefAbstract cvar(cvar_name.c_str());
-    return &cvar.GetConVarData()->m_minValue;
-}
-
-CVValue_t** CConvarManager::GetMaxValuePtrPtr(std::string cvar_name)
-{
-    ConVarRefAbstract cvar(cvar_name.c_str());
-    return &cvar.GetConVarData()->m_maxValue;
-}
-
 void* CConvarManager::GetConvarDataAddress(std::string cvar_name)
 {
     ConVarRefAbstract cvar(cvar_name.c_str());

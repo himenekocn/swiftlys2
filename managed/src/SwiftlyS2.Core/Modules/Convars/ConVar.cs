@@ -80,188 +80,9 @@ internal class ConVar<T> : IConVar<T>{
   }
 
   public T Value {
-    get {
-      if (typeof(T) == typeof(bool)) {
-        return (T)(object)NativeConvars.GetConvarValueBool(Name);
-      }
-      else if (typeof(T) == typeof(short)) {
-        return (T)(object)NativeConvars.GetConvarValueInt16(Name);
-      }
-      else if (typeof(T) == typeof(ushort)) {
-        return (T)(object)NativeConvars.GetConvarValueUInt16(Name);
-      }
-      else if (typeof(T) == typeof(int)) {
-        return (T)(object)NativeConvars.GetConvarValueInt32(Name);
-      }
-      else if (typeof(T) == typeof(uint)) {
-        return (T)(object)NativeConvars.GetConvarValueUInt32(Name);
-      }
-      else if (typeof(T) == typeof(float)) {
-        return (T)(object)NativeConvars.GetConvarValueFloat(Name);
-      }
-      else if (typeof(T) == typeof(long)) {
-        return (T)(object)NativeConvars.GetConvarValueInt64(Name);
-      }
-      else if (typeof(T) == typeof(ulong)) {
-        return (T)(object)NativeConvars.GetConvarValueUInt64(Name);
-      }
-      else if (typeof(T) == typeof(double)) {
-        return (T)(object)NativeConvars.GetConvarValueDouble(Name);
-      }
-      else if (typeof(T) == typeof(Color)) {
-        return (T)(object)NativeConvars.GetConvarValueColor(Name);
-      }
-      else if (typeof(T) == typeof(QAngle)) {
-        return (T)(object)NativeConvars.GetConvarValueQAngle(Name);
-      }
-      else if (typeof(T) == typeof(Vector)) {
-        return (T)(object)NativeConvars.GetConvarValueVector(Name);
-      }
-      else if (typeof(T) == typeof(Vector2D)) {
-        return (T)(object)NativeConvars.GetConvarValueVector2D(Name);
-      }
-      else if (typeof(T) == typeof(Vector4D)) {
-        return (T)(object)NativeConvars.GetConvarValueVector4D(Name);
-      }
-      else if (typeof(T) == typeof(string)) {
-        return (T)(object)NativeConvars.GetConvarValueString(Name);
-      }
-      throw new ArgumentException($"Invalid type {typeof(T).Name}");
-    }
-    set {
-      if (value is bool boolValue) {
-        NativeConvars.SetConvarValueBool(Name, boolValue);
-        return;
-      }
-      else if (value is short shortValue) {
-        NativeConvars.SetConvarValueInt16(Name, shortValue);
-        return;
-      }
-      else if (value is ushort ushortValue) {
-        NativeConvars.SetConvarValueUInt16(Name, ushortValue);
-        return;
-      }
-      else if (value is int intValue) {
-        NativeConvars.SetConvarValueInt32(Name, intValue);
-        return;
-      }
-      else if (value is uint uintValue) {
-        NativeConvars.SetConvarValueUInt32(Name, uintValue);
-        return;
-      }
-      else if (value is float floatValue) {
-        NativeConvars.SetConvarValueFloat(Name, floatValue);
-        return;
-      }
-      else if (value is long longValue) {
-        NativeConvars.SetConvarValueInt64(Name, longValue);
-        return;
-      }
-      else if (value is ulong ulongValue) {
-        NativeConvars.SetConvarValueUInt64(Name, ulongValue);
-        return;
-      }
-      else if (value is double doubleValue) {
-        NativeConvars.SetConvarValueDouble(Name, doubleValue);
-        return;
-      }
-      else if (value is Color colorValue) {
-        NativeConvars.SetConvarValueColor(Name, colorValue);
-        return;
-      }
-      else if (value is QAngle qAngleValue) {
-        NativeConvars.SetConvarValueQAngle(Name, qAngleValue);
-        return;
-      }
-      else if (value is Vector vectorValue) {
-        NativeConvars.SetConvarValueVector(Name, vectorValue);
-        return;
-      }
-      else if (value is Vector2D vector2DValue) {
-        NativeConvars.SetConvarValueVector2D(Name, vector2DValue);
-        return;
-      }
-      else if (value is Vector4D vector4DValue) {
-        NativeConvars.SetConvarValueVector4D(Name, vector4DValue);
-        return;
-      }
-      else if (value is string stringValue) {
-        NativeConvars.SetConvarValueString(Name, stringValue);
-        return;
-      }
-      throw new ArgumentException($"Invalid type {typeof(T).Name}");
-    }
+    get => GetValue();
+    set => SetValue(value);
   }
-
-  public void SetInternal(T value)
-  {
-    var addr = NativeConvars.GetConvarDataAddress(Name);
-
-    if (addr == nint.Zero) {
-      throw new Exception($"Convar {Name} not found.");
-    }
-
-    if (value is bool boolValue) {
-      addr.Write(boolValue);
-      return;
-    }
-    else if (value is short shortValue) {
-      addr.Write(shortValue);
-      return;
-    }
-    else if (value is ushort ushortValue) {
-      addr.Write(ushortValue);
-      return;
-    }
-    else if (value is int intValue) {
-      addr.Write(intValue);
-      return;
-    } 
-    else if (value is float floatValue) {
-      addr.Write(floatValue);
-      return;
-    }
-    else if (value is long longValue) {
-      addr.Write(longValue);
-      return;
-    }
-    else if (value is ulong ulongValue) {
-      addr.Write(ulongValue);
-      return;
-    }
-    else if (value is double doubleValue) {
-      addr.Write(doubleValue);
-      return;
-    }
-    else if (value is Color colorValue) {
-      addr.Write(colorValue);
-      return;
-    }
-    else if (value is QAngle qAngleValue) {
-      addr.Write(qAngleValue);
-      return;
-    }
-    else if (value is Vector vectorValue) {
-      addr.Write(vectorValue);
-      return;
-    }
-    else if (value is Vector2D vector2DValue) {
-      addr.Write(vector2DValue);
-      return;
-    }
-    else if (value is Vector4D vector4DValue) {
-      addr.Write(vector4DValue);
-      return;
-    }
-    else if (value is string stringValue)
-    {
-      var ptr = StringPool.Allocate(stringValue);
-      addr.Write(ptr);
-      return;
-    }
-    throw new ArgumentException($"Invalid type {typeof(T).Name}");
-  }
-
   public void ReplicateToClient(int clientId, T value)
   {
     if (value is bool boolValue) {
@@ -361,6 +182,51 @@ internal class ConVar<T> : IConVar<T>{
     
     NativeConvars.QueryClientConvar(clientId, Name);
   }
+
+  public T GetValue()
+  {
+    unsafe {
+      if (Type != EConVarType.EConVarType_String) {
+        return *(T*)NativeConvars.GetValuePtr(Name);
+      }
+      else {
+        return (T)(object)(*(CUtlString*)NativeConvars.GetValuePtr(Name)).Value;
+      }
+    }
+  }
+
+  public void SetValue(T value)
+  {
+    unsafe {
+      if (Type != EConVarType.EConVarType_String) {
+        NativeConvars.SetValuePtr(Name, (nint)(&value));
+      }
+      else {
+        CUtlString str = new();
+        str.Value = (string)(object)value;
+        NativeConvars.SetValuePtr(Name, (nint)(&str));
+      }
+    }
+  }
+
+
+  public void SetInternal( T value )
+  {
+    unsafe
+    {
+      if (Type != EConVarType.EConVarType_String)
+      {
+        NativeConvars.SetValueInternalPtr(Name, (nint)(&value));
+      }
+      else
+      {
+        CUtlString str = new();
+        str.Value = (string)(object)value;
+        NativeConvars.SetValueInternalPtr(Name, (nint)(&str));
+      }
+    }
+  }
+
 
   public T GetMinValue()
   {

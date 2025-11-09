@@ -55,21 +55,14 @@ internal class TestService {
   {
     _Core.Command.RegisterCommand("rrr", (context) => {
 
-      var a = _Core.ConVar.Create("test_convar", "Test convar", 123);
+      var a = _Core.ConVar.Create("test_convar", "Test convar", "abc");
 
-      Console.WriteLine(a.Flags.HasFlag(ConvarFlags.DEVELOPMENT_ONLY));
+      Console.WriteLine(a.Value);
+      a.SetInternal("ghi");
 
-      // setting this to DEVELOPMENT_ONLY will cause a crash later
-      // because if its development only, the ConVarRefAbstract will not be able to find the ConvarData
-      // eventually return a nullptr in GetConvarData
-      a.Flags |= ConvarFlags.REPLICATED;
-
-      Console.WriteLine(a.Flags.HasFlag(ConvarFlags.REPLICATED));
-      Console.WriteLine(a.Flags.HasFlag(ConvarFlags.CHEAT));
-
-      Console.WriteLine(a.DefaultValue);
-      a.DefaultValue = 234;
-      Console.WriteLine(a.DefaultValue);
+      Console.WriteLine(a.Value);
+      a.Value = "def";
+      Console.WriteLine(a.Value);
     });
     // _Core.Event.OnItemServicesCanAcquireHook += (@event) => {
     //   Console.WriteLine(@event.EconItemView.ItemDefinitionIndex);
