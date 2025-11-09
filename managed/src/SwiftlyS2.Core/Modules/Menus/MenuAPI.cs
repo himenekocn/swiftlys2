@@ -143,8 +143,13 @@ internal sealed class MenuAPI : IMenuAPI
                 DesiredIndex: desiredOptionIndex.TryGetValue(player, out var desired) ? desired : -1,
                 SelectedIndex: selectedOptionIndex.TryGetValue(player, out var selected) ? selected : -1
             ))
-            .Where(state => state.DesiredIndex >= 0 && state.SelectedIndex >= 0 && state.DesiredIndex != state.SelectedIndex)
+            .Where(state => state.DesiredIndex >= 0 && state.SelectedIndex >= 0)
             .ToList();
+
+        if (playerStates.Count == 0)
+        {
+            return;
+        }
 
         var maxVisibleItems = Math.Clamp(
             Configuration.MaxVisibleItems switch {
@@ -155,22 +160,120 @@ internal sealed class MenuAPI : IMenuAPI
             5
         );
 
-        var centerIndex = maxVisibleItems / 2;
+        var halfVisible = maxVisibleItems / 2;
 
-        foreach (var (player, desiredIndex, selectedIndex) in playerStates)
+        lock (optionsLock)
         {
-            // TODO
-            // BeforeSelectionMove?.Invoke(this, new MenuEventArgs { Player = player, Options = visibleOptionsCache.TryGetValue(player, out var options) ? options : null });
+            var totalOptions = maxOptions;
 
-            // TODO
-            OptionHovering?.Invoke(this, new MenuEventArgs { Player = player, Options = null });
+            foreach (var (player, desiredIndex, selectedIndex) in playerStates)
+            {
+                if (totalOptions == 0)
+                {
+                    continue;
+                }
 
-            // TODO
-            // AfterSelectionMove?.Invoke(this, new MenuEventArgs { Player = player, Options = null });
+                var clampedDesiredIndex = Math.Clamp(desiredIndex, 0, totalOptions - 1);
+
+                IReadOnlyList<IMenuOption> visibleOptions;
+                int arrowPosition;
+
+                if (totalOptions > maxVisibleItems)
+                {
+                    var (startIndex, position) = OptionScrollStyle switch {
+                        MenuOptionScrollStyle.WaitingCenter when clampedDesiredIndex < halfVisible
+                            => (0, clampedDesiredIndex),
+                        MenuOptionScrollStyle.WaitingCenter when clampedDesiredIndex >= totalOptions - halfVisible
+                            => (totalOptions - maxVisibleItems, maxVisibleItems - (totalOptions - clampedDesiredIndex)),
+                        MenuOptionScrollStyle.WaitingCenter
+                            => (clampedDesiredIndex - halfVisible, halfVisible),
+
+                        MenuOptionScrollStyle.LinearScroll when maxVisibleItems == 1
+                            => (clampedDesiredIndex, 0),
+                        MenuOptionScrollStyle.LinearScroll when clampedDesiredIndex < maxVisibleItems - 1
+                            => (0, clampedDesiredIndex),
+                        MenuOptionScrollStyle.LinearScroll when clampedDesiredIndex >= totalOptions - (maxVisibleItems - 1)
+                            => (totalOptions - maxVisibleItems, maxVisibleItems - (totalOptions - clampedDesiredIndex)),
+                        MenuOptionScrollStyle.LinearScroll
+                            => (clampedDesiredIndex - (maxVisibleItems - 1), maxVisibleItems - 1),
+
+                        MenuOptionScrollStyle.CenterFixed
+                            => (-1, halfVisible),
+
+                        _ => (0, 0)
+                    };
+
+                    visibleOptions = OptionScrollStyle == MenuOptionScrollStyle.CenterFixed
+                        ? Enumerable.Range(0, maxVisibleItems)
+                            .Select(i => options[(clampedDesiredIndex + i - halfVisible + totalOptions) % totalOptions])
+                            .ToList()
+                            .AsReadOnly()
+                        : options
+                            .Skip(startIndex)
+                            .Take(maxVisibleItems)
+                            .ToList()
+                            .AsReadOnly();
+
+                    arrowPosition = position;
+                }
+                else
+                {
+                    visibleOptions = options.AsReadOnly();
+                    arrowPosition = clampedDesiredIndex;
+                }
+
+                OptionHovering?.Invoke(this, new MenuEventArgs {
+                    Player = player,
+                    Options = visibleOptions
+                });
+
+                var html = BuildMenuHtml(player, visibleOptions, arrowPosition, clampedDesiredIndex, totalOptions, maxVisibleItems);
+                NativePlayer.SetCenterMenuRender(player.PlayerID, html);
+
+                if (desiredIndex != selectedIndex)
+                {
+                    _ = selectedOptionIndex.TryUpdate(player, clampedDesiredIndex, selectedIndex);
+                }
+            }
+        }
+    }
+
+    private string BuildMenuHtml( IPlayer player, IReadOnlyList<IMenuOption> visibleOptions, int arrowPosition, int selectedIndex, int totalOptions, int maxVisibleItems )
+    {
+        var html = new System.Text.StringBuilder();
+
+        if (!Configuration.HideTitle)
+        {
+            html.Append($"<font class='fontSize-m' color='#FFFFFF'>{Configuration.Title}</font>");
+            if (totalOptions > maxVisibleItems)
+            {
+                html.Append($"<font class='fontSize-s' color='#FFFFFF'> [{selectedIndex + 1}/{totalOptions}]</font>");
+            }
         }
 
-        playerStates
-            .ForEach(state => selectedOptionIndex.TryUpdate(state.Player, state.DesiredIndex, state.SelectedIndex));
+        html.Append("<font color='#FFFFFF' class='fontSize-sm'><br>");
+
+        for (int i = 0; i < visibleOptions.Count; i++)
+        {
+            var option = visibleOptions[i];
+            var isSelected = i == arrowPosition;
+
+            if (isSelected)
+            {
+                html.Append($"<font color='#FFFFFF' class='fontSize-sm'>➤ </font>");
+            }
+            else
+            {
+                html.Append("\u00A0\u00A0\u00A0 ");
+            }
+
+            html.Append(option.GetDisplayText(player, 0));
+            html.Append("<br>");
+        }
+
+        html.Append("</font>");
+
+        return html.ToString();
     }
 
     public void ShowForPlayer( IPlayer player )

@@ -30,6 +30,7 @@ using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Loggers;
 using SwiftlyS2.Shared.Menus;
 using SwiftlyS2.Shared.SteamAPI;
+using SwiftlyS2.Core.Menus.OptionsBase;
 
 namespace TestPlugin;
 
@@ -621,6 +622,26 @@ public class TestPlugin : BasePlugin
             .Design.MaxVisibleItems(5)
             .Design.SetMenuTitle("Refactored Menu")
             .Design.HideMenuTitle(false)
+            .Design.SetGlobalOptionScrollStyle(MenuOptionScrollStyle.LinearScroll)
+            .AddOption(new TextMenuOption("1"))
+            .AddOption(new TextMenuOption("12"))
+            .AddOption(new TextMenuOption("123"))
+            .AddOption(new TextMenuOption("1234"))
+            .AddOption(new TextMenuOption("12345"))
+            .AddOption(new TextMenuOption("123456"))
+            .AddOption(new TextMenuOption("1234567"))
+            .AddOption(new TextMenuOption("12345678"))
+            .AddOption(new TextMenuOption("123456789"))
+            .AddOption(new TextMenuOption("1234567890"))
+            .AddOption(new TextMenuOption("123456789"))
+            .AddOption(new TextMenuOption("12345678"))
+            .AddOption(new TextMenuOption("1234567"))
+            .AddOption(new TextMenuOption("123456"))
+            .AddOption(new TextMenuOption("12345"))
+            .AddOption(new TextMenuOption("1234"))
+            .AddOption(new TextMenuOption("123"))
+            .AddOption(new TextMenuOption("12"))
+            .AddOption(new TextMenuOption("1"))
             .Build();
 
         Core.MenusAPI.OpenMenuForPlayer(player, menu);
