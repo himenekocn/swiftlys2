@@ -11,16 +11,16 @@ namespace SwiftlyS2.Core.Natives;
 internal static class NativePlayer {
   private static int _MainThreadID;
 
-  private unsafe static delegate* unmanaged<int, int, byte*, void> _SendMessage;
+  private unsafe static delegate* unmanaged<int, int, byte*, int, void> _SendMessage;
 
-  public unsafe static void SendMessage(int playerid, int kind, string message) {
+  public unsafe static void SendMessage(int playerid, int kind, string message, int htmlDuration) {
     var pool = ArrayPool<byte>.Shared;
     var messageLength = Encoding.UTF8.GetByteCount(message);
     var messageBuffer = pool.Rent(messageLength + 1);
     Encoding.UTF8.GetBytes(message, messageBuffer);
     messageBuffer[messageLength] = 0;
     fixed (byte* messageBufferPtr = messageBuffer) {
-      _SendMessage(playerid, kind, messageBufferPtr);
+      _SendMessage(playerid, kind, messageBufferPtr, htmlDuration);
       pool.Return(messageBuffer);
     }
   }
