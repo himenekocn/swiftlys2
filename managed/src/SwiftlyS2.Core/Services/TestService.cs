@@ -37,16 +37,39 @@ internal class TestService {
     _Core = core;
     _Logger = logger;
 
+    _Logger.LogWarning("TestService created");
+    _Logger.LogWarning("TestService created");
+    _Logger.LogWarning("TestService created");
+    _Logger.LogWarning("TestService created");
+    _Logger.LogWarning("TestService created");
+    _Logger.LogWarning("TestService created");
+    _Logger.LogWarning("TestService created");
+    _Logger.LogWarning("TestService created");
+    _Logger.LogWarning("TestService created");
+
     Test();
   }
 
 
   public void Test()
   {
+    _Core.Event.OnEntityDeleted += (@event) => {
+      Console.WriteLine("Entity deleted: " + @event.Entity.Entity?.DesignerName);
+    };
     _Core.Command.RegisterCommand("rrr", (context) => {
-      _Core.Engine.ExecuteCommandWithBuffer("echo 1", (buffer) => {
-        Console.WriteLine(buffer);
+
+      _Core.EntitySystem.GetAllEntities().ToList().ForEach(entity => {
+        entity.Entity.Flags |= 0x200;
       });
+
+      var a = _Core.ConVar.Create("test_convar", "Test convar", "abc");
+
+      Console.WriteLine(a.Value);
+      a.SetInternal("ghi");
+
+      Console.WriteLine(a.Value);
+      a.Value = "def";
+      Console.WriteLine(a.Value);
     });
     // _Core.Event.OnItemServicesCanAcquireHook += (@event) => {
     //   Console.WriteLine(@event.EconItemView.ItemDefinitionIndex);

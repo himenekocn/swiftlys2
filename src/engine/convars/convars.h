@@ -20,6 +20,7 @@
 #define src_engine_convars_convars_h
 
 #include <api/engine/convars/convars.h>
+#include <public/tier1/convar.h>
 #include <optional>
 
 class CConvarManager : public IConvarManager
