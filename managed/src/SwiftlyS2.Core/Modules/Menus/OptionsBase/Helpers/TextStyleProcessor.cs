@@ -296,6 +296,17 @@ internal sealed partial class TextStyleProcessor
                     pendingOpenTags.Add(content);
                     break;
 
+                // Handle closing tags in skipped region, remove matching opening tag from pending
+                case (true, false) when content.StartsWith("</"):
+                    var closingTagName = content[2..^1].Split(' ')[0];
+                    var matchIndex = pendingOpenTags.FindLastIndex(t =>
+                        t[1..^1].Split(' ')[0].Equals(closingTagName, StringComparison.OrdinalIgnoreCase));
+                    if (matchIndex >= 0)
+                    {
+                        pendingOpenTags.RemoveAt(matchIndex);
+                    }
+                    break;
+
                 // Process plain text, keeping only middle portion
                 case (false, _):
                     foreach (var ch in content)
