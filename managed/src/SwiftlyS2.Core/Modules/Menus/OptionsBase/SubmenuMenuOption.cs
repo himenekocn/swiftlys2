@@ -13,10 +13,10 @@ public sealed class SubmenuMenuOption : MenuOptionBase
     private readonly Func<Task<IMenuAPI>>? submenuBuilderAsync;
     private readonly ConcurrentDictionary<IPlayer, bool> isLoading = new();
 
-    /// <summary>
-    /// Occurs when the submenu is ready to be opened.
-    /// </summary>
-    public event EventHandler<MenuManagerEventArgs>? SubmenuRequested;
+    // /// <summary>
+    // /// Occurs when the submenu is ready to be opened.
+    // /// </summary>
+    // public event EventHandler<MenuManagerEventArgs>? SubmenuRequested;
 
     /// <summary>
     /// Creates an instance of <see cref="SubmenuMenuOption"/> with a pre-built submenu.
@@ -80,12 +80,9 @@ public sealed class SubmenuMenuOption : MenuOptionBase
 
     public override string GetDisplayText( IPlayer player, int displayLine = 0 )
     {
-        if (isLoading.TryGetValue(player, out var loading) && loading)
-        {
-            return "<font color='#FFA500'>Waiting...</font>";
-        }
-
-        return base.GetDisplayText(player, displayLine);
+        return isLoading.TryGetValue(player, out var loading) && loading
+            ? "<font color='#FFA500'>Waiting...</font>"
+            : base.GetDisplayText(player, displayLine);
     }
 
     private async ValueTask OnSubmenuClick( object? sender, MenuOptionClickEventArgs args )
@@ -93,10 +90,11 @@ public sealed class SubmenuMenuOption : MenuOptionBase
         var menu = await GetSubmenuAsync(args.Player);
         if (menu != null)
         {
-            SubmenuRequested?.Invoke(this, new MenuManagerEventArgs {
-                Player = args.Player,
-                Menu = menu
-            });
+            // SubmenuRequested?.Invoke(this, new MenuManagerEventArgs {
+            //     Player = args.Player,
+            //     Menu = menu
+            // });
+            Menu?.MenuManager.OpenMenuForPlayer(args.Player, menu);
         }
     }
 

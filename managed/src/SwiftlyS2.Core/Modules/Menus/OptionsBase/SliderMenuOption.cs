@@ -10,26 +10,23 @@ namespace SwiftlyS2.Core.Menus.OptionsBase;
 public sealed class SliderMenuOption : MenuOptionBase
 {
     private readonly ConcurrentDictionary<IPlayer, float> values = new();
-    private readonly float min;
-    private readonly float max;
-    private readonly float step;
     private readonly float defaultValue;
     private readonly int totalBars;
 
     /// <summary>
     /// Gets the minimum value of the slider.
     /// </summary>
-    public float Min => min;
+    public float Min { get; private init; }
 
     /// <summary>
     /// Gets the maximum value of the slider.
     /// </summary>
-    public float Max => max;
+    public float Max { get; private init; }
 
     /// <summary>
     /// Gets the step increment/decrement value.
     /// </summary>
-    public float Step => step;
+    public float Step { get; private init; }
 
     /// <summary>
     /// Occurs when the slider value changes for a player.
@@ -77,9 +74,9 @@ public sealed class SliderMenuOption : MenuOptionBase
 
         Text = text;
         PlaySound = true;
-        this.min = min;
-        this.max = max;
-        this.step = step;
+        this.Min = min;
+        this.Max = max;
+        this.Step = step;
         this.defaultValue = Math.Clamp(defaultValue ?? min, min, max);
         this.totalBars = totalBars;
 
@@ -91,7 +88,7 @@ public sealed class SliderMenuOption : MenuOptionBase
     {
         var text = base.GetDisplayText(player, displayLine);
         var value = values.GetOrAdd(player, defaultValue);
-        var percentage = (value - min) / (max - min);
+        var percentage = (value - Min) / (Max - Min);
         var filledBars = (int)(percentage * totalBars);
 
         var bars = string.Concat(
@@ -120,14 +117,14 @@ public sealed class SliderMenuOption : MenuOptionBase
     /// <param name="value">The value to set. Will be clamped between Min and Max.</param>
     public void SetValue( IPlayer player, float value )
     {
-        var clampedValue = Math.Clamp(value, min, max);
+        var clampedValue = Math.Clamp(value, Min, Max);
         _ = values.AddOrUpdate(player, clampedValue, ( _, _ ) => clampedValue);
     }
 
     private ValueTask OnSliderClick( object? sender, MenuOptionClickEventArgs args )
     {
         var oldValue = values.GetOrAdd(args.Player, defaultValue);
-        var newValue = Math.Clamp(oldValue + step > max ? min : oldValue + step, min, max);
+        var newValue = Math.Clamp(oldValue + Step > Max ? Min : oldValue + Step, Min, Max);
 
         _ = values.AddOrUpdate(args.Player, newValue, ( _, _ ) => newValue);
 

@@ -10,8 +10,6 @@ public sealed class ProgressBarMenuOption : MenuOptionBase
 {
     private readonly ConcurrentDictionary<IPlayer, Func<float>> progressProviders = new();
     private readonly Func<float> defaultProgressProvider;
-    private readonly int barWidth;
-    private readonly bool showPercentage;
     private readonly bool multiLine;
     private readonly string filledChar;
     private readonly string emptyChar;
@@ -19,12 +17,12 @@ public sealed class ProgressBarMenuOption : MenuOptionBase
     /// <summary>
     /// Gets the width of the progress bar in characters.
     /// </summary>
-    public int BarWidth => barWidth;
+    public int BarWidth { get; private init; }
 
     /// <summary>
     /// Gets whether to display the percentage value.
     /// </summary>
-    public bool ShowPercentage => showPercentage;
+    public bool ShowPercentage { get; private init; }
 
     public override int LineCount => multiLine ? 2 : 1;
 
@@ -53,8 +51,8 @@ public sealed class ProgressBarMenuOption : MenuOptionBase
         PlaySound = false;
         this.defaultProgressProvider = progressProvider;
         this.multiLine = multiLine;
-        this.barWidth = multiLine ? 20 : 10;
-        this.showPercentage = showPercentage;
+        this.BarWidth = multiLine ? 20 : 10;
+        this.ShowPercentage = showPercentage;
         this.filledChar = filledChar;
         this.emptyChar = emptyChar;
 
@@ -65,28 +63,23 @@ public sealed class ProgressBarMenuOption : MenuOptionBase
     {
         var provider = progressProviders.GetOrAdd(player, defaultProgressProvider);
         var progress = Math.Clamp(provider(), 0f, 1f);
-        var filledCount = (int)(progress * barWidth);
-        var emptyCount = barWidth - filledCount;
+        var filledCount = (int)(progress * BarWidth);
+        var emptyCount = BarWidth - filledCount;
 
         var bar = string.Concat(
             Enumerable.Range(0, filledCount).Select(_ => $"<font color='#FFFFFF'>{filledChar}</font>")
                 .Concat(Enumerable.Range(0, emptyCount).Select(_ => $"<font color='#666666'>{emptyChar}</font>"))
         );
 
-        var progressBar = $"<font color='#FFFFFF'>(</font>{bar}<font color='#FF3333'>)</font>{(showPercentage ? $" <font color='#FFFFFF'>{(int)(progress * 100)}%</font>" : string.Empty)}";
+        var progressBar = $"<font color='#FFFFFF'>(</font>{bar}<font color='#FF3333'>)</font>{(ShowPercentage ? $" <font color='#FFFFFF'>{(int)(progress * 100)}%</font>" : string.Empty)}";
 
-        if (multiLine)
-        {
-            return displayLine switch {
+        return multiLine
+            ? displayLine switch {
                 1 => base.GetDisplayText(player, displayLine),
                 2 => progressBar,
                 _ => $"{base.GetDisplayText(player, displayLine)}:<br>{progressBar}"
-            };
-        }
-        else
-        {
-            return $"{base.GetDisplayText(player, displayLine)}: {progressBar}";
-        }
+            }
+            : $"{base.GetDisplayText(player, displayLine)}: {progressBar}";
     }
 
     /// <summary>

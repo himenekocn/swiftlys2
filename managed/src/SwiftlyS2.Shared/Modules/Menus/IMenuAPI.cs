@@ -1,3 +1,4 @@
+using SwiftlyS2.Core.Menus;
 using SwiftlyS2.Shared.Players;
 
 namespace SwiftlyS2.Shared.Menus;
@@ -126,6 +127,11 @@ public sealed class MenuEventArgs : EventArgs
 /// </summary>
 public interface IMenuAPI : IDisposable
 {
+    /// <summary>
+    /// The menu manager that this menu belongs to.
+    /// </summary>
+    public IMenuManagerAPI MenuManager { get; }
+
     /// <summary>
     /// Configuration settings for this menu.
     /// </summary>

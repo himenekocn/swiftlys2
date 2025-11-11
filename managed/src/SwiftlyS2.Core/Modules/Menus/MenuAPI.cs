@@ -10,6 +10,11 @@ namespace SwiftlyS2.Core.Menus;
 internal sealed class MenuAPI : IMenuAPI, IDisposable
 {
     /// <summary>
+    /// The menu manager that this menu belongs to.
+    /// </summary>
+    public IMenuManagerAPI MenuManager { get; init; }
+
+    /// <summary>
     /// Configuration settings for this menu.
     /// </summary>
     public MenuConfiguration Configuration { get; init; }
@@ -97,6 +102,8 @@ internal sealed class MenuAPI : IMenuAPI, IDisposable
         disposed = false;
 
         this.core = core;
+
+        MenuManager = core.MenusAPI;
         Configuration = configuration;
         KeybindOverrides = keybindOverrides;
         OptionScrollStyle = optionScrollStyle;
@@ -396,13 +403,16 @@ internal sealed class MenuAPI : IMenuAPI, IDisposable
     {
         lock (optionsLock)
         {
-            option.Click += OnOptionClick;
+            // option.Click += OnOptionClick;
 
-            if (option is OptionsBase.SubmenuMenuOption submenuOption)
+            // if (option is OptionsBase.SubmenuMenuOption submenuOption)
+            // {
+            //     submenuOption.SubmenuRequested += OnSubmenuRequested;
+            // }
+            if (option is OptionsBase.MenuOptionBase baseOption)
             {
-                submenuOption.SubmenuRequested += OnSubmenuRequested;
+                baseOption.Menu = this;
             }
-
             options.Add(option);
             maxOptions = options.Count;
             // maxDisplayLines = options.Sum(option => option.LineCount);
@@ -413,12 +423,12 @@ internal sealed class MenuAPI : IMenuAPI, IDisposable
     {
         lock (optionsLock)
         {
-            option.Click -= OnOptionClick;
+            // option.Click -= OnOptionClick;
 
-            if (option is OptionsBase.SubmenuMenuOption submenuOption)
-            {
-                submenuOption.SubmenuRequested -= OnSubmenuRequested;
-            }
+            // if (option is OptionsBase.SubmenuMenuOption submenuOption)
+            // {
+            //     submenuOption.SubmenuRequested -= OnSubmenuRequested;
+            // }
 
             var result = options.Remove(option);
             maxOptions = options.Count;
@@ -484,21 +494,21 @@ internal sealed class MenuAPI : IMenuAPI, IDisposable
         player.PlayerPawn.MoveTypeUpdated();
     }
 
-    private ValueTask OnOptionClick( object? sender, MenuOptionClickEventArgs args )
-    {
-        if (args.CloseMenu)
-        {
-            CloseForPlayer(args.Player);
-        }
+    // private ValueTask OnOptionClick( object? sender, MenuOptionClickEventArgs args )
+    // {
+    //     if (args.CloseMenu)
+    //     {
+    //         CloseForPlayer(args.Player);
+    //     }
 
-        return ValueTask.CompletedTask;
-    }
+    //     return ValueTask.CompletedTask;
+    // }
 
-    private void OnSubmenuRequested( object? sender, MenuManagerEventArgs args )
-    {
-        if (args.Player != null && args.Menu != null)
-        {
-            core.MenusAPI.OpenMenuForPlayer(args.Player, args.Menu);
-        }
-    }
+    // private void OnSubmenuRequested( object? sender, MenuManagerEventArgs args )
+    // {
+    //     if (args.Player != null && args.Menu != null)
+    //     {
+    //         core.MenusAPI.OpenMenuForPlayer(args.Player, args.Menu);
+    //     }
+    // }
 }

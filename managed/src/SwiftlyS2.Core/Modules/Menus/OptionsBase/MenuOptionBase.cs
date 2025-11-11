@@ -85,10 +85,10 @@ public abstract partial class MenuOptionBase : IMenuOption, IDisposable
         GC.SuppressFinalize(this);
     }
 
-    // /// <summary>
-    // /// Gets or sets the menu that this option belongs to.
-    // /// </summary>
-    // public IMenuAPI? Menu { get; init; }
+    /// <summary>
+    /// Gets or sets the menu that this option belongs to.
+    /// </summary>
+    public IMenuAPI? Menu { get; internal set; }
 
     /// <summary>
     /// Gets the number of lines this option requests to occupy in the menu.
@@ -422,6 +422,11 @@ public abstract partial class MenuOptionBase : IMenuOption, IDisposable
         if (!visible || !enabled)
         {
             return;
+        }
+
+        if (CloseAfterClick)
+        {
+            Menu?.MenuManager.CloseMenuForPlayer(player, Menu!);
         }
 
         if (!await OnValidatingAsync(player))

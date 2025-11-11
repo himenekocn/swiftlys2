@@ -130,10 +130,10 @@ public sealed class MenuOptionValueChangedEventArgs<T> : EventArgs
 /// </summary>
 public interface IMenuOption : IDisposable
 {
-    // /// <summary>
-    // /// Gets or sets the menu that this option belongs to.
-    // /// </summary>
-    // public IMenuAPI? Menu { get; }
+    /// <summary>
+    /// Gets the menu that this option belongs to.
+    /// </summary>
+    public IMenuAPI? Menu { get; }
 
     /// <summary>
     /// Gets the number of lines this option requests to occupy in the menu.
