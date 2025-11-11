@@ -32,16 +32,16 @@ internal static class NativePlayerManager {
     return ret;
   }
 
-  private unsafe static delegate* unmanaged<int, byte*, void> _SendMessage;
+  private unsafe static delegate* unmanaged<int, byte*, int, void> _SendMessage;
 
-  public unsafe static void SendMessage(int kind, string message) {
+  public unsafe static void SendMessage(int kind, string message, int duration) {
     var pool = ArrayPool<byte>.Shared;
     var messageLength = Encoding.UTF8.GetByteCount(message);
     var messageBuffer = pool.Rent(messageLength + 1);
     Encoding.UTF8.GetBytes(message, messageBuffer);
     messageBuffer[messageLength] = 0;
     fixed (byte* messageBufferPtr = messageBuffer) {
-      _SendMessage(kind, messageBufferPtr);
+      _SendMessage(kind, messageBufferPtr, duration);
       pool.Return(messageBuffer);
     }
   }

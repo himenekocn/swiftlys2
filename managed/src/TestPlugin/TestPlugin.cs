@@ -539,18 +539,18 @@ public class TestPlugin : BasePlugin
         return HookResult.Continue;
     }
 
-    private Callback<ValidateAuthTicketResponse_t> _authTicketResponse;
+    private Callback<GCMessageAvailable_t> _authTicketResponse;
 
     [EventListener<EventDelegates.OnSteamAPIActivated>]
     public void OnSteamAPIActivated()
     {
         Console.WriteLine("TestPlugin OnSteamAPIActivated");
-        _authTicketResponse = Callback<ValidateAuthTicketResponse_t>.Create(AuthResponse);
+        _authTicketResponse = Callback<GCMessageAvailable_t>.Create(AuthResponse);
     }
 
-    public void AuthResponse( ValidateAuthTicketResponse_t param )
+    public void AuthResponse( GCMessageAvailable_t param )
     {
-        Console.WriteLine($"AuthResponse {param.m_eAuthSessionResponse} -> {param.m_SteamID.m_SteamID}");
+        Console.WriteLine($"AuthResponse {param.m_nMessageSize}");
     }
 
     [Command("getip")]

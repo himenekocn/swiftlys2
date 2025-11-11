@@ -126,14 +126,14 @@ void CPlayer::Shutdown()
     }
 }
 
-void CPlayer::SendMsg(MessageType type, const std::string& message)
+void CPlayer::SendMsg(MessageType type, const std::string& message, int duration = 5000)
 {
     if (IsFakeClient()) return;
 
     if (type == MessageType::CenterHTML) {
         if (message == "") centerMessageEndTime = 0;
         else {
-            centerMessageEndTime = GetTime() + 5000;
+            centerMessageEndTime = GetTime() + duration;
             centerMessageText = message;
         }
     }

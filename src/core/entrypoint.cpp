@@ -57,23 +57,11 @@ InterfacesManager g_ifaceService;
 IVFunctionHook* g_pGameServerSteamAPIActivated = nullptr;
 IVFunctionHook* g_pGameServerSteamAPIDeactivated = nullptr;
 
-IVFunctionHook* g_pRegisterLoopModeHook = nullptr;
-IVFunctionHook* g_pUnregisterLoopModeHook = nullptr;
-
-IVFunctionHook* g_pCreateLoopModeHook = nullptr;
-IVFunctionHook* g_pDestroyLoopModeHook = nullptr;
-
 IVFunctionHook* g_pLoopInitHook = nullptr;
 IVFunctionHook* g_pLoopShutdownHook = nullptr;
 
 void GameServerSteamAPIActivatedHook(void* _this);
 void GameServerSteamAPIDeactivatedHook(void* _this);
-
-void RegisterLoopModeHook(void* _this, const char* loopModeName, void* factory, void** ppGlobalPtr);
-void UnregisterLoopModeHook(void* _this, const char* loopModeName, void* factory, void** ppGlobalPtr);
-
-void* CreateLoopModeHook(void* _this);
-void DestroyLoopModeHook(void* _this, void* loopmode);
 
 bool LoopInitHook(void* _this, KeyValues* pKeyValues, void* pRegistry);
 void LoopShutdownHook(void* _this);
@@ -86,8 +74,25 @@ bool SwiftlyCore::Load(BridgeKind_t kind)
     SetupConsoleColors();
 
     s2binlib_initialize(Plat_GetGameDirectory(), "csgo");
-    s2binlib_set_module_base_from_pointer("server", g_ifaceService.FetchInterface<IServerGameDLL>(INTERFACEVERSION_SERVERGAMEDLL));
-    s2binlib_set_module_base_from_pointer("engine2", g_ifaceService.FetchInterface<IVEngineServer2>(INTERFACEVERSION_VENGINESERVER));
+
+#ifdef _WIN32
+    void* libServer = load_library(
+            (const char_t*)WIN_LINUX(
+                StringWide((Plat_GetGameDirectory() + std::string("\\csgo\\bin\\win64\\server.dll"))).c_str(),
+                (Plat_GetGameDirectory() + std::string("/csgo/bin/linuxsteamrt64/libserver.so")).c_str()
+            )
+    );
+
+    void* libEngine = load_library(
+                (const char_t*)WIN_LINUX(
+                    StringWide(Plat_GetGameDirectory() + std::string("\\bin\\win64\\engine2.dll")).c_str(),
+                    (Plat_GetGameDirectory() + std::string("/bin/linuxsteamrt64/libengine2.so")).c_str()
+                )
+    );
+
+    s2binlib_set_module_base_from_pointer("server", libServer);
+    s2binlib_set_module_base_from_pointer("engine2", libEngine);
+#endif
 
     auto cvars = g_ifaceService.FetchInterface<ICvar>(CVAR_INTERFACE_VERSION);
     g_pCVar = cvars;
@@ -174,16 +179,16 @@ bool SwiftlyCore::Load(BridgeKind_t kind)
     auto hooksmanager = g_ifaceService.FetchInterface<IHooksManager>(HOOKSMANAGER_INTERFACE_VERSION);
     hooksmanager->Initialize();
 
-    void* engineservicemgr = nullptr;
-    s2binlib_find_vtable("engine2", "CEngineServiceMgr", &engineservicemgr);
+    void* loopmodeLevelLoad = nullptr;
+    s2binlib_find_vtable("engine2", "CLoopModeLevelLoad", &loopmodeLevelLoad);
 
-    g_pRegisterLoopModeHook = hooksmanager->CreateVFunctionHook();
-    g_pRegisterLoopModeHook->SetHookFunction(engineservicemgr, gamedata->GetOffsets()->Fetch("IEngineServiceMgr::RegisterLoopMode"), (void*)RegisterLoopModeHook, true);
-    g_pRegisterLoopModeHook->Enable();
+    g_pLoopInitHook = hooksmanager->CreateVFunctionHook();
+    g_pLoopInitHook->SetHookFunction(loopmodeLevelLoad, gamedata->GetOffsets()->Fetch("ILoopMode::LoopInit"), (void*)LoopInitHook, true);
+    g_pLoopInitHook->Enable();
 
-    g_pUnregisterLoopModeHook = hooksmanager->CreateVFunctionHook();
-    g_pUnregisterLoopModeHook->SetHookFunction(engineservicemgr, gamedata->GetOffsets()->Fetch("IEngineServiceMgr::UnregisterLoopMode"), (void*)UnregisterLoopModeHook, true);
-    g_pUnregisterLoopModeHook->Enable();
+    g_pLoopShutdownHook = hooksmanager->CreateVFunctionHook();
+    g_pLoopShutdownHook->SetHookFunction(loopmodeLevelLoad, gamedata->GetOffsets()->Fetch("ILoopMode::LoopShutdown"), (void*)LoopShutdownHook, true);
+    g_pLoopShutdownHook->Enable();
 
     void* servervtable = nullptr;
     s2binlib_find_vtable("server", "CSource2Server", &servervtable);
@@ -276,87 +281,6 @@ void GameServerSteamAPIDeactivatedHook(void* _this)
     return reinterpret_cast<decltype(&GameServerSteamAPIDeactivatedHook)>(g_pGameServerSteamAPIDeactivated->GetOriginal())(_this);
 }
 
-void RegisterLoopModeHook(void* _this, const char* loopModeName, void* factory, void** ppGlobalPtr)
-{
-    if (std::string(loopModeName) == "game")
-    {
-        auto hooksmanager = g_ifaceService.FetchInterface<IHooksManager>(HOOKSMANAGER_INTERFACE_VERSION);
-        auto gamedata = g_ifaceService.FetchInterface<IGameDataManager>(GAMEDATA_INTERFACE_VERSION);
-
-        g_pCreateLoopModeHook = hooksmanager->CreateVFunctionHook();
-        g_pCreateLoopModeHook->SetHookFunction(factory, gamedata->GetOffsets()->Fetch("ILoopModeFactory::CreateLoopMode"), (void*)CreateLoopModeHook, false);
-        g_pCreateLoopModeHook->Enable();
-
-        g_pDestroyLoopModeHook = hooksmanager->CreateVFunctionHook();
-        g_pDestroyLoopModeHook->SetHookFunction(factory, gamedata->GetOffsets()->Fetch("ILoopModeFactory::DestroyLoopMode"), (void*)DestroyLoopModeHook, false);
-        g_pDestroyLoopModeHook->Enable();
-    }
-
-    return reinterpret_cast<decltype(&RegisterLoopModeHook)>(g_pRegisterLoopModeHook->GetOriginal())(_this, loopModeName, factory, ppGlobalPtr);
-}
-
-void UnregisterLoopModeHook(void* _this, const char* loopModeName, void* factory, void** ppGlobalPtr)
-{
-    if (std::string(loopModeName) == "game")
-    {
-        auto hooksmanager = g_ifaceService.FetchInterface<IHooksManager>(HOOKSMANAGER_INTERFACE_VERSION);
-        if (g_pCreateLoopModeHook)
-        {
-            g_pCreateLoopModeHook->Disable();
-            hooksmanager->DestroyVFunctionHook(g_pCreateLoopModeHook);
-            g_pCreateLoopModeHook = nullptr;
-        }
-
-        if (g_pDestroyLoopModeHook)
-        {
-            g_pDestroyLoopModeHook->Disable();
-            hooksmanager->DestroyVFunctionHook(g_pDestroyLoopModeHook);
-            g_pDestroyLoopModeHook = nullptr;
-        }
-    }
-
-    return reinterpret_cast<decltype(&UnregisterLoopModeHook)>(g_pUnregisterLoopModeHook->GetOriginal())(_this, loopModeName, factory, ppGlobalPtr);
-}
-
-void* CreateLoopModeHook(void* _this)
-{
-    void* ret = reinterpret_cast<decltype(&CreateLoopModeHook)>(g_pCreateLoopModeHook->GetOriginal())(_this);
-
-    auto hooksmanager = g_ifaceService.FetchInterface<IHooksManager>(HOOKSMANAGER_INTERFACE_VERSION);
-    auto gamedata = g_ifaceService.FetchInterface<IGameDataManager>(GAMEDATA_INTERFACE_VERSION);
-
-    g_pLoopInitHook = hooksmanager->CreateVFunctionHook();
-    g_pLoopInitHook->SetHookFunction(ret, gamedata->GetOffsets()->Fetch("ILoopMode::LoopInit"), (void*)LoopInitHook, false);
-    g_pLoopInitHook->Enable();
-
-    g_pLoopShutdownHook = hooksmanager->CreateVFunctionHook();
-    g_pLoopShutdownHook->SetHookFunction(ret, gamedata->GetOffsets()->Fetch("ILoopMode::LoopShutdown"), (void*)LoopShutdownHook, false);
-    g_pLoopShutdownHook->Enable();
-
-    return ret;
-}
-
-void DestroyLoopModeHook(void* _this, void* loopmode)
-{
-    auto hooksmanager = g_ifaceService.FetchInterface<IHooksManager>(HOOKSMANAGER_INTERFACE_VERSION);
-
-    if (g_pLoopInitHook)
-    {
-        g_pLoopInitHook->Disable();
-        hooksmanager->DestroyVFunctionHook(g_pLoopInitHook);
-        g_pLoopInitHook = nullptr;
-    }
-
-    if (g_pLoopShutdownHook)
-    {
-        g_pLoopShutdownHook->Disable();
-        hooksmanager->DestroyVFunctionHook(g_pLoopShutdownHook);
-        g_pLoopShutdownHook = nullptr;
-    }
-
-    return reinterpret_cast<decltype(&DestroyLoopModeHook)>(g_pDestroyLoopModeHook->GetOriginal())(_this, loopmode);
-}
-
 bool LoopInitHook(void* _this, KeyValues* pKeyValues, void* pRegistry)
 {
     bool ret = reinterpret_cast<decltype(&LoopInitHook)>(g_pLoopInitHook->GetOriginal())(_this, pKeyValues, pRegistry);
@@ -433,7 +357,7 @@ void* SwiftlyCore::GetInterface(const std::string& interface_name)
         ifaceCreate = get_export(lib, "CreateInterface");
         unload_library(lib);
     }
-    else if (NETWORKMESSAGES_INTERFACE_VERSION == interface_name) {
+    else if (NETWORKMESSAGES_INTERFACE_VERSION == interface_name || NETWORKSYSTEM_INTERFACE_VERSION == interface_name) {
         void* lib = load_library(
             (const char_t*)WIN_LINUX(
                 StringWide(Plat_GetGameDirectory() + std::string("\\bin\\win64\\networksystem.dll")).c_str(),
