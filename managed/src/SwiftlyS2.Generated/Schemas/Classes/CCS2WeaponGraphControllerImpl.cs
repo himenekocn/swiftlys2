@@ -21,6 +21,9 @@ internal partial class CCS2WeaponGraphControllerImpl : CAnimGraphControllerBaseI
   public SchemaUntypedField ActionReset {
     get => new SchemaUntypedField(_Handle + Schema.GetOffset(0x8553337E580F422E));
   }
+  public SchemaUntypedField WeaponActionSpeedScale {
+    get => new SchemaUntypedField(_Handle + Schema.GetOffset(0x8553337EC667EC52));
+  }
   public SchemaUntypedField WeaponCategory {
     get => new SchemaUntypedField(_Handle + Schema.GetOffset(0x8553337EE2B7A95D));
   }

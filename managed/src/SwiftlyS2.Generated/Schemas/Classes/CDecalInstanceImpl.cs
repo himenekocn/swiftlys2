@@ -60,6 +60,9 @@ internal partial class CDecalInstanceImpl : SchemaClass, CDecalInstance {
   public ref float AnimationScale {
     get => ref _Handle.AsRef<float>(Schema.GetOffset(0x88CA447CE03B2F87));
   }
+  public ref float AnimationStartTime {
+    get => ref _Handle.AsRef<float>(Schema.GetOffset(0x88CA447CDC58A88C));
+  }
   public GameTime_t PlaceTime {
     get => new GameTime_tImpl(_Handle + Schema.GetOffset(0x88CA447C1103AE77));
   }
