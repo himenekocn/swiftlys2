@@ -80,6 +80,9 @@ public sealed class MenuOptionValidatingEventArgs : EventArgs
 /// <summary>
 /// Provides event data for menu option click events.
 /// </summary>
+/// <remarks>
+/// NOTE: When handling click events, the sender parameter must be passed as IMenuOption.
+/// </remarks>
 public sealed class MenuOptionClickEventArgs : EventArgs
 {
     /// <summary>
@@ -87,10 +90,10 @@ public sealed class MenuOptionClickEventArgs : EventArgs
     /// </summary>
     public required IPlayer Player { get; init; }
 
-    /// <summary>
-    /// The menu option that was clicked.
-    /// </summary>
-    public required IMenuOption Option { get; init; }
+    // /// <summary>
+    // /// The menu option that was clicked.
+    // /// </summary>
+    // public required IMenuOption Option { get; init; }
 
     /// <summary>
     /// Gets or sets a value indicating whether the menu should be closed after handling the click.

@@ -442,7 +442,7 @@ public abstract partial class MenuOptionBase : IMenuOption, IDisposable
         {
             var args = new MenuOptionClickEventArgs {
                 Player = player,
-                Option = this,
+                // Option = this,
                 CloseMenu = CloseAfterClick
             };
 
