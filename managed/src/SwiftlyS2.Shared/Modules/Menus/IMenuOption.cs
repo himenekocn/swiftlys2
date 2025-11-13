@@ -96,7 +96,7 @@ public sealed class MenuOptionClickEventArgs : EventArgs
     // public required IMenuOption Option { get; init; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the menu should be closed after handling the click.
+    /// Gets a value indicating whether the menu should be closed after handling the click.
     /// </summary>
     public bool CloseMenu { get; internal set; }
 }

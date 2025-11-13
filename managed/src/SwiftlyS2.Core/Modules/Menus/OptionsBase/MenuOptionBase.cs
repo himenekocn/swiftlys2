@@ -428,11 +428,6 @@ public abstract partial class MenuOptionBase : IMenuOption, IDisposable
             return;
         }
 
-        if (CloseAfterClick)
-        {
-            Menu?.MenuManager.CloseMenuForPlayer(player, Menu!);
-        }
-
         if (!await OnValidatingAsync(player))
         {
             return;
@@ -447,6 +442,11 @@ public abstract partial class MenuOptionBase : IMenuOption, IDisposable
             };
 
             await Click.Invoke(this, args);
+        }
+
+        if (CloseAfterClick)
+        {
+            Menu?.MenuManager.CloseMenuForPlayer(player, Menu!);
         }
     }
 
