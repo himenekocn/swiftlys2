@@ -216,16 +216,12 @@ def parse_native(lines: list[str]):
 
                 for param in string_params:
                     writer.add_line(f"byte[] {param}Buffer = Encoding.UTF8.GetBytes({param} + \"\\0\");")
-                for param in bytes_params:
-                    writer.add_line(f"var {param}Length = {param}.Length;")
-                    writer.add_line(f"byte[] {param}Buffer = new byte[{param}Length];")
-                    writer.add_line(f"Buffer.BlockCopy({param}, 0, {param}Buffer, 0, {param}Length);")
                 
                 fixed_blocks = []
                 for param in string_params:
                     fixed_blocks.append(f"fixed (byte* {param}BufferPtr = {param}Buffer)")
                 for param in bytes_params:
-                    fixed_blocks.append(f"fixed (byte* {param}BufferPtr = {param}Buffer)")
+                    fixed_blocks.append(f"fixed (byte* {param}BufferPtr = {param})")
                 
                 def write_native_call():
                     call_args = []

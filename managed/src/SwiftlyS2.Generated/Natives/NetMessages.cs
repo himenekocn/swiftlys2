@@ -800,12 +800,9 @@ internal static class NativeNetMessages
     {
         var valueLength = value.Length;
         byte[] fieldNameBuffer = Encoding.UTF8.GetBytes(fieldName + "\0");
-        var valueLength = value.Length;
-        byte[] valueBuffer = new byte[valueLength];
-        Buffer.BlockCopy(value, 0, valueBuffer, 0, valueLength);
         fixed (byte* fieldNameBufferPtr = fieldNameBuffer)
         {
-            fixed (byte* valueBufferPtr = valueBuffer)
+            fixed (byte* valueBufferPtr = value)
             {
                 _SetBytes(netmsg, fieldNameBufferPtr, valueBufferPtr, valueLength);
             }
@@ -818,12 +815,9 @@ internal static class NativeNetMessages
     {
         var valueLength = value.Length;
         byte[] fieldNameBuffer = Encoding.UTF8.GetBytes(fieldName + "\0");
-        var valueLength = value.Length;
-        byte[] valueBuffer = new byte[valueLength];
-        Buffer.BlockCopy(value, 0, valueBuffer, 0, valueLength);
         fixed (byte* fieldNameBufferPtr = fieldNameBuffer)
         {
-            fixed (byte* valueBufferPtr = valueBuffer)
+            fixed (byte* valueBufferPtr = value)
             {
                 _SetRepeatedBytes(netmsg, fieldNameBufferPtr, index, valueBufferPtr, valueLength);
             }
@@ -836,12 +830,9 @@ internal static class NativeNetMessages
     {
         var valueLength = value.Length;
         byte[] fieldNameBuffer = Encoding.UTF8.GetBytes(fieldName + "\0");
-        var valueLength = value.Length;
-        byte[] valueBuffer = new byte[valueLength];
-        Buffer.BlockCopy(value, 0, valueBuffer, 0, valueLength);
         fixed (byte* fieldNameBufferPtr = fieldNameBuffer)
         {
-            fixed (byte* valueBufferPtr = valueBuffer)
+            fixed (byte* valueBufferPtr = value)
             {
                 _AddBytes(netmsg, fieldNameBufferPtr, valueBufferPtr, valueLength);
             }
