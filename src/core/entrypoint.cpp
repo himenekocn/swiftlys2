@@ -67,15 +67,15 @@ IVFunctionHook* g_pGameServerSteamAPIDeactivated = nullptr;
 IVFunctionHook* g_pLoopInitHook = nullptr;
 IVFunctionHook* g_pLoopShutdownHook = nullptr;
 
-// Simple benchmark function for P/Invoke testing
-#ifdef _WIN32
-extern "C" __declspec(dllexport) int32_t SwiftlyS2_Benchmark_PInvoke()
-#else
-extern "C" __attribute__((visibility("default"))) int32_t SwiftlyS2_Benchmark_PInvoke()
-#endif
-{
-    return 1337;
-}
+// // Simple benchmark function for P/Invoke testing
+// #ifdef _WIN32
+// extern "C" __declspec(dllexport) int32_t SwiftlyS2_Benchmark_PInvoke()
+// #else
+// extern "C" __attribute__((visibility("default"))) int32_t SwiftlyS2_Benchmark_PInvoke()
+// #endif
+// {
+//     return 1337;
+// }
 
 void GameServerSteamAPIActivatedHook(void* _this);
 void GameServerSteamAPIDeactivatedHook(void* _this);
