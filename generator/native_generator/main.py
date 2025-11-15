@@ -267,7 +267,9 @@ def parse_native(lines: list[str]):
                     write_native_call()
             
             writer.add_block(f"public unsafe static {RETURN_TYPE_MAP[return_type]} {function_name}({method_signature})", write_method_content)
-    writer.add_block(f"internal static class Native{class_name}", write_class_content)
+    # Benchmark class should be public for external access
+    access_modifier = "public" if class_name == "Benchmark" else "internal"
+    writer.add_block(f"{access_modifier} static class Native{class_name}", write_class_content)
 
     with open(out_path, "w", encoding="utf-8", newline="") as f:
         f.write(writer.get_code())

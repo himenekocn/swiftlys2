@@ -17,35 +17,40 @@
  ************************************************************************************************/
 
 #include "entrypoint.h"
-#include <api/interfaces/manager.h>
-#include <api/interfaces/interfaces.h>
-#include <api/scripting/scripting.h>    
-#include <api/memory/hooks/manager.h>
 #include "console/colors.h"
+#include <api/interfaces/interfaces.h>
+#include <api/interfaces/manager.h>
+#include <api/memory/hooks/manager.h>
+#include <api/scripting/scripting.h>
 #include <core/managed/host/host.h>
+
 
 #include "managed/host/dynlib.h"
 #include "managed/host/strconv.h"
 
-#include <engine/entities/listener.h>
 #include <engine/entities/entitysystem.h>
+#include <engine/entities/listener.h>
 #include <engine/fixes/entrypoint.h>
 #include <engine/gamesystem/gamesystem.h>
+
 
 #include <public/tier0/icommandline.h>
 #include <public/tier1/utlstringtoken.h>
 
+#include <api/shared/files.h>
 #include <api/shared/plat.h>
 #include <api/shared/string.h>
-#include <api/shared/files.h>
 
-#include <public/tier1/KeyValues.h>
+
 #include <public/icvar.h>
+#include <public/tier1/KeyValues.h>
+
 
 #include <fmt/format.h>
 
-#include <s2binlib/s2binlib.h>
 #include <public/engine/igameeventsystem.h>
+#include <s2binlib/s2binlib.h>
+
 
 #include <public/steam/steam_gameserver.h>
 
@@ -61,6 +66,16 @@ IVFunctionHook* g_pGameServerSteamAPIDeactivated = nullptr;
 
 IVFunctionHook* g_pLoopInitHook = nullptr;
 IVFunctionHook* g_pLoopShutdownHook = nullptr;
+
+// Simple benchmark function for P/Invoke testing
+#ifdef _WIN32
+extern "C" __declspec(dllexport) int32_t SwiftlyS2_Benchmark_PInvoke()
+#else
+extern "C" __attribute__((visibility("default"))) int32_t SwiftlyS2_Benchmark_PInvoke()
+#endif
+{
+    return 1337;
+}
 
 void GameServerSteamAPIActivatedHook(void* _this);
 void GameServerSteamAPIDeactivatedHook(void* _this);
@@ -78,19 +93,9 @@ bool SwiftlyCore::Load(BridgeKind_t kind)
     s2binlib_initialize(Plat_GetGameDirectory(), "csgo");
 
 #ifdef _WIN32
-    void* libServer = load_library(
-            (const char_t*)WIN_LINUX(
-                StringWide((Plat_GetGameDirectory() + std::string("\\csgo\\bin\\win64\\server.dll"))).c_str(),
-                (Plat_GetGameDirectory() + std::string("/csgo/bin/linuxsteamrt64/libserver.so")).c_str()
-            )
-    );
+    void* libServer = load_library((const char_t*)WIN_LINUX(StringWide((Plat_GetGameDirectory() + std::string("\\csgo\\bin\\win64\\server.dll"))).c_str(), (Plat_GetGameDirectory() + std::string("/csgo/bin/linuxsteamrt64/libserver.so")).c_str()));
 
-    void* libEngine = load_library(
-                (const char_t*)WIN_LINUX(
-                    StringWide(Plat_GetGameDirectory() + std::string("\\bin\\win64\\engine2.dll")).c_str(),
-                    (Plat_GetGameDirectory() + std::string("/bin/linuxsteamrt64/libengine2.so")).c_str()
-                )
-    );
+    void* libEngine = load_library((const char_t*)WIN_LINUX(StringWide(Plat_GetGameDirectory() + std::string("\\bin\\win64\\engine2.dll")).c_str(), (Plat_GetGameDirectory() + std::string("/bin/linuxsteamrt64/libengine2.so")).c_str()));
 
     s2binlib_set_module_base_from_pointer("server", libServer);
     s2binlib_set_module_base_from_pointer("engine2", libEngine);
@@ -104,22 +109,27 @@ bool SwiftlyCore::Load(BridgeKind_t kind)
 
     auto logger = g_ifaceService.FetchInterface<ILogger>(LOGGER_INTERFACE_VERSION);
 
-    if (GetCurrentGame() == "unknown") {
+    if (GetCurrentGame() == "unknown")
+    {
         auto engine = g_ifaceService.FetchInterface<IVEngineServer2>(INTERFACEVERSION_VENGINESERVER);
 
-        if (engine) logger->Error("Entrypoint", fmt::format("Unknown game detected. App ID: {}", engine->GetAppID()));
-        else logger->Error("Entrypoint", "Unknown game detected. No engine interface available.");
+        if (engine)
+            logger->Error("Entrypoint", fmt::format("Unknown game detected. App ID: {}", engine->GetAppID()));
+        else
+            logger->Error("Entrypoint", "Unknown game detected. No engine interface available.");
 
         return false;
     }
 
     m_sCorePath = CommandLine()->ParmValue(CUtlStringToken("-sw_path"), WIN_LINUX("addons\\swiftlys2", "addons/swiftlys2"));
-    if (!ends_with(m_sCorePath, WIN_LINUX("\\", "/"))) m_sCorePath += WIN_LINUX("\\", "/");
+    if (!ends_with(m_sCorePath, WIN_LINUX("\\", "/")))
+        m_sCorePath += WIN_LINUX("\\", "/");
 
     auto configuration = g_ifaceService.FetchInterface<IConfiguration>(CONFIGURATION_INTERFACE_VERSION);
     configuration->InitializeExamples();
 
-    if (!configuration->Load()) {
+    if (!configuration->Load())
+    {
         logger->Error("Entrypoint", "Couldn't load the core configuration.");
         return false;
     }
@@ -133,14 +143,18 @@ bool SwiftlyCore::Load(BridgeKind_t kind)
     gamedata->GetSignatures()->Load(GetCurrentGame());
     gamedata->GetPatches()->Load(GetCurrentGame());
 
-    if (std::string* s = std::get_if<std::string>(&configuration->GetValue("core.PatchesToPerform"))) {
+    if (std::string* s = std::get_if<std::string>(&configuration->GetValue("core.PatchesToPerform")))
+    {
         auto patches = explodeToSet(*s, " ");
-        for (const auto& patch : patches) {
-            if (gamedata->GetPatches()->Exists(patch)) {
+        for (const auto& patch : patches)
+        {
+            if (gamedata->GetPatches()->Exists(patch))
+            {
                 gamedata->GetPatches()->Apply(patch);
                 logger->Info("Patching", fmt::format("Applied patch: {}", patch));
             }
-            else {
+            else
+            {
                 logger->Warning("Patching", fmt::format("Couldn't find patch: {}", patch));
             }
         }
@@ -149,7 +163,8 @@ bool SwiftlyCore::Load(BridgeKind_t kind)
     auto consoleoutput = g_ifaceService.FetchInterface<IConsoleOutput>(CONSOLEOUTPUT_INTERFACE_VERSION);
     consoleoutput->Initialize();
     if (bool* b = std::get_if<bool>(&configuration->GetValue("core.ConsoleFilter")))
-        if (*b) consoleoutput->ToggleFilter();
+        if (*b)
+            consoleoutput->ToggleFilter();
 
     auto entsystem = g_ifaceService.FetchInterface<IEntitySystem>(ENTITYSYSTEM_INTERFACE_VERSION);
     entsystem->Initialize();
@@ -160,7 +175,8 @@ bool SwiftlyCore::Load(BridgeKind_t kind)
     auto evmanager = g_ifaceService.FetchInterface<IEventManager>(GAMEEVENTMANAGER_INTERFACE_VERSION);
     evmanager->Initialize(GetCurrentGame());
 
-    if (!InitGameSystem()) {
+    if (!InitGameSystem())
+    {
         logger->Error("Game System", "Couldn't initialize the Game System.\n");
         return false;
     }
@@ -310,13 +326,13 @@ void SwiftlyCore::OnMapLoad(std::string map_name)
     current_map = map_name;
 
     if (g_pOnMapLoadCallback)
-        reinterpret_cast<void(*)(const char*)>(g_pOnMapLoadCallback)(map_name.c_str());
+        reinterpret_cast<void (*)(const char*)>(g_pOnMapLoadCallback)(map_name.c_str());
 }
 
 void SwiftlyCore::OnMapUnload()
 {
     if (g_pOnMapUnloadCallback)
-        reinterpret_cast<void(*)(const char*)>(g_pOnMapUnloadCallback)(current_map.c_str());
+        reinterpret_cast<void (*)(const char*)>(g_pOnMapUnloadCallback)(current_map.c_str());
 
     current_map = "";
 }
@@ -331,63 +347,39 @@ void* SwiftlyCore::GetInterface(const std::string& interface_name)
 
     void* ifaceptr = nullptr;
     void* ifaceCreate = nullptr;
-    if (INTERFACEVERSION_SERVERGAMEDLL == interface_name || INTERFACEVERSION_SERVERGAMECLIENTS == interface_name || SOURCE2GAMEENTITIES_INTERFACE_VERSION == interface_name) {
-        void* lib = load_library(
-            (const char_t*)WIN_LINUX(
-                StringWide((Plat_GetGameDirectory() + std::string("\\csgo\\bin\\win64\\server.dll"))).c_str(),
-                (Plat_GetGameDirectory() + std::string("/csgo/bin/linuxsteamrt64/libserver.so")).c_str()
-            )
-        );
+    if (INTERFACEVERSION_SERVERGAMEDLL == interface_name || INTERFACEVERSION_SERVERGAMECLIENTS == interface_name || SOURCE2GAMEENTITIES_INTERFACE_VERSION == interface_name)
+    {
+        void* lib = load_library((const char_t*)WIN_LINUX(StringWide((Plat_GetGameDirectory() + std::string("\\csgo\\bin\\win64\\server.dll"))).c_str(), (Plat_GetGameDirectory() + std::string("/csgo/bin/linuxsteamrt64/libserver.so")).c_str()));
         ifaceCreate = get_export(lib, "CreateInterface");
         unload_library(lib);
     }
-    else if (SCHEMASYSTEM_INTERFACE_VERSION == interface_name) {
-        void* lib = load_library(
-            (const char_t*)WIN_LINUX(
-                StringWide(Plat_GetGameDirectory() + std::string("\\bin\\win64\\schemasystem.dll")).c_str(),
-                (Plat_GetGameDirectory() + std::string("/bin/linuxsteamrt64/libschemasystem.so")).c_str()
-            )
-        );
+    else if (SCHEMASYSTEM_INTERFACE_VERSION == interface_name)
+    {
+        void* lib = load_library((const char_t*)WIN_LINUX(StringWide(Plat_GetGameDirectory() + std::string("\\bin\\win64\\schemasystem.dll")).c_str(), (Plat_GetGameDirectory() + std::string("/bin/linuxsteamrt64/libschemasystem.so")).c_str()));
         ifaceCreate = get_export(lib, "CreateInterface");
         unload_library(lib);
     }
-    else if (CVAR_INTERFACE_VERSION == interface_name) {
-        void* lib = load_library(
-                    (const char_t*)WIN_LINUX(
-                        StringWide(Plat_GetGameDirectory() + std::string("\\bin\\win64\\tier0.dll")).c_str(),
-                        (Plat_GetGameDirectory() + std::string("/bin/linuxsteamrt64/libtier0.so")).c_str()
-                    )
-        );
+    else if (CVAR_INTERFACE_VERSION == interface_name)
+    {
+        void* lib = load_library((const char_t*)WIN_LINUX(StringWide(Plat_GetGameDirectory() + std::string("\\bin\\win64\\tier0.dll")).c_str(), (Plat_GetGameDirectory() + std::string("/bin/linuxsteamrt64/libtier0.so")).c_str()));
         ifaceCreate = get_export(lib, "CreateInterface");
         unload_library(lib);
     }
-    else if (NETWORKMESSAGES_INTERFACE_VERSION == interface_name || NETWORKSYSTEM_INTERFACE_VERSION == interface_name) {
-        void* lib = load_library(
-            (const char_t*)WIN_LINUX(
-                StringWide(Plat_GetGameDirectory() + std::string("\\bin\\win64\\networksystem.dll")).c_str(),
-                (Plat_GetGameDirectory() + std::string("/bin/linuxsteamrt64/libnetworksystem.so")).c_str()
-            )
-        );
+    else if (NETWORKMESSAGES_INTERFACE_VERSION == interface_name || NETWORKSYSTEM_INTERFACE_VERSION == interface_name)
+    {
+        void* lib = load_library((const char_t*)WIN_LINUX(StringWide(Plat_GetGameDirectory() + std::string("\\bin\\win64\\networksystem.dll")).c_str(), (Plat_GetGameDirectory() + std::string("/bin/linuxsteamrt64/libnetworksystem.so")).c_str()));
         ifaceCreate = get_export(lib, "CreateInterface");
         unload_library(lib);
     }
-    else if (SOUNDSYSTEM_INTERFACE_VERSION == interface_name || SOUNDOPSYSTEM_INTERFACE_VERSION == interface_name) {
-        void* lib = load_library(
-            (const char_t*)WIN_LINUX(
-                StringWide(Plat_GetGameDirectory() + std::string("\\bin\\win64\\soundsystem.dll")).c_str(),
-                (Plat_GetGameDirectory() + std::string("/bin/linuxsteamrt64/libsoundsystem.so")).c_str()
-            )
-        );
+    else if (SOUNDSYSTEM_INTERFACE_VERSION == interface_name || SOUNDOPSYSTEM_INTERFACE_VERSION == interface_name)
+    {
+        void* lib = load_library((const char_t*)WIN_LINUX(StringWide(Plat_GetGameDirectory() + std::string("\\bin\\win64\\soundsystem.dll")).c_str(), (Plat_GetGameDirectory() + std::string("/bin/linuxsteamrt64/libsoundsystem.so")).c_str()));
         ifaceCreate = get_export(lib, "CreateInterface");
         unload_library(lib);
     }
-    else {
-        void* lib = load_library(
-            (const char_t*)WIN_LINUX(
-                StringWide(Plat_GetGameDirectory() + std::string("\\bin\\win64\\engine2.dll")).c_str(),
-                (Plat_GetGameDirectory() + std::string("/bin/linuxsteamrt64/libengine2.so")).c_str()
-            )
-        );
+    else
+    {
+        void* lib = load_library((const char_t*)WIN_LINUX(StringWide(Plat_GetGameDirectory() + std::string("\\bin\\win64\\engine2.dll")).c_str(), (Plat_GetGameDirectory() + std::string("/bin/linuxsteamrt64/libengine2.so")).c_str()));
         ifaceCreate = get_export(lib, "CreateInterface");
         unload_library(lib);
     }
@@ -397,7 +389,8 @@ void* SwiftlyCore::GetInterface(const std::string& interface_name)
         ifaceptr = reinterpret_cast<void* (*)(const char*, int*)>(ifaceCreate)(interface_name.c_str(), nullptr);
     }
 
-    if (ifaceptr != nullptr) g_mInterfacesCache.insert({ interface_name, ifaceptr });
+    if (ifaceptr != nullptr)
+        g_mInterfacesCache.insert({interface_name, ifaceptr});
 
     return ifaceptr;
 }
@@ -410,22 +403,30 @@ void SwiftlyCore::SendConsoleMessage(const std::string& message)
 std::string SwiftlyCore::GetCurrentGame()
 {
     auto engine = g_ifaceService.FetchInterface<IVEngineServer2>(INTERFACEVERSION_VENGINESERVER);
-    if (!engine) return "unknown";
+    if (!engine)
+        return "unknown";
 
-    switch (engine->GetAppID()) {
-    case 730: return "cs2";
-    default: return "unknown";
+    switch (engine->GetAppID())
+    {
+    case 730:
+        return "cs2";
+    default:
+        return "unknown";
     }
 }
 
 int SwiftlyCore::GetMaxGameClients()
 {
     auto engine = g_ifaceService.FetchInterface<IVEngineServer2>(INTERFACEVERSION_VENGINESERVER);
-    if (!engine) return 0;
+    if (!engine)
+        return 0;
 
-    switch (engine->GetAppID()) {
-    case 730: return 64;
-    default: return 0;
+    switch (engine->GetAppID())
+    {
+    case 730:
+        return 64;
+    default:
+        return 0;
     }
 }
 

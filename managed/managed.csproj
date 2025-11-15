@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
 
@@ -61,6 +61,7 @@
 
   <ItemGroup>
     <Compile Remove="src\TestPlugin\**\*.cs" />
+    <Compile Remove="SwiftlyS2.Benchmarks\**\*.cs" />
     <Compile Remove="**\obj\**\*.cs" />
     <Compile Remove="**\bin\**\*.cs" />
   </ItemGroup>
