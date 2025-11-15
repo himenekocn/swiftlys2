@@ -19,7 +19,7 @@ internal static class NativeFileSystem
         fixed (byte* pathIdBufferPtr = pathIdBuffer)
         {
             var ret = _GetSearchPath(null, pathIdBufferPtr, searchPathType, searchPathsToGet);
-            var retBuffer = new byte[ret];
+            var retBuffer = new byte[ret + 1];
             fixed (byte* retBufferPtr = retBuffer)
             {
                 ret = _GetSearchPath(retBufferPtr, pathIdBufferPtr, searchPathType, searchPathsToGet);
@@ -109,7 +109,7 @@ internal static class NativeFileSystem
             fixed (byte* pathIdBufferPtr = pathIdBuffer)
             {
                 var ret = _ReadFile(null, fileNameBufferPtr, pathIdBufferPtr);
-                var retBuffer = new byte[ret];
+                var retBuffer = new byte[ret + 1];
                 fixed (byte* retBufferPtr = retBuffer)
                 {
                     ret = _ReadFile(retBufferPtr, fileNameBufferPtr, pathIdBufferPtr);

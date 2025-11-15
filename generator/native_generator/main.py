@@ -182,7 +182,10 @@ def parse_native(lines: list[str]):
                         if is_buffer_return(return_type):
                             first_call_args = ["null"] + call_args
                             writer.add_line(f"var ret = _{function_name}({', '.join(first_call_args)});")
-                            writer.add_line("var retBuffer = new byte[ret];")
+                            if return_type == "string":
+                                writer.add_line("var retBuffer = new byte[ret + 1];")
+                            else:
+                                writer.add_line("var retBuffer = new byte[ret];")
                             
                             def write_ret_fixed():
                                 second_call_args = ["retBufferPtr"] + call_args
@@ -238,7 +241,10 @@ def parse_native(lines: list[str]):
                     if is_buffer_return(return_type):
                         first_call_args = ["null"] + call_args
                         writer.add_line(f"var ret = _{function_name}({', '.join(first_call_args)});")
-                        writer.add_line("var retBuffer = new byte[ret];")
+                        if return_type == "string":
+                            writer.add_line("var retBuffer = new byte[ret + 1];")
+                        else:
+                            writer.add_line("var retBuffer = new byte[ret];")
                         
                         def write_ret_fixed():
                             second_call_args = ["retBufferPtr"] + call_args

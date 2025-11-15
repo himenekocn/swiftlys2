@@ -16,7 +16,7 @@ internal static class NativeDatabase
     public unsafe static string GetDefaultConnection()
     {
         var ret = _GetDefaultConnection(null);
-        var retBuffer = new byte[ret];
+        var retBuffer = new byte[ret + 1];
         fixed (byte* retBufferPtr = retBuffer)
         {
             ret = _GetDefaultConnection(retBufferPtr);
@@ -29,7 +29,7 @@ internal static class NativeDatabase
     public unsafe static string GetDefaultConnectionCredentials()
     {
         var ret = _GetDefaultConnectionCredentials(null);
-        var retBuffer = new byte[ret];
+        var retBuffer = new byte[ret + 1];
         fixed (byte* retBufferPtr = retBuffer)
         {
             ret = _GetDefaultConnectionCredentials(retBufferPtr);
@@ -45,7 +45,7 @@ internal static class NativeDatabase
         fixed (byte* connectionNameBufferPtr = connectionNameBuffer)
         {
             var ret = _GetCredentials(null, connectionNameBufferPtr);
-            var retBuffer = new byte[ret];
+            var retBuffer = new byte[ret + 1];
             fixed (byte* retBufferPtr = retBuffer)
             {
                 ret = _GetCredentials(retBufferPtr, connectionNameBufferPtr);

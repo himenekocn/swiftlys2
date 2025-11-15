@@ -154,7 +154,7 @@ public static class NativeBenchmark
         fixed (byte* valueBufferPtr = valueBuffer)
         {
             var ret = _StringToString(null, valueBufferPtr);
-            var retBuffer = new byte[ret];
+            var retBuffer = new byte[ret + 1];
             fixed (byte* retBufferPtr = retBuffer)
             {
                 ret = _StringToString(retBufferPtr, valueBufferPtr);

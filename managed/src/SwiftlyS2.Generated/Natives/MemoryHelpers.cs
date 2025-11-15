@@ -63,7 +63,7 @@ internal static class NativeMemoryHelpers
     public unsafe static string GetObjectPtrVtableName(nint objptr)
     {
         var ret = _GetObjectPtrVtableName(null, objptr);
-        var retBuffer = new byte[ret];
+        var retBuffer = new byte[ret + 1];
         fixed (byte* retBufferPtr = retBuffer)
         {
             ret = _GetObjectPtrVtableName(retBufferPtr, objptr);

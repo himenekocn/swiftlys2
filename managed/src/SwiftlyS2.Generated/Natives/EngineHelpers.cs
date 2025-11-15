@@ -16,7 +16,7 @@ internal static class NativeEngineHelpers
     public unsafe static string GetIP()
     {
         var ret = _GetIP(null);
-        var retBuffer = new byte[ret];
+        var retBuffer = new byte[ret + 1];
         fixed (byte* retBufferPtr = retBuffer)
         {
             ret = _GetIP(retBufferPtr);
@@ -86,7 +86,7 @@ internal static class NativeEngineHelpers
     public unsafe static string GetCurrentGame()
     {
         var ret = _GetCurrentGame(null);
-        var retBuffer = new byte[ret];
+        var retBuffer = new byte[ret + 1];
         fixed (byte* retBufferPtr = retBuffer)
         {
             ret = _GetCurrentGame(retBufferPtr);
@@ -99,7 +99,7 @@ internal static class NativeEngineHelpers
     public unsafe static string GetNativeVersion()
     {
         var ret = _GetNativeVersion(null);
-        var retBuffer = new byte[ret];
+        var retBuffer = new byte[ret + 1];
         fixed (byte* retBufferPtr = retBuffer)
         {
             ret = _GetNativeVersion(retBufferPtr);
@@ -112,7 +112,7 @@ internal static class NativeEngineHelpers
     public unsafe static string GetMenuSettings()
     {
         var ret = _GetMenuSettings(null);
-        var retBuffer = new byte[ret];
+        var retBuffer = new byte[ret + 1];
         fixed (byte* retBufferPtr = retBuffer)
         {
             ret = _GetMenuSettings(retBufferPtr);
@@ -133,7 +133,7 @@ internal static class NativeEngineHelpers
     public unsafe static string GetCSGODirectoryPath()
     {
         var ret = _GetCSGODirectoryPath(null);
-        var retBuffer = new byte[ret];
+        var retBuffer = new byte[ret + 1];
         fixed (byte* retBufferPtr = retBuffer)
         {
             ret = _GetCSGODirectoryPath(retBufferPtr);
@@ -146,7 +146,7 @@ internal static class NativeEngineHelpers
     public unsafe static string GetGameDirectoryPath()
     {
         var ret = _GetGameDirectoryPath(null);
-        var retBuffer = new byte[ret];
+        var retBuffer = new byte[ret + 1];
         fixed (byte* retBufferPtr = retBuffer)
         {
             ret = _GetGameDirectoryPath(retBufferPtr);

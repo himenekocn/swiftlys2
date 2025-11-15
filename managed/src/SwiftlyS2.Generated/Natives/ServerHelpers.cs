@@ -16,7 +16,7 @@ internal static class NativeServerHelpers
     public unsafe static string GetServerLanguage()
     {
         var ret = _GetServerLanguage(null);
-        var retBuffer = new byte[ret];
+        var retBuffer = new byte[ret + 1];
         fixed (byte* retBufferPtr = retBuffer)
         {
             ret = _GetServerLanguage(retBufferPtr);

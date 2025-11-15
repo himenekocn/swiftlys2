@@ -42,7 +42,7 @@ internal static class NativeCommandLine
             fixed (byte* defaultValueBufferPtr = defaultValueBuffer)
             {
                 var ret = _GetParameterValueString(null, parameterBufferPtr, defaultValueBufferPtr);
-                var retBuffer = new byte[ret];
+                var retBuffer = new byte[ret + 1];
                 fixed (byte* retBufferPtr = retBuffer)
                 {
                     ret = _GetParameterValueString(retBufferPtr, parameterBufferPtr, defaultValueBufferPtr);
@@ -81,7 +81,7 @@ internal static class NativeCommandLine
     public unsafe static string GetCommandLine()
     {
         var ret = _GetCommandLine(null);
-        var retBuffer = new byte[ret];
+        var retBuffer = new byte[ret + 1];
         fixed (byte* retBufferPtr = retBuffer)
         {
             ret = _GetCommandLine(retBufferPtr);

@@ -110,7 +110,7 @@ internal static class NativePlayer
     public unsafe static string GetIPAddress(int playerid)
     {
         var ret = _GetIPAddress(null, playerid);
-        var retBuffer = new byte[ret];
+        var retBuffer = new byte[ret + 1];
         fixed (byte* retBufferPtr = retBuffer)
         {
             ret = _GetIPAddress(retBufferPtr, playerid);
@@ -184,7 +184,7 @@ internal static class NativePlayer
     public unsafe static string GetLanguage(int playerid)
     {
         var ret = _GetLanguage(null, playerid);
-        var retBuffer = new byte[ret];
+        var retBuffer = new byte[ret + 1];
         fixed (byte* retBufferPtr = retBuffer)
         {
             ret = _GetLanguage(retBufferPtr, playerid);

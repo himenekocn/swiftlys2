@@ -54,7 +54,7 @@ internal static class NativeSounds
     public unsafe static string GetName(nint soundEvent)
     {
         var ret = _GetName(null, soundEvent);
-        var retBuffer = new byte[ret];
+        var retBuffer = new byte[ret + 1];
         fixed (byte* retBufferPtr = retBuffer)
         {
             ret = _GetName(retBufferPtr, soundEvent);

@@ -67,7 +67,7 @@ internal static class NativeGameEvents
         fixed (byte* keyBufferPtr = keyBuffer)
         {
             var ret = _GetString(null, _event, keyBufferPtr);
-            var retBuffer = new byte[ret];
+            var retBuffer = new byte[ret + 1];
             fixed (byte* retBufferPtr = retBuffer)
             {
                 ret = _GetString(retBufferPtr, _event, keyBufferPtr);

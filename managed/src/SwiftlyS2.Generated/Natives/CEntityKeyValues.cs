@@ -118,7 +118,7 @@ internal static class NativeCEntityKeyValues
         fixed (byte* keyBufferPtr = keyBuffer)
         {
             var ret = _GetString(null, keyvalues, keyBufferPtr);
-            var retBuffer = new byte[ret];
+            var retBuffer = new byte[ret + 1];
             fixed (byte* retBufferPtr = retBuffer)
             {
                 ret = _GetString(retBufferPtr, keyvalues, keyBufferPtr);

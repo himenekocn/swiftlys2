@@ -457,7 +457,7 @@ internal static class NativeNetMessages
         fixed (byte* fieldNameBufferPtr = fieldNameBuffer)
         {
             var ret = _GetString(null, netmsg, fieldNameBufferPtr);
-            var retBuffer = new byte[ret];
+            var retBuffer = new byte[ret + 1];
             fixed (byte* retBufferPtr = retBuffer)
             {
                 ret = _GetString(retBufferPtr, netmsg, fieldNameBufferPtr);
@@ -474,7 +474,7 @@ internal static class NativeNetMessages
         fixed (byte* fieldNameBufferPtr = fieldNameBuffer)
         {
             var ret = _GetRepeatedString(null, netmsg, fieldNameBufferPtr, index);
-            var retBuffer = new byte[ret];
+            var retBuffer = new byte[ret + 1];
             fixed (byte* retBufferPtr = retBuffer)
             {
                 ret = _GetRepeatedString(retBufferPtr, netmsg, fieldNameBufferPtr, index);
