@@ -10,6 +10,7 @@ public partial class SteamIdParser
 	private static readonly Regex SteamId64Regex = MyRegex();
 	private static readonly Regex SteamIdRegex = MyRegex1();
 	private static readonly Regex SteamId3Regex = MyRegex2();
+	private static readonly Regex SteamIdOnlineRegex = MyRegex3();
 
 	public static ulong? ParseToSteamId64( string input )
 	{
@@ -19,6 +20,9 @@ public partial class SteamIdParser
 		input = input.Trim();
 
 		if (TryParseSteamId64(input, out var steamId64))
+			return steamId64;
+
+		if (TryParseSteamIdOnline(input, out steamId64))
 			return steamId64;
 
 		if (TryParseSteamId(input, out steamId64))
@@ -45,6 +49,27 @@ public partial class SteamIdParser
 		steamId64 = 0;
 
 		var match = SteamIdRegex.Match(input);
+		if (!match.Success)
+			return false;
+
+		if (!uint.TryParse(match.Groups[1].Value, out uint y))
+			return false;
+
+		if (!uint.TryParse(match.Groups[2].Value, out uint z))
+			return false;
+
+		if (y > 1)
+			return false;
+
+		steamId64 = STEAM_ID_BASE + (z * 2) + y;
+		return true;
+	}
+
+	public static bool TryParseSteamIdOnline( string input, out ulong steamId64 )
+	{
+		steamId64 = 0;
+
+		var match = SteamIdOnlineRegex.Match(input);
 		if (!match.Success)
 			return false;
 
@@ -102,6 +127,17 @@ public partial class SteamIdParser
 		return $"[U:1:{accountId}]";
 	}
 
+	public static string ToSteamIdOnline( ulong steamId64 )
+	{
+		if (!IsValidSteamId64(steamId64))
+			return null;
+
+		var accountId = steamId64 - STEAM_ID_BASE;
+		var y = accountId % 2;
+		var z = accountId / 2;
+		return $"STEAM_1:{y}:{z}";
+	}
+
 	[GeneratedRegex(@"^7656119[0-9]{10}$")]
 	private static partial Regex MyRegex();
 
@@ -110,6 +146,9 @@ public partial class SteamIdParser
 
 	[GeneratedRegex(@"^\[U:1:([0-9]+)\]$")]
 	private static partial Regex MyRegex2();
+
+	[GeneratedRegex(@"^STEAM_1:([0-1]):([0-9]+)$")]
+	private static partial Regex MyRegex3();
 }
 
 
@@ -336,13 +375,6 @@ public struct CSteamID : IEquatable<CSteamID>, IComparable<CSteamID>
 		return (EUniverse)((m_SteamID >> 56) & 0xFFul);
 	}
 
-	public string ToSteamIdOnline()
-	{
-		var num = m_SteamID - 76561197960265728L;
-		var value = num % 2;
-		var value2 = num / 2;
-		return $"STEAM_1:{value}:{value2}";
-	}
 
 	public bool IsValid()
 	{
@@ -391,6 +423,11 @@ public struct CSteamID : IEquatable<CSteamID>, IComparable<CSteamID>
 	public uint GetSteamID32()
 	{
 		return GetAccountID().m_AccountID;
+	}
+
+	public string GetSteamIDOnline()
+	{
+		return SteamIdParser.ToSteamIdOnline(m_SteamID);
 	}
 
 	#region Overrides

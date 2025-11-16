@@ -75,7 +75,7 @@ internal class TestService {
   public void Test2()
   {
     _Core.Event.OnMovementServicesRunCommandHook += (@event) => {
-
+      @event.UserCmdPB.Base.ClientTick -= 100;
     };
     // _Core.Event.OnItemServicesCanAcquireHook += (@event) => {
     //   Console.WriteLine(@event.EconItemView.ItemDefinitionIndex);
