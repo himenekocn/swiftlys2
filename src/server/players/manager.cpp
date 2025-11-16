@@ -210,8 +210,14 @@ void CheckTransmitHook(void* _this, CCheckTransmitInfo** ppInfoList, int infoCou
         auto& pInfo = ppInfoList[i];
         int playerid = pInfo->m_nPlayerSlot.Get();
         if (!playermanager->IsPlayerOnline(playerid))
+        {
             continue;
+        }
         auto player = playermanager->GetPlayer(playerid);
+        if (!player)
+        {
+            continue;
+        }
 
         auto& blockedBits = player->GetBlockedTransmittingBits();
 
