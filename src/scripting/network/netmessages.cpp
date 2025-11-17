@@ -904,6 +904,8 @@ void Bridge_NetMessages_ClearRepeatedField(void* pmsg, const char* fieldName)
     msg->GetReflection()->ClearField(msg, field);
 }
 
+extern bool bypassPostEventAbstractHook;
+
 void Bridge_NetMessages_SendMessage(void* pmsg, int msgid, int playerid)
 {
     CNetMessagePB<google::protobuf::Message>* msg = (CNetMessagePB<google::protobuf::Message>*)pmsg;
@@ -913,8 +915,12 @@ void Bridge_NetMessages_SendMessage(void* pmsg, int msgid, int playerid)
     auto netmsg = networkMessages->FindNetworkMessageById(msgid);
     if (!netmsg) return;
 
+    bypassPostEventAbstractHook = true;
+
     CSingleRecipientFilter filter(playerid);
     gameEventSystem->PostEventAbstract(-1, false, &filter, netmsg, msg, 0);
+
+    bypassPostEventAbstractHook = false;
 }
 
 void Bridge_NetMessages_SendMessageToPlayers(void* pmsg, int msgid, uint64_t playermask)
@@ -926,6 +932,8 @@ void Bridge_NetMessages_SendMessageToPlayers(void* pmsg, int msgid, uint64_t pla
     auto netmsg = networkMessages->FindNetworkMessageById(msgid);
     if (!netmsg) return;
 
+    bypassPostEventAbstractHook = true;
+
     CRecipientFilter filter;
     auto& recipients = filter.GetRecipients();
 
@@ -934,6 +942,8 @@ void Bridge_NetMessages_SendMessageToPlayers(void* pmsg, int msgid, uint64_t pla
     *(uint64_t*)(recipients.Base()) = playermask;
 
     gameEventSystem->PostEventAbstract(-1, false, &filter, netmsg, msg, 0);
+
+    bypassPostEventAbstractHook = false;
 }
 
 uint64_t Bridge_NetMessages_AddNetMessageServerHook(void* callback_ptr)

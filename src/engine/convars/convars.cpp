@@ -75,6 +75,7 @@ uint64_t g_uCreatedConCommandId = 0;
 IVFunctionHook* g_pProcessRespondCvarValueHook = nullptr;
 
 extern INetworkMessages* networkMessages;
+extern bool bypassPostEventAbstractHook;
 
 class CConvarListener : public IConVarListener
 {
@@ -155,8 +156,12 @@ void CConvarManager::QueryClientConvar(int playerid, std::string cvar_name)
 
     msg->set_cvar_name(cvar_name);
 
+    bypassPostEventAbstractHook = true;
+
     CSingleRecipientFilter filter(playerid);
     gameEventSystem->PostEventAbstract(-1, false, &filter, netmsg, msg, 0);
+
+    bypassPostEventAbstractHook = false;
 
     // see at the end of the file the comment for this one too
     delete msg;
@@ -508,8 +513,12 @@ void CConvarManager::SetClientConvar(int playerid, const std::string& cvar_name,
     cvar->set_name(cvar_name);
     cvar->set_value(value);
 
+    bypassPostEventAbstractHook = true;
+
     CSingleRecipientFilter filter(playerid);
     gameEventSystem->PostEventAbstract(-1, false, &filter, netmsg, msg, 0);
+
+    bypassPostEventAbstractHook = false;
 
     /*
     Finally it's been fixed, i've had this problem since a year ago, glad that it's fixed and i didn't need to use deamberd with it's "const const const" feature

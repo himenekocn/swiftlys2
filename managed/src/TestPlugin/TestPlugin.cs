@@ -245,9 +245,20 @@ public class TestPlugin : BasePlugin
         {
             Console.WriteLine("TestPlugin OnClientDisconnected " + @event.PlayerId);
         };
+
+        var convar = Core.ConVar.Find<float>("sv_cs_player_speed_has_hostage");
         Core.Event.OnTick += () =>
         {
-            int i = 0;
+            var players = Core.PlayerManager.GetAllPlayers();
+            foreach (var player in players)
+            {
+                Core.Profiler.StartRecording("OnTick Send 1024 sv_cs_player_speed_has_hostage convar at player");
+                for (int i = 0; i < 1024; i++)
+                {
+                    convar!.ReplicateToClient(player.PlayerID, (float)Random.Shared.NextDouble());
+                }
+                Core.Profiler.StopRecording("OnTick Send 1024 sv_cs_player_speed_has_hostage convar at player");
+            }
         };
 
         // Core.Event.OnClientProcessUsercmds += (@event) => {

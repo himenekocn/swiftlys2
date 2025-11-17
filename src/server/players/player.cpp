@@ -127,6 +127,7 @@ void CPlayer::Shutdown()
 }
 
 extern INetworkMessages* networkMessages;
+extern bool bypassPostEventAbstractHook;
 
 void CPlayer::SendMsg(MessageType type, const std::string& message, int duration = 5000)
 {
@@ -170,8 +171,12 @@ void CPlayer::SendMsg(MessageType type, const std::string& message, int duration
         pmsg->set_dest((int)type);
         pmsg->add_param(msg);
 
+        bypassPostEventAbstractHook = true;
+
         CSingleRecipientFilter filter(m_iPlayerId);
         gameEventSystem->PostEventAbstract(-1, false, &filter, netmsg, pmsg, 0);
+
+        bypassPostEventAbstractHook = false;
 
         // see in src/engine/convars/convars.cpp at the end of the file why i "love" this now
         delete pmsg;

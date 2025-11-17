@@ -33,9 +33,11 @@ std::map<uint64_t, std::function<int(int, int, void*)>> g_mClientMessageSendCall
 IFunctionHook* g_pFilterMessageHook = nullptr;
 IVFunctionHook* g_pPostEventAbstractHook = nullptr;
 
+bool bypassPostEventAbstractHook = false;
+
 bool FilterMessage(INetworkMessageProcessingPreFilterCustom* client, CNetMessage* cMsg, INetChannel* netchan);
 void PostEventAbstractHook(void* _this, CSplitScreenSlot nSlot, bool bLocalOnly, int nClientCount, const uint64* clients,
-        INetworkMessageInternal* pEvent, const CNetMessage* pData, unsigned long nSize, NetChannelBufType_t bufType);
+    INetworkMessageInternal* pEvent, const CNetMessage* pData, unsigned long nSize, NetChannelBufType_t bufType);
 
 void CNetMessages::Initialize()
 {
@@ -83,6 +85,8 @@ bool FilterMessage(INetworkMessageProcessingPreFilterCustom* client, CNetMessage
 
 void PostEventAbstractHook(void* _this, CSplitScreenSlot nSlot, bool bLocalOnly, int nClientCount, const uint64* clients, INetworkMessageInternal* pEvent, const CNetMessage* pData, unsigned long nSize, NetChannelBufType_t bufType)
 {
+    if (bypassPostEventAbstractHook) return reinterpret_cast<decltype(&PostEventAbstractHook)>(g_pPostEventAbstractHook->GetOriginal())(_this, nSlot, bLocalOnly, nClientCount, clients, pEvent, pData, nSize, bufType);
+
     int msgid = pEvent->GetNetMessageInfo()->m_MessageId;
     CNetMessage* msg = const_cast<CNetMessage*>(pData);
     uint64_t* playermask = (uint64_t*)(clients);

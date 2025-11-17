@@ -89,8 +89,8 @@ internal class GameEventCallback<T> : GameEventCallback, IDisposable where T : I
     {
       try
       {
-        var category = "GameEventCallback::" + EventName;
         if (hash != T.GetHash()) return HookResult.Continue;
+        var category = "GameEventCallback::" + EventName;
         Profiler.StartRecording(category);
         var eventObj = T.Create(pEvent);
         var result = _callback(eventObj);

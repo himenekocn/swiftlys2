@@ -50,6 +50,8 @@ void insert(std::vector<uint8_t>& vec, const void* value, uint8_t size) {
     }
 }
 
+extern bool bypassPostEventAbstractHook;
+
 uint32_t CSoundEvent::Emit()
 {
     // packed_param serialization
@@ -87,7 +89,11 @@ uint32_t CSoundEvent::Emit()
     data->set_seed(guid);
     data->set_packed_params(std::string(buffer.begin(), buffer.end()));
 
+    bypassPostEventAbstractHook = true;
+
     gameEventSystem->PostEventAbstract(-1, false, &m_fClients, pNetMsg, data, 0);
+
+    bypassPostEventAbstractHook = false;
 
     delete data;
 
