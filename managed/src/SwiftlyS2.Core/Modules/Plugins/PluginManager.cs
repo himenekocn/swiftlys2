@@ -196,7 +196,11 @@ internal class PluginManager
         {
             if (!silent)
             {
-                logger.LogWarning("Failed to unload plugin by Id: {Id}", id);
+                logger.LogWarning("Failed to unload plugin by id: {Id}", id);
+            }
+            if (context != null)
+            {
+                context.Status = PluginStatus.Indeterminate;
             }
             return false;
         }
@@ -209,7 +213,7 @@ internal class PluginManager
     public bool LoadPluginById( string id, bool silent = false )
     {
         var context = plugins
-            .Where(p => p.Status == PluginStatus.Unloaded || p.Status == PluginStatus.Error)
+            .Where(p => p.Status != PluginStatus.Loading && p.Status != PluginStatus.Loaded)
             .FirstOrDefault(p => p.Metadata?.Id == id);
 
         try
@@ -217,14 +221,22 @@ internal class PluginManager
             if (plugins.Remove(context!))
             {
                 _ = LoadPlugin(context!.PluginDirectory!, true, silent);
+                return true;
             }
-            return true;
+            else
+            {
+                throw new ArgumentException(string.Empty, string.Empty);
+            }
         }
         catch
         {
             if (!silent)
             {
-                logger.LogWarning("Failed to load plugin by Id: {Id}", id);
+                logger.LogWarning("Failed to load plugin by id: {Id}", id);
+            }
+            if (context != null)
+            {
+                context.Status = PluginStatus.Indeterminate;
             }
             return false;
         }
@@ -240,11 +252,11 @@ internal class PluginManager
 
         if (!LoadPluginById(id, silent))
         {
-            logger.LogWarning("Failed to reload plugin by Id: {Id}", id);
+            logger.LogWarning("Failed to reload plugin by id: {Id}", id);
         }
         else
         {
-            logger.LogInformation("Reloaded plugin by Id: {Id}", id);
+            logger.LogInformation("Reloaded plugin by id: {Id}", id);
         }
     }
 

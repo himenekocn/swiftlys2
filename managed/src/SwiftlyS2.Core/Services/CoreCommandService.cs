@@ -361,6 +361,7 @@ internal class CoreCommandService
             PluginStatus.Error => "Error",
             PluginStatus.Loading => "Loading",
             PluginStatus.Unloaded => "Unloaded",
+            PluginStatus.Indeterminate => "Indeterminate",
             _ => "Unknown"
         };
 
