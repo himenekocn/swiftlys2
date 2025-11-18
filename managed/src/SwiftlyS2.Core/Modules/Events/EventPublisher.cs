@@ -724,4 +724,21 @@ internal static class EventPublisher
             return;
         }
     }
+
+    public static void InvokeOnPlayerPawnPostThinkHook( OnPlayerPawnPostThinkHookEvent @event )
+    {
+        if (_subscribers.Count == 0) return;
+        try
+        {
+            foreach (var subscriber in _subscribers)
+            {
+                subscriber.InvokeOnPlayerPawnPostThinkHook(@event);
+            }
+        }
+        catch (Exception e)
+        {
+            if (!GlobalExceptionHandler.Handle(e)) return;
+            AnsiConsole.WriteException(e);
+        }
+    }
 }

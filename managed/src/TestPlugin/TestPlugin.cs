@@ -140,6 +140,11 @@ public class TestPlugin : BasePlugin
         //   }
         // };
 
+        // Core.Event.OnPlayerPawnPostThink += ( @event ) =>
+        // {
+        //     Console.WriteLine($"PostThink -> {@event.PlayerPawn.OriginalController.Value?.PlayerName}");
+        // };
+
         Core.Engine.ExecuteCommandWithBuffer("@ping", ( buffer ) =>
         {
             Console.WriteLine($"pong: {buffer}");
