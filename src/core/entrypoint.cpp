@@ -310,7 +310,7 @@ bool LoopInitHook(void* _this, KeyValues* pKeyValues, void* pRegistry)
     g_SwiftlyCore.OnMapLoad(pKeyValues->GetString("levelname"));
     if (pKeyValues->FindKey("customgamemode")) {
         workshop_map = pKeyValues->GetString("customgamemode");
-    }
+    } else workshop_map = "";
 
     return ret;
 }
