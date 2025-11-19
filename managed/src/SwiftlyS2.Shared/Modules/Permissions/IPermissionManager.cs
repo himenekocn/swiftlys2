@@ -38,4 +38,10 @@ public interface IPermissionManager {
   /// <param name="permission"> The permission to remove the sub-permission from. </param>
   /// <param name="subPermission"> The sub-permission to remove. </param>
   void RemoveSubPermission(string permission, string subPermission);
+
+  /// <summary>
+  /// Clear all permission from a player.
+  /// </summary>
+  /// <param name="steamId"> The Steam ID of the player. </param>
+  void ClearPermission(ulong steamId);
 }
