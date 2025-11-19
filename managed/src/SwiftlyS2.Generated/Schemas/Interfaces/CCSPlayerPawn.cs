@@ -12,7 +12,6 @@ public partial interface CCSPlayerPawn : CCSPlayerPawnBase, ISchemaClass<CCSPlay
 
   static CCSPlayerPawn ISchemaClass<CCSPlayerPawn>.From(nint handle) => new CCSPlayerPawnImpl(handle);
   static int ISchemaClass<CCSPlayerPawn>.Size => 7280;
-
   
   public CCSPlayer_BulletServices? BulletServices { get; }
   

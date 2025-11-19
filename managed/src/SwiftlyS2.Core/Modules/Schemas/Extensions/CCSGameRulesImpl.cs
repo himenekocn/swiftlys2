@@ -1,4 +1,5 @@
 ﻿using SwiftlyS2.Core.Natives;
+using SwiftlyS2.Shared.Misc;
 using SwiftlyS2.Shared.Natives;
 using SwiftlyS2.Shared.SchemaDefinitions;
 using SwiftlyS2.Shared.Schemas;
@@ -16,5 +17,10 @@ internal partial class CCSGameRulesImpl : CCSGameRules
     public void TerminateRound( RoundEndReason reason, float delay )
     {
         GameFunctions.TerminateRound(Address, (uint)reason, delay);
+    }
+
+    public GamePhase GamePhaseEnum {
+        get => (GamePhase)GamePhase;
+        set => GamePhase = (int)value;
     }
 }

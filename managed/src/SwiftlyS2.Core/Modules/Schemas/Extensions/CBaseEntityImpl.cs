@@ -1,5 +1,6 @@
 ﻿using SwiftlyS2.Core.Natives;
 using SwiftlyS2.Shared.Natives;
+using SwiftlyS2.Shared.Players;
 using SwiftlyS2.Shared.SchemaDefinitions;
 
 namespace SwiftlyS2.Core.SchemaDefinitions;
@@ -14,6 +15,11 @@ internal partial class CBaseEntityImpl : CBaseEntity
 
     public Vector? AbsOrigin => CBodyComponent?.SceneNode?.AbsOrigin;
     public QAngle? AbsRotation => CBodyComponent?.SceneNode?.AbsRotation;
+
+    public Team Team {
+        get => (Team)TeamNum;
+        set => TeamNum = (byte)value;
+    }
 
     public void Teleport( Vector? position, QAngle? angle, Vector? velocity )
     {

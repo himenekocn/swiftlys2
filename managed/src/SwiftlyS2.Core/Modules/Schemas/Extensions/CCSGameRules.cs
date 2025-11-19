@@ -1,4 +1,5 @@
-﻿using SwiftlyS2.Shared.Natives;
+﻿using SwiftlyS2.Shared.Misc;
+using SwiftlyS2.Shared.Natives;
 using SwiftlyS2.Shared.SchemaDefinitions;
 using SwiftlyS2.Shared.Schemas;
 
@@ -19,4 +20,6 @@ public partial interface CCSGameRules
     /// <param name="reason">The reason for ending the round</param>
     /// <param name="delay">The delay before ending the round</param>
     public void TerminateRound( RoundEndReason reason, float delay );
+
+    public GamePhase GamePhaseEnum { get; set; }
 }
